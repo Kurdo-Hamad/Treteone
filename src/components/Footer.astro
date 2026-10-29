@@ -5,11 +5,11 @@ import { companyNav, homeHref, productsHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §6.13 — registered name, licence number, both address forms, copy
- * button. This block is half of how the site survives the "are these people
- * real?" check (§1), so nothing in it may be invented.
+ * Registered name, licence number, both address forms, copy button. This
+ * block is half of how the site survives the "are these people real?" check
+ * (§1), so nothing in it may be invented.
  *
- * ⚠ §10 — the registered Chinese company name and the business licence number
+ * ⚠ §12 — the registered Chinese company name and the business licence number
  * have not been supplied. They render as a marked placeholder and are listed in
  * the README. Do not fill them in with a plausible-looking value.
  */
@@ -21,7 +21,7 @@ const buildYear = new Date().getFullYear();
 const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 ---
 
-<footer class="site-footer">
+<footer class="site-footer dark-surface">
   <div class="wrap">
     <div class="site-footer__grid">
       <div class="site-footer__brand">
@@ -34,7 +34,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
       </div>
 
       <nav class="site-footer__col" aria-labelledby="footer-products">
-        <h2 class="site-footer__head" id="footer-products">{t('footer.products')}</h2>
+        <h2 class="eyebrow site-footer__head" id="footer-products">{t('footer.products')}</h2>
         <ul class="site-footer__list">
           {
             footerCategories.map((category) => (
@@ -49,7 +49,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
       </nav>
 
       <nav class="site-footer__col" aria-labelledby="footer-company">
-        <h2 class="site-footer__head" id="footer-company">{t('footer.company')}</h2>
+        <h2 class="eyebrow site-footer__head" id="footer-company">{t('footer.company')}</h2>
         <ul class="site-footer__list">
           {
             companyNav.map((item) => (
@@ -64,7 +64,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
       </nav>
 
       <div class="site-footer__col">
-        <h2 class="site-footer__head">{t('footer.contact')}</h2>
+        <h2 class="eyebrow site-footer__head">{t('footer.contact')}</h2>
         <ul class="site-footer__list">
           <li>
             <a class="site-footer__link" href={mailHref}>{company.email}</a>
@@ -130,51 +130,44 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 </script>
 
 <style>
+  /* .dark-surface supplies the navy ground and the on-dark roles. */
   .site-footer {
-    --fg-strong: var(--white);
-    --fg-body: var(--on-dark-2);
-    --fg-muted: var(--on-dark-3);
-    --focus: var(--signal);
-
-    background: var(--ink-3);
+    background: var(--surface-anchor);
     color: var(--on-dark-3);
-    padding-block: 72px 32px;
-    font-size: .9rem;
+    padding-block: 80px 32px;
+    font-size: 1rem;
     line-height: 1.6;
   }
 
   .site-footer__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 44px;
   }
 
   .mark {
     font-family: var(--font-stack-display);
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.375rem;
     letter-spacing: .06em;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--white);
+    color: var(--text-inverse);
     display: inline-block;
   }
   .mark__dot {
-    color: var(--signal);
+    color: var(--accent-electric);
   }
 
   .site-footer__blurb {
     margin-top: 16px;
     max-width: 40ch;
+    color: var(--on-dark-2);
   }
 
   .site-footer__head {
-    font-family: var(--font-stack-display);
-    font-size: .98rem;
-    font-weight: 600;
-    letter-spacing: var(--meso-ls-h3);
-    color: var(--white);
-    margin: 0 0 16px;
+    color: var(--color-muted-blue);
+    margin: 0 0 14px;
   }
 
   .site-footer__list {
@@ -182,16 +175,18 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     margin: 0;
     padding: 0;
   }
-  .site-footer__list li {
-    margin-bottom: 9px;
-  }
   .site-footer__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
     text-decoration: none;
-    color: var(--on-dark-3);
+    color: var(--on-dark-2);
     transition: color var(--dur-fast);
   }
   .site-footer__link:hover {
-    color: var(--signal);
+    color: var(--text-link-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   .site-footer__address {
@@ -204,48 +199,39 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
   }
 
   .site-footer__copy {
-    margin-top: 14px;
-    font-size: .82rem;
-    padding: 8px 14px;
-    color: var(--white);
-    border-color: var(--on-dark-4);
-  }
-  .site-footer__copy:hover {
-    background: var(--white);
-    color: var(--ink);
-    border-color: var(--white);
+    margin-top: 16px;
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: .875rem;
   }
   .site-footer__copy.is-done {
-    border-color: var(--signal);
-    color: var(--signal);
+    border-color: var(--color-cyan-light);
+    color: var(--color-cyan-light);
   }
   .site-footer__copy-status {
     display: block;
     margin-top: 8px;
     min-height: 1.4em;
-    font-size: .8rem;
-    color: var(--signal);
+    font-size: .875rem;
+    color: var(--color-cyan-light);
   }
 
   .site-footer__legal {
-    margin-top: 52px;
+    margin-top: 56px;
     padding-top: 22px;
     border-top: 1px solid var(--rule-dark);
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     justify-content: space-between;
-    font-size: .8rem;
-    /* §9 floor: .50 white on this ground measures 5:1. Do not dim further. */
+    font-size: .875rem;
+    /* §11 floor: .50 white on navy measures 5.1:1. Do not dim further. */
     color: var(--on-dark-4);
   }
   .site-footer__registration {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-  }
-  .site-footer__sep {
-    color: var(--on-dark-4);
   }
 
   @media (min-width: 720px) {

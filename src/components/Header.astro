@@ -10,19 +10,20 @@ import {
 } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §6.1 — sticky, transparent over the hero, solid after. Mobile drawer.
+ * Sticky header. Semi-transparent navy over the hero, solid white after it
+ * (locked visual system §17). Mobile drawer below 1040px — five 20px links,
+ * the language switch and the CTA do not fit a tablet bar.
  *
- * The language control is two real links to two real routes (§2), not a button
- * that swaps text in place. That is what makes each language separately
- * indexable, and it is why the header needs no i18n code in the browser.
+ * The language control is two real links to two real routes (§2), not a
+ * button that swaps text in place.
  */
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const alternates = alternateLinks(Astro.url);
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 
-// The wordmark is the trading name, uppercased in CSS, with the amber
-// interpunct from the approved prototype.
+// The wordmark is the trading name, uppercased in CSS, with a cyan interpunct.
 const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 ---
 
@@ -40,20 +41,26 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     >
       <ul class="site-nav__list">
         {
-          primaryNav.map((item) => (
-            <li>
-              <a class="site-nav__link" href={localisePath(item.href, lang)}>
-                {t(item.key)}
-              </a>
-            </li>
-          ))
+          primaryNav.map((item) => {
+            const href = localisePath(item.href, lang);
+            return (
+              <li>
+                <a
+                  class="site-nav__link"
+                  href={href}
+                  aria-current={href.replace(/\/$/, '') === current ? 'page' : undefined}
+                >
+                  {t(item.key)}
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
 
       <!-- On a phone the toolbar CTA is hidden, so the drawer carries its own.
-           The quote form is the only conversion point on the site (§7); it is
-           never more than one tap away. -->
-      <a class="btn site-nav__cta" href={localisePath(quoteHref, lang)}>
+           The quote form is the only conversion point (§8). -->
+      <a class="btn site-header__btn site-nav__cta" href={localisePath(quoteHref, lang)}>
         {t('cta.quote')}
       </a>
     </nav>
@@ -76,7 +83,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
         }
       </div>
 
-      <a class="btn site-header__cta" href={localisePath(quoteHref, lang)}>
+      <a class="btn site-header__btn site-header__cta" href={localisePath(quoteHref, lang)}>
         {t('cta.quote')}
       </a>
 
@@ -105,32 +112,49 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 </script>
 
 <style>
+  /* -- solid white: the default, and every state after the hero ---------- */
   .site-header {
+    --rule-current: var(--rule-light);
+    --fg-strong: var(--color-navy);
+    --fg-muted: var(--text-body);
+    --focus: var(--focus-light);
+
     position: sticky;
     top: 0;
     z-index: 80;
-    background: color-mix(in srgb, var(--paper) 90%, transparent);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--rule);
-    color: var(--ink);
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--rule-current);
+    color: var(--fg-strong);
     transition:
       background var(--dur),
       border-color var(--dur),
+      box-shadow var(--dur),
       color var(--dur);
   }
+  .site-header.is-past,
+  .site-header:where(:not(:has(~ main [data-header-dark-zone]))) {
+    box-shadow: var(--shadow-raised);
+  }
 
-  /* Over the hero. Set once here; every child reads the role tokens. */
-  .site-header.is-on-dark {
-    background: color-mix(in srgb, var(--ink-3) 60%, transparent);
-    border-color: var(--rule-dark);
-    color: var(--white);
-    --focus: var(--signal);
+  /* -- over the hero: semi-transparent navy, modest blur -----------------
+     The :has() arm makes a hero page start dark, before the script runs and
+     with JS off, so the bar never flashes white over the photograph. The
+     script adds .is-past once the hero has scrolled away. */
+  .site-header.is-on-dark,
+  .site-header:where(:not(.is-past):has(~ main [data-header-dark-zone])) {
+    --rule-current: var(--rule-dark);
+    --fg-strong: var(--text-inverse);
+    --fg-muted: var(--on-dark-2);
+    --focus: var(--focus-dark);
+
+    background: color-mix(in srgb, var(--color-navy) 55%, transparent);
+    backdrop-filter: blur(6px);
   }
 
   .site-header__bar {
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 32px;
     height: var(--header-h);
   }
 
@@ -138,47 +162,47 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
   .mark {
     font-family: var(--font-stack-display);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     letter-spacing: .06em;
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     color: inherit;
+    padding-block: 8px;
   }
   .mark__dot {
-    color: var(--signal);
+    color: var(--accent-electric);
   }
 
-  /* -- navigation -------------------------------------------------------- */
+  /* -- navigation (§5: General Sans 500, --fs-nav) ----------------------- */
   .site-nav {
     display: none;
     margin-left: auto;
   }
   .site-nav__list {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     list-style: none;
     margin: 0;
     padding: 0;
-    font-size: .92rem;
   }
   .site-nav__link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-stack-display);
+    font-size: var(--fs-nav);
+    font-weight: 500;
+    line-height: 1.2;
     text-decoration: none;
-    color: var(--steel);
-    padding: 6px 0;
+    color: var(--fg-muted);
     border-bottom: 2px solid transparent;
     transition: color var(--dur-fast), border-color var(--dur-fast);
   }
-  .site-nav__link:hover {
-    color: inherit;
-    border-bottom-color: var(--signal);
-  }
-  .is-on-dark .site-nav__link {
-    color: var(--on-dark-2);
-  }
-  .is-on-dark .site-nav__link:hover {
-    color: var(--white);
+  .site-nav__link:hover,
+  .site-nav__link[aria-current='page'] {
+    color: var(--fg-strong);
+    border-bottom-color: var(--accent-electric);
   }
   .site-nav__cta {
     display: none;
@@ -194,45 +218,55 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 
   .lang-switch {
     display: flex;
-    border: 1px solid var(--rule);
+    border: 1px solid var(--rule-current);
     border-radius: var(--radius);
     overflow: hidden;
-    font-size: .78rem;
-  }
-  .is-on-dark .lang-switch {
-    border-color: var(--rule-dark);
+    font-family: var(--font-stack-display);
+    font-size: .875rem;
+    font-weight: 500;
   }
   .lang-switch__option {
-    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    white-space: nowrap;
     text-decoration: none;
-    color: var(--steel);
-    line-height: 1.4;
+    color: var(--fg-muted);
     transition: background var(--dur-fast), color var(--dur-fast);
   }
   .lang-switch__option:hover {
-    color: var(--ink);
-  }
-  .is-on-dark .lang-switch__option {
-    color: var(--on-dark-3);
-  }
-  .is-on-dark .lang-switch__option:hover {
-    color: var(--white);
+    color: var(--fg-strong);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
   .lang-switch__option[aria-current='true'] {
-    background: var(--ink);
-    color: var(--white);
+    background: var(--color-navy);
+    color: var(--text-inverse);
   }
-  .is-on-dark .lang-switch__option[aria-current='true'] {
-    background: var(--white);
-    color: var(--ink);
+  .is-on-dark .lang-switch__option[aria-current='true'],
+  .site-header:where(:not(.is-past):has(~ main [data-header-dark-zone])) .lang-switch__option[aria-current='true'] {
+    background: var(--text-inverse);
+    color: var(--color-navy);
   }
 
+  /* §16 — the header CTA is cyan with navy text in both states. Restrained
+     hover: a lighter fill and a navy shadow, no glow. */
+  .site-header__btn {
+    background: var(--color-cyan);
+    border-color: var(--color-cyan);
+    color: var(--color-navy);
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: .9375rem;
+    white-space: nowrap;
+  }
+  .site-header__btn:hover {
+    background: var(--color-cyan-light);
+    border-color: var(--color-cyan-light);
+  }
   .site-header__cta {
     display: none;
-  }
-  .is-on-dark .site-header__cta {
-    background: var(--signal);
-    color: var(--ink);
   }
 
   /* -- burger ------------------------------------------------------------ */
@@ -240,18 +274,15 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--rule);
+    border: 1px solid var(--rule-current);
     background: none;
     border-radius: var(--radius);
-    /* 44px target: §11 treats the phone as the primary visitor. */
+    /* 44px target — the phone is the primary visitor (§13). */
     width: 44px;
     height: 44px;
     padding: 0;
     cursor: pointer;
     color: inherit;
-  }
-  .is-on-dark .burger {
-    border-color: var(--rule-dark);
   }
   .burger__icon {
     width: 22px;
@@ -274,25 +305,33 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     transform: translateY(-6px) rotate(-45deg);
   }
 
-  /* -- mobile drawer ----------------------------------------------------- */
-  @media (max-width: 719px) {
+  /* -- drawer, below desktop --------------------------------------------- */
+  @media (max-width: 1039px) {
+    /* An open drawer is always solid navy, whatever is behind the bar, so
+       the links never sit on a photograph. */
+    .site-header.is-open {
+      --rule-current: var(--rule-dark);
+      --fg-strong: var(--text-inverse);
+      --fg-muted: var(--on-dark-2);
+      --focus: var(--focus-dark);
+      background: var(--surface-primary);
+      box-shadow: none;
+    }
+    .site-header.is-open .lang-switch__option[aria-current='true'] {
+      background: var(--text-inverse);
+      color: var(--color-navy);
+    }
+
     .site-nav {
       position: absolute;
       top: var(--header-h);
       left: 0;
       right: 0;
-      flex-direction: column;
-      gap: 0;
-      background: var(--paper);
-      color: var(--ink);
-      border-bottom: 1px solid var(--rule);
-      padding: 8px var(--wrap-pad-sm) 20px;
+      background: var(--surface-primary);
+      border-top: 1px solid var(--rule-dark);
+      box-shadow: var(--shadow-modal);
+      padding: 8px var(--wrap-pad-sm) 24px;
       margin-left: 0;
-    }
-    .is-on-dark .site-nav {
-      background: var(--ink);
-      color: var(--white);
-      border-color: var(--rule-dark);
     }
     .is-open .site-nav {
       display: block;
@@ -300,43 +339,59 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     .site-nav__list {
       flex-direction: column;
       gap: 0;
-      font-size: 1rem;
     }
     .site-nav__link {
-      display: block;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--rule);
-      border-bottom-color: var(--rule);
-      color: inherit;
+      display: flex;
+      min-height: 56px;
+      border-bottom: 1px solid var(--rule-dark);
+      color: var(--text-inverse);
     }
-    .is-on-dark .site-nav__link {
-      border-bottom-color: var(--rule-dark);
-      color: var(--white);
+    .site-nav__link:hover,
+    .site-nav__link[aria-current='page'] {
+      border-bottom-color: var(--color-cyan-light);
     }
     .site-nav__cta {
-      display: block;
-      margin-top: 18px;
-      text-align: center;
-    }
-    .is-on-dark .site-nav__cta {
-      background: var(--signal);
-      color: var(--ink);
+      display: flex;
+      width: 100%;
+      margin-top: 20px;
     }
   }
 
-  @media (min-width: 720px) {
+  @media (min-width: 720px) and (max-width: 1039px) {
+    .site-nav {
+      padding-inline: var(--wrap-pad);
+    }
+  }
+
+  @media (min-width: 1040px) {
     .site-nav {
       display: flex;
       align-items: center;
+    }
+    /* 1040px leaves ~985px of bar: tighten until the wrap has room. */
+    .site-header__bar {
+      gap: 24px;
+    }
+    .site-nav__list {
+      gap: 20px;
     }
     .site-header__tools {
       margin-left: 0;
     }
     .site-header__cta {
-      display: inline-block;
+      display: inline-flex;
     }
     .burger {
       display: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .site-header__bar {
+      gap: 32px;
+    }
+    .site-nav__list {
+      gap: 28px;
     }
   }
 </style>

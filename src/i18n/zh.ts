@@ -19,9 +19,8 @@ export const zh: UIStrings = {
   // ---- header -------------------------------------------------------------
   'nav.label': '主导航',
   'nav.products': '产品',
-  'nav.scope': '供应范围',
   'nav.industries': '行业',
-  'nav.sourcing': '难寻备件',
+  'nav.sourcing': '寻源采购',
   'nav.brands': '品牌',
   'nav.about': '关于我们',
   'nav.openMenu': '打开菜单',
@@ -34,13 +33,17 @@ export const zh: UIStrings = {
 
   // ---- calls to action ----------------------------------------------------
   'cta.quote': '索取报价',
-  'cta.sendRequirement': '提交需求',
-  'cta.browseProducts': '浏览产品',
 
   // ---- hero ---------------------------------------------------------------
-  'hero.h1': '工厂运转所需，我们都能供应。',
+  // §6 locked copy. ⚠ §12 — first-pass translation, needs native review.
+  'hero.eyebrow': '工业供应与采购',
+  'hero.h1': '驱动工业的零部件、设备与技术。',
   'hero.lede':
-    '从一只轴承到整套工业设备，我们负责确认型号、寻找供应商并给出报价。',
+    '从关键备件到成套工业设备，我们采购并供应保障工业运行所需的一切。',
+  'hero.ctaProducts': '浏览产品',
+  'hero.ctaQuote': '索取报价',
+  'hero.ctaSourcing': '找不到备件？',
+  'hero.scrollCue': '了解 Trete One',
   'hero.region': '专题图片',
   'hero.slideLabel': (n: number, total: number) => `显示第 ${n} 张，共 ${total} 张`,
   'hero.counter': (n: number, total: number) => `第 ${n} 张，共 ${total} 张`,

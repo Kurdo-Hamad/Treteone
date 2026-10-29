@@ -65,7 +65,9 @@ if (header && darkZone && 'IntersectionObserver' in window) {
   const observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
-      if (entry) header.classList.toggle('is-on-dark', entry.isIntersecting);
+      if (!entry) return;
+      header.classList.toggle('is-on-dark', entry.isIntersecting);
+      header.classList.toggle('is-past', !entry.isIntersecting);
     },
     { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 },
   );

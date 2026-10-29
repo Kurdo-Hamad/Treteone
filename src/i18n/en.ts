@@ -20,9 +20,8 @@ export const en = {
   // ---- header -------------------------------------------------------------
   'nav.label': 'Primary',
   'nav.products': 'Products',
-  'nav.scope': 'Scope',
   'nav.industries': 'Industries',
-  'nav.sourcing': 'Hard-to-find',
+  'nav.sourcing': 'Sourcing',
   'nav.brands': 'Brands',
   'nav.about': 'About',
   'nav.openMenu': 'Open menu',
@@ -35,13 +34,17 @@ export const en = {
 
   // ---- calls to action ----------------------------------------------------
   'cta.quote': 'Request a quote',
-  'cta.sendRequirement': 'Send your requirement',
-  'cta.browseProducts': 'Browse products',
 
   // ---- hero ---------------------------------------------------------------
-  'hero.h1': 'Everything your operation needs.',
+  // §6 locked copy. Uppercase on the eyebrow and buttons is applied in CSS.
+  'hero.eyebrow': 'Industrial supply & sourcing',
+  'hero.h1': 'The Parts, Equipment & Technology Behind Industry.',
   'hero.lede':
-    'From a single replacement bearing to complete industrial machinery — we identify the part, find the supplier and quote it.',
+    'From critical spare parts to complete industrial equipment, we source and supply what keeps industrial operations running.',
+  'hero.ctaProducts': 'Explore products',
+  'hero.ctaQuote': 'Request a quote',
+  'hero.ctaSourcing': 'Can’t find a part?',
+  'hero.scrollCue': 'Explore Trete One',
   'hero.region': 'Featured photography',
   'hero.slideLabel': (n: number, total: number) => `Show image ${n} of ${total}`,
   'hero.counter': (n: number, total: number) => `Image ${n} of ${total}`,

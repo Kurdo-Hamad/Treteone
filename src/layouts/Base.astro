@@ -44,7 +44,8 @@ const alternates = alternateLinks(Astro.url);
     <link rel="canonical" href={canonical.href} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#16191C" />
+    {/* --color-navy. A meta value cannot read a custom property. */}
+    <meta name="theme-color" content="#051b38" />
 
     {/* §2 — each language is a real route, so each is separately indexable. */}
     {
