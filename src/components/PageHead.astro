@@ -1,0 +1,32 @@
+---
+/**
+ * The opening block of every detail route (/products, /industries, /sourcing,
+ * /brands, /about, /quote): kicker, h1, lead. One component so the six pages
+ * read as one product (approved mockup, "view" sections).
+ *
+ * All three strings are already localised by the page. The block sits inside
+ * the page's own .wrap.sec section; whatever follows (index rows, directory,
+ * form) goes in the default slot, under the lead.
+ */
+
+interface Props {
+  kicker: string;
+  title: string;
+  lead?: string;
+}
+
+const { kicker, title, lead } = Astro.props;
+---
+
+<header class="page-head">
+  <p class="kicker">{kicker}</p>
+  <h1>{title}</h1>
+  {lead && <p class="lead page-head__lead">{lead}</p>}
+</header>
+<slot />
+
+<style>
+  .page-head__lead {
+    margin-top: 16px;
+  }
+</style>

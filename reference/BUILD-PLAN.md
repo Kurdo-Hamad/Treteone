@@ -182,7 +182,6 @@ Files you own. Do not edit anything outside this list:
   src/components/ScopeSteps.astro
   src/components/ProcessSteps.astro
   src/components/DefinitionGrid.astro
-  src/components/PageHead.astro
   src/i18n/{en,zh}/{products,industries,sourcing,about}.ts
   src/data/categories.ts
   src/data/industries.ts
@@ -212,8 +211,8 @@ Build four routes from the mockup:
 Rules:
 - IndexRows is one component used by both /products and /industries. It collapses
   to two columns below 960px with the spec and action stacking under the heading.
-- Every detail route opens with the same PageHead (kicker, h1, lead) so the six
-  pages read as one product.
+- Every detail route opens with PageHead (kicker, h1, lead) — already in the
+  foundation; use it, do not modify it.
 - All copy through i18n. Data through src/data/.
 - Do not invent a business licence number, a reply time, or any figure.
 
