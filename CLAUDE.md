@@ -94,6 +94,7 @@ src/
     products/          <category slug>.jpg
     scope/             <stage slug>.jpg — portrait, the sticky media column
     industries/        <industry slug>.jpg
+    sourcing/          plate.jpg
   pages/
     index.astro
     zh/index.astro

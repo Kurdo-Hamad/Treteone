@@ -1,0 +1,249 @@
+---
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { brandRows, brands, brandSlug } from '~/data/brands';
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.9 — two rows, opposite directions, pause on hover. Missing logo
+ * falls back to a dashed name tile. Disclaimer below.
+ *
+ * ⚠ §11 — the heading is "Brands we source" and the disclaimer stays. Nothing
+ * here may imply authorisation, distributorship or agency.
+ *
+ * ⚠ §10 — public/logos/ is empty and it is still an open question which of
+ * these manufacturers may be shown as a logo at all, so every tile currently
+ * renders as the dashed name fallback. That is the expected state.
+ *
+ * Which tiles have logos is resolved HERE, at build time, by reading the
+ * directory — not in the browser with an <img onerror> fallback like the
+ * prototype. That means no broken-image flash, no error handler to trip the
+ * CSP, and no JavaScript for a section that otherwise needs none.
+ *
+ * Accessibility: a marquee is a poor way to hear a list of 32 names, so the
+ * moving rows are `aria-hidden` and a plain, static list of every brand is
+ * exposed to assistive technology instead. Under prefers-reduced-motion the
+ * rows stop and wrap into a static grid, so the same names stay readable
+ * without anything moving (§9).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/**
+ * §8 — "Every .svg must contain real vector paths. A base64 raster inside an
+ * SVG wrapper is not a vector — the MesoAxis header logo is 462 KB of exactly
+ * that, on all 35 pages. Check before committing any logo or icon."
+ *
+ * This is that check, and it fails the build rather than trusting a reviewer to
+ * notice. It runs on the whole directory, so it also catches a logo added for a
+ * brand that is not in the list.
+ */
+// process.cwd(), not import.meta.url: this component is compiled into the build
+// output, so a URL relative to the module resolves inside dist/, not to source.
+// Astro always builds from the project root, which is also how Cloudflare runs it.
+const logoDir = join(process.cwd(), 'public', 'logos');
+
+const availableLogos = new Set<string>();
+
+// An empty directory is not tracked by git, so public/logos/ may genuinely not
+// exist on a fresh checkout. That is the current state (§10), not an error.
+const logoFiles = existsSync(logoDir) ? readdirSync(logoDir) : [];
+
+for (const file of logoFiles) {
+  if (!file.endsWith('.svg')) continue;
+
+  const svg = readFileSync(join(logoDir, file), 'utf8');
+  if (/;base64,/i.test(svg) || /<image[\s>]/i.test(svg)) {
+    throw new Error(
+      `public/logos/${file} is a raster wrapped in an SVG, not a vector (CLAUDE.md §8).\n` +
+        'It embeds a bitmap via <image> or a base64 data URI. Export real paths, ' +
+        'or ship it as an AVIF/WebP through astro:assets instead.',
+    );
+  }
+
+  availableLogos.add(file.replace(/\.svg$/, ''));
+}
+
+const tile = (name: string) => {
+  const slug = brandSlug(name);
+  return { name, slug, logo: availableLogos.has(slug) ? `/logos/${slug}.svg` : null };
+};
+---
+
+<section class="brands" id="brands">
+  <div class="wrap">
+    <div class="brands__head rv">
+      <h2>{t('brands.heading')}</h2>
+      <p class="lede">{t('brands.lede')}</p>
+    </div>
+  </div>
+
+  {/* The list as assistive technology should meet it: static, complete, once. */}
+  <h3 class="sr-only" id="brand-list-label">{t('brands.listLabel')}</h3>
+  <ul class="sr-only" aria-labelledby="brand-list-label">
+    {brands.map((name) => <li>{name}</li>)}
+  </ul>
+
+  {
+    brandRows.map((row, rowIndex) => (
+      <div class:list={['marquee', { 'marquee--reverse': rowIndex === 1 }]} aria-hidden="true">
+        <div class="marquee__track">
+          {/* Two copies: the animation travels exactly one copy's width and
+              loops, so the seam never shows. The clone is dropped entirely
+              under reduced motion, where the row becomes a static grid. */}
+          {[0, 1].map((copy) => (
+            <div class="marquee__copy" data-marquee-clone={copy === 1 ? '' : undefined}>
+              {row.map((name) => {
+                const item = tile(name);
+                return (
+                  <div class:list={['logo', { 'logo--has-image': item.logo !== null }]}>
+                    {item.logo ? (
+                      <img class="logo__img" src={item.logo} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <span class="logo__name">{item.name}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+
+  <div class="wrap">
+    <p class="brands__disclaimer">{t('brands.disclaimer')}</p>
+  </div>
+</section>
+
+<style>
+  .brands {
+    padding-block: var(--section-y);
+  }
+
+  .brands__head {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 44px;
+  }
+  .brands__head .lede {
+    max-width: 44ch;
+  }
+
+  /* -- marquee ----------------------------------------------------------- */
+
+  .marquee {
+    overflow: hidden;
+    border-block: 1px solid var(--rule);
+    background: var(--white);
+  }
+  .marquee + .marquee {
+    border-top: 0;
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: brand-slide 46s linear infinite;
+    will-change: transform;
+  }
+  .marquee--reverse .marquee__track {
+    animation-direction: reverse;
+    animation-duration: 56s;
+  }
+  /* §6.9 — pausing on hover lets someone actually read a name they spotted. */
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__copy {
+    display: flex;
+  }
+
+  @keyframes brand-slide {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* -- tile -------------------------------------------------------------- */
+
+  .logo {
+    flex: 0 0 190px;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-inline-end: 1px solid var(--rule);
+    padding: 16px;
+  }
+
+  .logo__img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: .7;
+    transition: filter var(--dur-fast), opacity var(--dur-fast);
+  }
+  .logo--has-image:hover .logo__img {
+    filter: none;
+    opacity: 1;
+  }
+
+  /* §10 — the fallback, and currently every tile. Dashed, so it reads as a
+     placeholder rather than as a wordmark we have chosen to set in type. */
+  .logo__name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed var(--rule);
+    font-family: var(--font-stack-display);
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--steel);
+    line-height: 1.15;
+    padding: 6px;
+  }
+
+  .brands__disclaimer {
+    margin-top: 22px;
+    font-size: .82rem;
+    color: var(--steel);
+    max-width: 78ch;
+  }
+
+  /* §9 — the rows stop. Freezing a marquee mid-travel would hide most of the
+     names, so instead each row wraps into a static grid and the duplicate copy
+     is dropped. Everything stays readable; nothing moves. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+    }
+    .marquee__copy {
+      flex-wrap: wrap;
+    }
+    .marquee__copy[data-marquee-clone] {
+      display: none;
+    }
+    .logo {
+      flex: 1 0 190px;
+    }
+  }
+
+  @media (min-width: 720px) {
+    .brands__head {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+</style>

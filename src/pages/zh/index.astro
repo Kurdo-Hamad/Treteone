@@ -1,8 +1,11 @@
 ---
+import BrandMarquee from '~/components/BrandMarquee.astro';
 import IndustryPicker from '~/components/IndustryPicker.astro';
+import ProcessTimeline from '~/components/ProcessTimeline.astro';
 import ProductRail from '~/components/ProductRail.astro';
 import RollingHero from '~/components/RollingHero.astro';
 import ScopeScroller from '~/components/ScopeScroller.astro';
+import SourcingBand from '~/components/SourcingBand.astro';
 import StatBand from '~/components/StatBand.astro';
 import Ticker from '~/components/Ticker.astro';
 import Base from '~/layouts/Base.astro';
@@ -16,10 +19,9 @@ import Base from '~/layouts/Base.astro';
  * ⚠ §10 — the Chinese copy is the prototype's first pass and still needs a
  * native-speaker review. See src/i18n/zh.ts and the zh fields in src/data/.
  *
- * Sections are in the order CLAUDE.md §6 fixes. Built so far: 1-7 and 13.
- * Still to come — 8 SourcingBand, 9 BrandMarquee, 10 ProcessTimeline,
- * 11 About, 12 QuoteForm — which is why the nav anchors for those still have
- * nothing to jump to.
+ * Sections are in the order CLAUDE.md §6 fixes. Built so far: 1-10 and 13.
+ * Still to come — 11 About and 12 QuoteForm, which is why #about and #quote
+ * still have nothing to jump to.
  */
 ---
 
@@ -30,4 +32,7 @@ import Base from '~/layouts/Base.astro';
   <ProductRail />
   <ScopeScroller />
   <IndustryPicker />
+  <SourcingBand />
+  <BrandMarquee />
+  <ProcessTimeline />
 </Base>

@@ -84,6 +84,32 @@ export const en = {
   'industries.lede': 'Pick a plant. We will match the specification to the duty.',
   'industries.listLabel': 'Industries',
 
+  // ---- sourcing band (§6.8) -----------------------------------------------
+  'sourcing.heading': 'Can’t find the part? Give us the number.',
+  'sourcing.lede':
+    'Obsolete, discontinued, legacy automation, unmarked castings, or just a photo of a nameplate — send whatever you have and we will investigate it.',
+  'sourcing.cta': 'Upload your requirement',
+  'sourcing.checklistLabel': 'What to send',
+  'sourcing.send.partNumber': 'Part number or manufacturer reference',
+  'sourcing.send.nameplate': 'Equipment model and nameplate photo',
+  'sourcing.send.datasheet': 'Datasheet, drawing or PDF',
+  'sourcing.send.boq': 'Excel BOQ or multi-line request',
+  'sourcing.send.description': 'A description, if that is all you have',
+
+  // ---- brand marquee (§6.9) -----------------------------------------------
+  // §11 — this wording is fixed. Never "authorised distributor", "agent",
+  // "partner" or anything that implies them.
+  'brands.heading': 'Brands we source',
+  'brands.lede':
+    'A selection of the manufacturers most often requested. If yours is not listed, ask.',
+  'brands.listLabel': 'Manufacturers we source',
+  'brands.disclaimer':
+    'Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.',
+
+  // ---- process timeline (§6.10) -------------------------------------------
+  'process.heading': 'From requirement to delivery.',
+  'process.stepCount': (n: number, total: number) => `Step ${n} of ${total}`,
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb':
     'Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop.',

@@ -158,7 +158,13 @@ function measure(route, htmlPath) {
     ['card__frame', 'rail', true],
     ['scope__figure', 'scope', true],
     ['industry-panel', 'industries', true],
+    ['sourcing__frame', 'sourcing', true],
   ];
+
+  // A picture that matches none of the above is counted as arriving, which is
+  // the pessimistic reading — but it almost certainly means a new section was
+  // added without a marker here, so say so rather than quietly mis-filing it.
+  const unclassified = [];
 
   let deferred = 0;
 
@@ -166,7 +172,8 @@ function measure(route, htmlPath) {
     const index = html.indexOf(picture);
     const preceding = html.slice(Math.max(0, index - 400), index);
     const section = SECTIONS.find(([marker]) => preceding.includes(marker));
-    const [, name = 'page', isDeferred = false] = section ?? [];
+    const [, name = 'UNCLASSIFIED', isDeferred = false] = section ?? [];
+    if (!section) unclassified.push(name);
 
     const avif = picture.match(/<source[^>]+type="image\/avif"[^>]*>/)?.[0]
       ?? picture.match(/<source[^>]+srcset="([^"]+)"[^>]*>/)?.[0];
@@ -182,6 +189,15 @@ function measure(route, htmlPath) {
       label: `${picked.url} (${picked.width}w) — ${name}${isDeferred ? ', deferred' : ''}`,
       bytes,
     });
+  }
+
+  if (unclassified.length > 0) {
+    console.warn(
+      `
+  ! ${unclassified.length} image(s) matched no section marker in check-budget.mjs.
+` +
+        '    They are counted as arriving. Add their marker to SECTIONS.',
+    );
   }
 
   const total = items.reduce((sum, item) => sum + item.bytes, 0);

@@ -19,7 +19,7 @@ static output · Cloudflare Pages.
 | `npm run check` | `astro check` — TypeScript + template diagnostics |
 | `npm run budget` | §8 first-load payload check against the 1.5 MB budget (run after a build) |
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
-| `npm run placeholders` | Regenerate all 31 §10 placeholder plates |
+| `npm run placeholders` | Regenerate all 32 §10 placeholder plates |
 
 `npm run build` is three steps, wired through npm's `prebuild`/`postbuild`, so
 they also run on Cloudflare:
@@ -42,7 +42,7 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 
 ## Build status
 
-**Passes 1–3 are complete.** Sections of CLAUDE.md §6 built so far:
+**Passes 1–4 are complete.** Sections of CLAUDE.md §6 built so far:
 
 | § | Section | Notes |
 |---|---|---|
@@ -53,35 +53,42 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 | 5 | `ProductRail` | 12 cards, drag / scroll / arrow keys, snap, progress bar |
 | 6 | `ScopeScroller` | sticky media, 5 stages, tag and image track the scroll |
 | 7 | `IndustryPicker` | 9 industries, real tablist with roving tabindex |
+| 8 | `SourcingBand` | photo plate + "what to send" checklist — **no JavaScript** |
+| 9 | `BrandMarquee` | two rows, opposite directions, all 32 tiles on fallback |
+| 10 | `ProcessTimeline` | 5 steps, amber line fills on scroll |
 | 13 | `Footer` | both address forms, copy button, §10 placeholders |
 
-Not built yet — sections 8–12: `SourcingBand`, `BrandMarquee`,
-`ProcessTimeline`, About, `QuoteForm`.
+Not built yet — sections 11 (About) and 12 (`QuoteForm`).
 
-Because of that, **`#sourcing`, `#brands`, `#about` and `#quote` still jump
-nowhere.** `#products`, `#scope` and `#industries` now resolve. Every "Request a
-quote" CTA — the two hero buttons and all 12 rail cards — points at `#quote`,
-which does not exist until §12 lands.
+Because of that, **`#about` and `#quote` still jump nowhere.** Everything else
+resolves. Every "Request a quote" CTA — the two hero buttons, all 12 rail cards
+and the sourcing band — points at `#quote`, which does not exist until §12
+lands. That is currently **the only broken thing a visitor can hit**, and it is
+also the site's only conversion point (§7), so §12 is the one that matters.
 
 ### Verified, not assumed
 
-- `npm run check` — 36 files, 0 errors, 0 warnings, 0 hints.
+- `npm run check` — 42 files, 0 errors, 0 warnings, 0 hints.
 - No external host is referenced anywhere in `dist/` — no `googleapis`, no
   `gstatic`, no CDN. `grep -r googleapis src public` must stay empty.
 - No inline `<style>`, no `style="..."` attribute and no inline event handler in
   the output, so the `default-src 'self'` CSP in `public/_headers` needs no
   `'unsafe-inline'`. This required `vite.build.assetsInlineLimit: 0`; Astro
   otherwise writes small hoisted scripts straight into the document.
-- All 354 local paths referenced by the two HTML documents and their CSS exist
-  in `dist/`. No duplicate `id` on either page (28 each).
+- All 365 local paths referenced by the two HTML documents and their CSS exist
+  in `dist/`. No duplicate `id` on either page (33 each).
 - Every colour in the emitted CSS resolves through a token — each brand hex
   appears exactly once, in the token block. No component hardcodes a colour.
-- Payload, 412px viewport at 2× DPR: **`/` = 922.7 KB, `/zh/` = 921.9 KB**
-  against the 1.5 MB budget — **60%**. Of that, **484 KB arrives on load** and
-  **438 KB is deferred** until the visitor scrolls to it or opens a panel.
+- Payload, 412px viewport at 2× DPR: **`/` = 976.5 KB, `/zh/` = 975.7 KB**
+  against the 1.5 MB budget — **64%**. Of that, **521 KB arrives on load** and
+  **456 KB is deferred** until the visitor scrolls to it or opens a panel.
+- §11 wording holds: no "authorised distributor", "agent" or "partner" claim
+  appears in either rendered page, and the trademark disclaimer is on both.
+- The §8 raster-in-SVG guard **actually fails the build**. Tested: a logo that
+  wraps a base64 PNG stops `npm run build` naming the file and the rule.
 - The tablist is a real one: 9 tabs, 9 panels, one `tabindex="0"` and eight
   `tabindex="-1"`, eight panels `hidden`. Checked in the built HTML.
-- `global.css` compiles to 38 KB. MesoAxis reached ~135 KB.
+- `global.css` compiles to 44 KB. MesoAxis reached ~135 KB.
 - The font verification **actually fails**. Tested end to end: Chinese copy
   routed into a page from a file type the source scan does not read exits
   `npm run build` with code 1 and names the glyph and the page.
@@ -151,6 +158,97 @@ just `/zh/`. It was `/zh/`-only because 100 KB of stylesheet was too much to
 carry for the one Chinese line in the English footer. At 2.9 KB of CSS plus a
 CJK-only `unicode-range` that reason is gone, and the English footer address now
 renders in the brand face. One line in `Base.astro` if you want it reverted.
+
+---
+
+## Real photography vs the §8 budget — measured
+
+The placeholder plates are synthetic hatch-and-text, which compresses far better
+than a photograph. So before building further, five real industrial photographs
+(Wikimedia Commons, CC/PD, easy through to very busy) were centre-cropped to
+each aspect ratio the site uses and run through **Astro's exact pipeline** —
+calibrated first against Astro's own output, reproducing it to within 0.24%.
+
+**Mobile 412px @2×, all 31 images at the time of the test:**
+
+| | arrival | deferred | images | + non-image | total | budget |
+|---|---|---|---|---|---|---|
+| placeholders | 122 KB | 439 KB | 561 KB | 362 KB | 923 KB | 60% |
+| real, mean photo | 212 KB | 818 KB | 1030 KB | 362 KB | 1392 KB | 91% |
+| real, busiest photo | 292 KB | 1117 KB | 1409 KB | 362 KB | **1771 KB** | **115%** |
+
+**The budget does not survive real photography as configured.** The mean squeaks
+under, but the test is not the mean — it is whatever photography is actually
+supplied, and a busy factory-floor shot puts the page 15% over §8.
+
+Astro passes no `quality`, so sharp's AVIF default of 50 applies. Worst-case
+totals by quality:
+
+| AVIF q | images | total | budget |
+|---|---|---|---|
+| 50 (current) | 1409 KB | 1771 KB | 115% over |
+| 45 | 1186 KB | 1548 KB | 101% over |
+| **40** | **967 KB** | **1329 KB** | **87% — holds** |
+| 35 | 813 KB | 1175 KB | 77% |
+
+**Recommendation: set `image.quality` to 40.** It holds worst-case with room for
+About and the QuoteForm. Everything here renders behind `grayscale(.3–.4)` and
+contrast filters at modest sizes, so 40 should be invisible — but that needs one
+look at a real photograph, so **it has not been changed.** One line in
+`astro.config.mjs` when you decide.
+
+Two things that do *not* help: pre-desaturating sources to match the CSS filter
+saves ~4%, and desktop (2.1 MB at 1440 @2×) is a separate problem — §8's budget
+is explicitly "first mobile load", so mobile is the gate.
+
+---
+
+## Pass 4 notes
+
+### The logo fallback is resolved at build time, not in the browser
+
+The prototype loads `logos/<slug>.svg` into an `<img>` and swaps to a dashed
+tile on the `error` event. Here the component reads `public/logos/` during the
+build and decides then. No broken-image flash, no error handler for the CSP to
+trip over, and `BrandMarquee` ships **zero JavaScript**.
+
+**All 32 tiles are currently the dashed fallback** — `public/logos/` is empty and
+§10 still has the open question of which manufacturers may be shown as a logo at
+all. A logo appears the moment its file exists; nothing else changes.
+
+### The build now refuses a raster wrapped in an SVG
+
+§8 is specific about this: "the MesoAxis header logo is 462 KB of exactly that,
+on all 35 pages. Check before committing any logo or icon." That check is now
+executable rather than a reviewer's job — `BrandMarquee` reads every SVG in
+`public/logos/` and throws if it finds `<image>` or a base64 data URI:
+
+```
+public/logos/siemens.svg is a raster wrapped in an SVG, not a vector (CLAUDE.md §8).
+```
+
+Verified by planting one: it stops `npm run build`.
+
+### A marquee is a bad way to hear 32 names
+
+The moving rows are `aria-hidden` and assistive technology gets a plain static
+list of every brand instead. Under `prefers-reduced-motion` the rows stop *and
+wrap into a static grid*, with the duplicate copy dropped — freezing a marquee
+mid-travel would hide most of the names, which is a worse outcome than the
+motion it avoids.
+
+### Both scroll-driven sections fail safe in the finished state
+
+The process timeline's amber line is drawn **full** in CSS, and the script's
+first act is to take it back to zero. If the bundle never arrives the timeline
+looks complete rather than permanently empty. The line also only ever advances —
+scrolling back up does not unwind it, because a step you have read stays read.
+
+### §11 wording, checked in the output
+
+No "authorised distributor", "agent" or "partner" claim appears in either
+rendered page, and the trademark disclaimer is present on both. Worth
+re-checking whenever brand copy changes.
 
 ---
 
@@ -392,8 +490,8 @@ simply absent.
 |---|---|
 | Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip. |
 | Business licence number | Same. |
-| Real photography — office, staff, goods packed, equipment handled | **31 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px). All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
-| Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty. `BrandMarquee` is pass 2 and needs both the files and the answer to the second half of that question. |
+| Real photography — office, staff, goods packed, equipment handled | **32 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px). All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
+| Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty, so all 32 tiles render as the dashed name fallback — the expected state. Drop `<slug>.svg` in (slug from `brandSlug()` in `src/data/brands.ts`) and that tile becomes a logo. The build rejects an SVG that is really a raster (§8). **The open question is still which manufacturers may be shown as a logo at all.** |
 | Real reply-time commitment | `StatBand` is built. The figure renders as a marked **UNCONFIRMED** placeholder, never as a fact — see "Pass 2 notes". Set `confirmed: true` in `src/data/stats.ts` once the business has committed to a number. |
 | Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts` are the prototype's first pass, carried over unchanged and marked as such in the file headers. Needs a native-speaker review. |
 | Open Graph image | Deliberately absent rather than fabricated. `summary` card only until there is a real photograph. |

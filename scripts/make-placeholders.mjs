@@ -13,6 +13,7 @@
  *   src/assets/products/<slug>.jpg      12 product cards,   1200x900
  *   src/assets/scope/<slug>.jpg          5 scope stages,    1600x2000
  *   src/assets/industries/<slug>.jpg     9 industry panels, 1600x1000
+ *   src/assets/sourcing/plate.jpg        1 sourcing plate,   1600x1000
  *
  * To replace one: drop the real photograph in at the same path and size or
  * larger, and delete its entry here. Nothing else changes — Astro re-derives
@@ -82,6 +83,9 @@ const industryPanels = {
   'water-wastewater': 'TREATMENT BASINS',
   'facilities-institutions': 'PLANT ROOM AND SWITCHBOARD',
 };
+
+/** The single plate in the SourcingBand (§6.8). */
+const sourcingPlate = 'GOODS PACKED AND LABELLED FOR DESPATCH';
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -177,5 +181,16 @@ for (const [slug, subject] of Object.entries(industryPanels)) {
   total += await write(industryDir, `${slug}.jpg`, svg);
 }
 console.log(`industry: ${Object.keys(industryPanels).length} plates at 1600x1000`);
+
+/* --------------------------------------------------------------- sourcing */
+
+const sourcingDir = join(root, 'src', 'assets', 'sourcing');
+await mkdir(sourcingDir, { recursive: true });
+total += await write(
+  sourcingDir,
+  'plate.jpg',
+  plate({ width: 1600, height: 1000, badge: null, subject: sourcingPlate, scale: 0.7 }),
+);
+console.log('sourcing: 1 plate at 1600x1000');
 
 console.log(`total:    ${(total / 1024 / 1024).toFixed(1)} MB of source art (not shipped as-is)`);

@@ -1,0 +1,139 @@
+---
+import { Picture } from 'astro:assets';
+import plate from '~/assets/sourcing/plate.jpg';
+import { quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations, type UIKey } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.8 — dark, photo plate plus the "what to send" checklist.
+ *
+ * This section exists to remove the excuse for not enquiring: whatever fragment
+ * of information a maintenance engineer has in front of them, the checklist
+ * says it is enough. It is the second-strongest route to §7's form after the
+ * hero, so the CTA is right beside the list rather than below the fold.
+ *
+ * No script.
+ *
+ * The checklist is an ordered set of i18n keys rather than a data module: it is
+ * presentation order for one section and nothing else reads it. The strings
+ * themselves live in src/i18n, as §3 requires.
+ *
+ * ⚠ §10 — the plate is a "PHOTOGRAPH PENDING" placeholder.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const checklist: readonly UIKey[] = [
+  'sourcing.send.partNumber',
+  'sourcing.send.nameplate',
+  'sourcing.send.datasheet',
+  'sourcing.send.boq',
+  'sourcing.send.description',
+];
+---
+
+<section class="sourcing dark-surface" id="sourcing">
+  <div class="wrap sourcing__grid">
+    <div class="sourcing__copy rv">
+      <h2 class="sourcing__heading">{t('sourcing.heading')}</h2>
+      <p class="lede sourcing__lede">{t('sourcing.lede')}</p>
+      <p class="sourcing__cta">
+        <a class="btn" href={localisePath(quoteHref, lang)}>{t('sourcing.cta')}</a>
+      </p>
+    </div>
+
+    <div class="sourcing__plate rv">
+      <div class="sourcing__frame">
+        <Picture
+          src={plate}
+          formats={['avif', 'webp']}
+          fallbackFormat="jpg"
+          widths={[520, 900, 1400]}
+          sizes="(min-width: 1040px) 45vw, 100vw"
+          alt=""
+          class="sourcing__img"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <h3 class="sr-only" id="sourcing-checklist">{t('sourcing.checklistLabel')}</h3>
+      <ul class="checklist" aria-labelledby="sourcing-checklist">
+        {checklist.map((key) => <li class="checklist__item">{t(key)}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sourcing {
+    padding-block: var(--section-y);
+  }
+
+  .sourcing__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+
+  /* §6.8 gives this band the display size, matching the prototype: it is a
+     turning point in the page, not another section heading. */
+  .sourcing__heading {
+    font-size: var(--meso-fs-h1);
+    line-height: var(--meso-lh-display);
+    letter-spacing: var(--meso-ls-display);
+  }
+  .sourcing__lede {
+    margin-top: 20px;
+    color: var(--on-dark-2);
+  }
+  .sourcing__cta {
+    margin-top: 30px;
+  }
+
+  .sourcing__plate {
+    border: 1px solid var(--rule-dark);
+    background: color-mix(in srgb, var(--white) 3%, transparent);
+  }
+  .sourcing__frame {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .sourcing__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(.5) contrast(1.1);
+  }
+
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .checklist__item {
+    padding: 14px 22px;
+    border-top: 1px solid var(--rule-dark);
+    color: var(--on-dark-2);
+    font-size: .94rem;
+    display: flex;
+    gap: 12px;
+  }
+  /* The amber square is the list marker. `list-style: none` removes the real
+     one, so this is decoration standing in for it — never content. */
+  .checklist__item::before {
+    content: '';
+    flex: 0 0 8px;
+    height: 8px;
+    background: var(--signal);
+    margin-top: .55em;
+  }
+
+  @media (min-width: 1040px) {
+    .sourcing__grid {
+      grid-template-columns: 1.05fr .95fr;
+    }
+  }
+</style>
