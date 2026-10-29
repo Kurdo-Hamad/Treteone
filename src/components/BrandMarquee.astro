@@ -1,0 +1,212 @@
+---
+import { brandTile } from '~/data/brand-logos';
+import { brands } from '~/data/brands';
+import { brandsHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * §7.8 Brand marquee — presentation only. The list comes from
+ * src/data/brands.ts and the logo files are resolved at build time by
+ * src/data/brand-logos.ts (§9): a logo shows the moment
+ * public/logos/<slug>.svg exists; until then each tile is the dashed
+ * "Logo" placeholder with the name beneath, as in the approved mockup.
+ *
+ * ⚠ §9, §13 — the wording is "Brands we source" and the trademark line stays.
+ * Nothing here may imply authorisation, distributorship or agency.
+ *
+ * Two rows in opposite directions; each row is its tiles twice over so the
+ * loop has no seam. Pauses on hover. Edge fades left and right. The moving
+ * rows are aria-hidden; assistive tech gets the plain list. Under reduced
+ * motion the rows stop, the duplicate goes, and the tiles wrap into a grid.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// brands.ts is a plain list of names today; it may become records with a
+// `name`. Read either, so this component does not care which.
+type BrandEntry = string | { readonly name: string };
+const nameOf = (entry: BrandEntry): string => (typeof entry === 'string' ? entry : entry.name);
+const names: readonly string[] = (brands as readonly BrandEntry[]).map(nameOf);
+
+// Alternate the list between the rows, so each row mixes disciplines.
+const rows: readonly (readonly string[])[] = [
+  names.filter((_, i) => i % 2 === 0),
+  names.filter((_, i) => i % 2 === 1),
+];
+---
+
+<section aria-labelledby="brands-title">
+  <div class="wrap sec">
+    <h2 id="brands-title">{t('home.brands.heading')}</h2>
+    <p class="small marquee__note">{t('home.brands.note')}</p>
+
+    <ul class="sr-only" aria-label={t('home.brands.listLabel')}>
+      {names.map((name) => <li>{name}</li>)}
+    </ul>
+
+    {
+      rows.map((row, r) => (
+        <div class:list={['marquee', { 'marquee--rev': r === 1 }]} aria-hidden="true">
+          <div class="marquee__track">
+            {[0, 1].map((copy) =>
+              row.map((name) => {
+                const tile = brandTile(name);
+                return (
+                  <div class:list={['mtile', { 'mtile--clone': copy === 1 }]}>
+                    <span class:list={['mtile__box', { 'mtile__box--logo': tile.logo !== null }]}>
+                      {tile.logo ? (
+                        <img src={tile.logo} alt="" loading="lazy" decoding="async" />
+                      ) : (
+                        t('home.brands.logo')
+                      )}
+                    </span>
+                    <small>{name}</small>
+                  </div>
+                );
+              }),
+            )}
+          </div>
+        </div>
+      ))
+    }
+
+    <p class="marquee__more">
+      <a class="btn btn-out" href={localisePath(brandsHref, lang)}>{t('home.brands.more')}</a>
+    </p>
+    <p class="small marquee__legal">{t('home.brands.disclaimer')}</p>
+  </div>
+</section>
+
+<style>
+  .marquee__note {
+    margin-top: 10px;
+    max-width: 62ch;
+  }
+
+  .marquee {
+    position: relative;
+    overflow: hidden;
+    margin-top: 28px;
+  }
+  .marquee + .marquee {
+    margin-top: clamp(12px, 1.6vw, 18px);
+  }
+  /* Edge fades: the page ground over the ends of the row, so tiles arrive
+     and leave rather than being cut by the gutter. */
+  .marquee::before,
+  .marquee::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: clamp(36px, 7vw, 90px);
+    pointer-events: none;
+  }
+  .marquee::before {
+    left: 0;
+    background: linear-gradient(to right, var(--surface-page), transparent);
+  }
+  .marquee::after {
+    right: 0;
+    background: linear-gradient(to left, var(--surface-page), transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 52s linear infinite;
+  }
+  .marquee--rev .marquee__track {
+    animation-direction: reverse;
+    animation-duration: 64s;
+  }
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .mtile {
+    flex: 0 0 clamp(128px, 15vw, 168px);
+    margin-right: clamp(12px, 1.6vw, 18px);
+    text-align: center;
+  }
+  .mtile__box {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 3 / 2;
+    background: var(--surface-pale);
+    font-family: var(--font-stack-mono);
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: background var(--dur-fast);
+  }
+  .mtile__box::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed var(--placeholder-dash);
+    transition: border-color var(--dur-fast);
+  }
+  .mtile__box--logo::after {
+    display: none;
+  }
+  .mtile__box img {
+    max-width: 70%;
+    max-height: 60%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1);
+    transition: filter var(--dur-fast);
+  }
+  .mtile:hover .mtile__box {
+    background: var(--surface-pale-hover);
+  }
+  .mtile:hover .mtile__box::after {
+    border-color: var(--color-cyan);
+  }
+  .mtile:hover .mtile__box img {
+    filter: none;
+  }
+  .mtile small {
+    display: block;
+    margin-top: 9px;
+    font-size: .78rem;
+    color: var(--text-quiet);
+  }
+
+  .marquee__more {
+    margin-top: 26px;
+  }
+  .marquee__legal {
+    margin-top: 18px;
+    max-width: 78ch;
+    font-size: .78rem;
+    color: var(--text-quiet);
+  }
+
+  /* §9, §11 — under reduced motion the rows stop and wrap into a static grid. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee::before,
+    .marquee::after {
+      display: none;
+    }
+    .marquee__track {
+      width: auto;
+      flex-wrap: wrap;
+      gap: clamp(12px, 1.6vw, 18px) 0;
+      animation: none;
+    }
+    .mtile--clone {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { categories } from '~/data/categories';
+import type { TextKey } from '~/data/heroSlides';
+import { productsHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * §7.6 Capability grid — eight of the twelve categories, each a small
+ * photograph slot, a noun-plus-clause heading and three lines. Four columns,
+ * two below 960px, one below 560px. A scope statement, not a catalogue: no
+ * prices, no stock, no part counts (§13).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const caps = [
+  'automation',
+  'instruments',
+  'valves',
+  'pumps',
+  'motors',
+  'fluid',
+  'mro',
+  'consumables',
+] as const;
+
+const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): TextKey =>
+  `home.caps.${cap}.${part}`;
+---
+
+<section aria-labelledby="caps-title">
+  <div class="wrap sec">
+    <h2 id="caps-title">{t('home.caps.heading')}</h2>
+    <p class="lead caps__lead">{t('home.caps.lead')}</p>
+    <ul class="caps">
+      {
+        caps.map((cap) => (
+          <li class="cap rv">
+            <ImagePlaceholder subject={t(key(cap, 'subject'))} variant="small" />
+            <h3>{t(key(cap, 'heading'))}</h3>
+            <p>{t(key(cap, 'body'))}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="caps__all">
+      <a class="btn btn-out" href={localisePath(productsHref, lang)}>
+        {t('home.caps.all')(categories.length)}
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .caps__lead {
+    margin-top: 12px;
+  }
+
+  .caps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(22px, 3vw, 40px);
+    margin: 34px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cap :global(.ph) {
+    margin-bottom: 16px;
+  }
+  .cap h3 {
+    font-size: .9375rem;
+    line-height: 1.35;
+  }
+  .cap p {
+    margin-top: 8px;
+    font-size: .8125rem;
+    line-height: 1.6;
+    color: var(--fg-body);
+  }
+
+  .cap.rv:nth-child(4n + 2) { transition-delay: 70ms; }
+  .cap.rv:nth-child(4n + 3) { transition-delay: 140ms; }
+  .cap.rv:nth-child(4n + 4) { transition-delay: 210ms; }
+
+  .caps__all {
+    margin-top: 30px;
+  }
+
+  @media (max-width: 960px) {
+    .caps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .caps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
