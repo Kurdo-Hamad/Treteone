@@ -1,0 +1,169 @@
+---
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+
+/**
+ * Every photography slot on the site renders this component until the real
+ * photograph is supplied (CLAUDE.md §12). Swapping in photography later is a
+ * change to this one component, not to every page.
+ *
+ *   subject  what the photograph will show, already localised by the caller
+ *            ("Process pump and motor on a baseplate"). Shown as the caption
+ *            and read out to assistive tech, so it must be a real subject,
+ *            never "image" or "photo".
+ *   variant  'wide'  — a card or split image. 16/10 unless the parent sets
+ *                      an aspect-ratio or height on it through `class`.
+ *            'small' — a capability-grid thumbnail, 4/3, label only.
+ *            'hero'  — fills its positioned parent; navy ground, caption
+ *                      top-right so the overlay copy has the lower left.
+ *   class    passed through, so a parent can size the frame.
+ *
+ * Mockup source: .ph, .ph-sm and .slide .ph in reference/mockup.html.
+ */
+
+interface Props {
+  subject: string;
+  variant?: 'wide' | 'small' | 'hero';
+  class?: string;
+}
+
+const { subject, variant = 'wide', class: className } = Astro.props;
+const t = useTranslations(getLangFromUrl(Astro.url));
+---
+
+<span
+  class:list={['ph', `ph--${variant}`, className]}
+  role="img"
+  aria-label={t('placeholder.label')(subject)}
+>
+  <span class="ph__t" aria-hidden="true">
+    <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" focusable="false">
+      <path d="M3 5h18v14H3z"></path>
+      <path d="M3 16.5l5-5 4 4 3-3 6 6"></path>
+      <circle cx="8.5" cy="9" r="1.4"></circle>
+    </svg>
+    {t('placeholder.image')}
+    <em>{subject}</em>
+  </span>
+</span>
+
+<style>
+  .ph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: var(--surface-pale);
+  }
+  .ph::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px dashed var(--placeholder-dash);
+    pointer-events: none;
+    transition: border-color var(--dur-fast);
+  }
+
+  .ph__t {
+    position: relative;
+    z-index: 2;
+    padding: 18px;
+    text-align: center;
+    font-family: var(--font-stack-mono);
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .ph__t svg {
+    display: block;
+    width: 26px;
+    height: 26px;
+    margin: 0 auto 10px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+  }
+  .ph__t em {
+    display: block;
+    max-width: 30ch;
+    margin-top: 7px;
+    font-style: normal;
+    font-size: .72rem;
+    letter-spacing: .02em;
+    text-transform: none;
+    line-height: 1.5;
+    color: var(--text-quiet);
+  }
+
+  /* -- wide ----------------------------------------------------------------- */
+  .ph--wide {
+    aspect-ratio: 16 / 10;
+  }
+
+  /* -- small ---------------------------------------------------------------- */
+  .ph--small {
+    aspect-ratio: 4 / 3;
+  }
+  .ph--small::after {
+    inset: 8px;
+  }
+  .ph--small .ph__t {
+    padding: 10px;
+    font-size: .55rem;
+    letter-spacing: .12em;
+  }
+  .ph--small .ph__t svg {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 6px;
+  }
+  .ph--small .ph__t em {
+    display: none;
+  }
+
+  /* -- hero ----------------------------------------------------------------- */
+  .ph--hero {
+    position: absolute;
+    inset: 0;
+    background: var(--color-navy-2);
+  }
+  .ph--hero::after {
+    display: none;
+  }
+  .ph--hero .ph__t {
+    position: absolute;
+    top: 26px;
+    right: clamp(20px, 3vw, 40px);
+    padding: 0;
+    text-align: right;
+    font-size: .58rem;
+    color: rgba(255, 255, 255, .5);
+  }
+  .ph--hero .ph__t svg {
+    width: 18px;
+    height: 18px;
+    margin: 0 0 7px auto;
+  }
+  .ph--hero .ph__t em {
+    margin-left: auto;
+    text-align: right;
+    color: rgba(255, 255, 255, .5);
+  }
+
+  /* A card that wraps a placeholder highlights its frame on hover. */
+  :global(a:hover) > .ph::after,
+  :global(.card:hover) .ph::after {
+    border-color: var(--color-cyan);
+  }
+
+  @media (max-width: 560px) {
+    .ph--hero .ph__t {
+      top: 20px;
+      right: 20px;
+    }
+    .ph--hero .ph__t em {
+      display: none;
+    }
+  }
+</style>

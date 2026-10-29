@@ -10,100 +10,111 @@ import {
 } from '~/i18n/ui';
 
 /**
- * Sticky header. Semi-transparent navy over the hero, solid white after it
- * (locked visual system §17). Mobile drawer below 1040px — five 20px links,
- * the language switch and the CTA do not fit a tablet bar.
+ * Masthead, from the approved mockup (reference/mockup.html).
  *
- * The language control is two real links to two real routes (§2), not a
- * button that swaps text in place.
+ * One row, solid navy, sticky:  logo slot · nav (right) · language · quote pill.
+ * Below 960px the nav folds into a hamburger and a drawer under the bar.
+ * A 2px cyan line along the bottom edge shows scroll progress.
+ *
+ * The language control is a real link to the real route in the other
+ * language (§2), never a button that swaps text in place. The mockup has no
+ * language control; it is added here because the site is bilingual.
  */
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const alternates = alternateLinks(Astro.url);
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string): boolean => (href.replace(/\/$/, '') || '/') === current;
 
-// The wordmark is the trading name, uppercased in CSS, with a cyan interpunct.
-const [markLead = '', markTail = ''] = company.tradingName.split(' ');
+// The other language, for the switch.
+const other = alternateLinks(Astro.url).find((alternate) => alternate.lang !== lang);
+const quote = localisePath(quoteHref, lang);
 ---
 
-<header class="site-header" data-header>
-  <div class="wrap site-header__bar">
-    <a class="mark" href={localisePath(homeHref, lang)} aria-label={t('nav.home')}>
-      <span>{markLead}</span><span class="mark__dot" aria-hidden="true">·</span><span>{markTail}</span>
+<header class="masthead" data-header>
+  <div class="wrap mast-top">
+    {/*
+      ===== LOGO SLOT =====
+      A fixed-height box: 34px tall, 28px on phones. Width is free.
+      To use the real logo, replace the <span class="brand-mark"> below with
+        <img src="/treteone-logo.svg" alt="" />   or an inline <svg>.
+      The img/svg inherits the slot's height (height: 100%, width: auto), so
+      the bar does not move. Keep alt="" — the link's aria-label already names
+      the company. The SVG must contain real vector paths (CLAUDE.md §10).
+    */}
+    <a class="brand" href={localisePath(homeHref, lang)} aria-label={t('nav.home')}>
+      <span class="brand-mark" aria-hidden="true">{company.tradingName}<i>.</i></span>
     </a>
 
-    <nav
-      class="site-nav"
-      id="site-nav"
-      aria-label={t('nav.label')}
-      data-header-nav
-    >
-      <ul class="site-nav__list">
-        {
-          primaryNav.map((item) => {
-            const href = localisePath(item.href, lang);
-            return (
-              <li>
-                <a
-                  class="site-nav__link"
-                  href={href}
-                  aria-current={href.replace(/\/$/, '') === current ? 'page' : undefined}
-                >
-                  {t(item.key)}
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
-
-      <!-- On a phone the toolbar CTA is hidden, so the drawer carries its own.
-           The quote form is the only conversion point (§8). -->
-      <a class="btn site-header__btn site-nav__cta" href={localisePath(quoteHref, lang)}>
-        {t('cta.quote')}
-      </a>
+    <nav class="mast-nav" aria-label={t('nav.label')}>
+      {
+        primaryNav.map((item) => {
+          const href = localisePath(item.href, lang);
+          return (
+            <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+              {t(item.key)}
+            </a>
+          );
+        })
+      }
     </nav>
 
-    <div class="site-header__tools">
-      <div class="lang-switch" role="group" aria-label={t('lang.label')}>
-        {
-          alternates.map(({ lang: code, hreflang, href }) => (
-            <a
-              class="lang-switch__option"
-              href={href}
-              hreflang={hreflang}
-              lang={hreflang}
-              aria-current={code === lang ? 'true' : undefined}
-              aria-label={code === lang ? undefined : t('lang.switchTo')(languages[code].label)}
-            >
-              {languages[code].short}
+    {
+      other && (
+        <a
+          class="lang"
+          href={other.href}
+          hreflang={other.hreflang}
+          lang={other.hreflang}
+          aria-label={t('lang.switchTo')(languages[other.lang].label)}
+        >
+          {languages[other.lang].short}
+        </a>
+      )
+    }
+
+    <a class="pill" href={quote} aria-current={isCurrent(quote) ? 'page' : undefined}>
+      <span class="lg">{t('cta.quote')}</span><span class="sm">{t('cta.quoteShort')}</span>
+      <span aria-hidden="true">→</span>
+    </a>
+
+    <button
+      class="burger"
+      type="button"
+      aria-controls="site-drawer"
+      aria-expanded="false"
+      aria-label={t('nav.openMenu')}
+      data-header-burger
+      data-label-open={t('nav.openMenu')}
+      data-label-close={t('nav.closeMenu')}
+    >
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </div>
+
+  <span class="scrollbar" aria-hidden="true" data-header-progress></span>
+
+  <div class="drawer" id="site-drawer" data-header-drawer>
+    <nav class="wrap" aria-label={t('nav.label')}>
+      {
+        primaryNav.map((item) => {
+          const href = localisePath(item.href, lang);
+          return (
+            <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+              {t(item.key)}
             </a>
-          ))
-        }
-      </div>
-
-      <a class="btn site-header__btn site-header__cta" href={localisePath(quoteHref, lang)}>
-        {t('cta.quote')}
-      </a>
-
-      <button
-        class="burger"
-        type="button"
-        aria-controls="site-nav"
-        aria-expanded="false"
-        aria-label={t('nav.openMenu')}
-        data-header-burger
-        data-label-open={t('nav.openMenu')}
-        data-label-close={t('nav.closeMenu')}
-      >
-        <svg class="burger__icon" viewBox="0 0 22 16" aria-hidden="true" focusable="false">
-          <rect class="burger__bar burger__bar--top" x="0" y="1" width="22" height="2" rx="1" />
-          <rect class="burger__bar burger__bar--mid" x="0" y="7" width="22" height="2" rx="1" />
-          <rect class="burger__bar burger__bar--bot" x="0" y="13" width="22" height="2" rx="1" />
-        </svg>
-      </button>
-    </div>
+          );
+        })
+      }
+      {
+        other && (
+          <a href={other.href} hreflang={other.hreflang} lang={other.hreflang}>
+            {languages[other.lang].label}
+          </a>
+        )
+      }
+      <a class="cta" href={quote}>{t('cta.quote')}</a>
+    </nav>
   </div>
 </header>
 
@@ -112,286 +123,263 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
 </script>
 
 <style>
-  /* -- solid white: the default, and every state after the hero ---------- */
-  .site-header {
-    --rule-current: var(--rule-light);
-    --fg-strong: var(--color-navy);
-    --fg-muted: var(--text-body);
-    --focus: var(--focus-light);
+  /* The masthead is a navy ground: it sets its own roles, so the focus ring
+     inside it is cyan-light (§4, §11) without any extra class. */
+  .masthead {
+    --focus: var(--focus-dark);
+    --fg-link: var(--text-link-dark);
 
     position: sticky;
     top: 0;
-    z-index: 80;
-    background: var(--surface-page);
-    border-bottom: 1px solid var(--rule-current);
-    color: var(--fg-strong);
-    transition:
-      background var(--dur),
-      border-color var(--dur),
-      box-shadow var(--dur),
-      color var(--dur);
-  }
-  .site-header.is-past,
-  .site-header:where(:not(:has(~ main [data-header-dark-zone]))) {
-    box-shadow: var(--shadow-raised);
-  }
-
-  /* -- over the hero: semi-transparent navy, modest blur -----------------
-     The :has() arm makes a hero page start dark, before the script runs and
-     with JS off, so the bar never flashes white over the photograph. The
-     script adds .is-past once the hero has scrolled away. */
-  .site-header.is-on-dark,
-  .site-header:where(:not(.is-past):has(~ main [data-header-dark-zone])) {
-    --rule-current: var(--rule-dark);
-    --fg-strong: var(--text-inverse);
-    --fg-muted: var(--on-dark-2);
-    --focus: var(--focus-dark);
-
-    background: color-mix(in srgb, var(--color-navy) 55%, transparent);
-    backdrop-filter: blur(6px);
-  }
-
-  .site-header__bar {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    height: var(--header-h);
-  }
-
-  /* -- wordmark ---------------------------------------------------------- */
-  .mark {
-    font-family: var(--font-stack-display);
-    font-weight: 700;
-    font-size: 1.375rem;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    color: inherit;
-    padding-block: 8px;
-  }
-  .mark__dot {
-    color: var(--accent-electric);
-  }
-
-  /* -- navigation (§5: General Sans 500, --fs-nav) ----------------------- */
-  .site-nav {
-    display: none;
-    margin-left: auto;
-  }
-  .site-nav__list {
-    display: flex;
-    gap: 28px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .site-nav__link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-family: var(--font-stack-display);
-    font-size: var(--fs-nav);
-    font-weight: 500;
-    line-height: 1.2;
-    text-decoration: none;
-    color: var(--fg-muted);
-    border-bottom: 2px solid transparent;
-    transition: color var(--dur-fast), border-color var(--dur-fast);
-  }
-  .site-nav__link:hover,
-  .site-nav__link[aria-current='page'] {
-    color: var(--fg-strong);
-    border-bottom-color: var(--accent-electric);
-  }
-  .site-nav__cta {
-    display: none;
-  }
-
-  /* -- tools ------------------------------------------------------------- */
-  .site-header__tools {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-left: auto;
-  }
-
-  .lang-switch {
-    display: flex;
-    border: 1px solid var(--rule-current);
-    border-radius: var(--radius);
-    overflow: hidden;
-    font-family: var(--font-stack-display);
-    font-size: .875rem;
-    font-weight: 500;
-  }
-  .lang-switch__option {
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
-    padding: 0 12px;
-    white-space: nowrap;
-    text-decoration: none;
-    color: var(--fg-muted);
-    transition: background var(--dur-fast), color var(--dur-fast);
-  }
-  .lang-switch__option:hover {
-    color: var(--fg-strong);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-  .lang-switch__option[aria-current='true'] {
+    z-index: 50;
+    /* Notched phones: the navy runs up behind the status bar. */
+    padding-top: env(safe-area-inset-top, 0px);
     background: var(--color-navy);
     color: var(--text-inverse);
   }
-  .is-on-dark .lang-switch__option[aria-current='true'],
-  .site-header:where(:not(.is-past):has(~ main [data-header-dark-zone])) .lang-switch__option[aria-current='true'] {
-    background: var(--text-inverse);
-    color: var(--color-navy);
+
+  .mast-top {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.4vw, 34px);
+    padding-block: 15px;
+    transition: padding-block .22s var(--ease);
+  }
+  .masthead.is-stuck .mast-top {
+    padding-block: 9px;
   }
 
-  /* §16 — the header CTA is cyan with navy text in both states. Restrained
-     hover: a lighter fill and a navy shadow, no glow. */
-  .site-header__btn {
+  /* -- logo slot ------------------------------------------------------------ */
+  .brand {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    height: var(--logo-h);
+    text-decoration: none;
+    color: inherit;
+  }
+  .brand :global(img),
+  .brand :global(svg) {
+    display: block;
+    height: 100%;
+    width: auto;
+  }
+  /* Text wordmark placeholder — remove when the logo artwork arrives. */
+  .brand-mark {
+    font-family: var(--font-stack-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .brand-mark i {
+    font-style: normal;
+    color: var(--color-cyan);
+  }
+
+  /* -- nav ------------------------------------------------------------------ */
+  .mast-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 1.9vw, 26px);
+    margin-left: auto;
+    font-family: var(--font-stack-display);
+    font-weight: 500;
+    font-size: .9rem;
+  }
+  .mast-nav a {
+    color: rgba(255, 255, 255, .78);
+    text-decoration: none;
+    padding-block: 4px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .16s;
+  }
+  .mast-nav a:hover {
+    color: var(--text-inverse);
+  }
+  .mast-nav a[aria-current='page'] {
+    color: var(--text-inverse);
+    border-bottom-color: var(--color-cyan);
+  }
+
+  /* -- language ------------------------------------------------------------- */
+  .lang {
+    font-family: var(--font-stack-display);
+    font-weight: 500;
+    font-size: .875rem;
+    color: rgba(255, 255, 255, .78);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 6px 0 6px clamp(14px, 1.9vw, 26px);
+    border-left: 1px solid rgba(255, 255, 255, .2);
+    transition: color .16s;
+  }
+  .lang:hover {
+    color: var(--text-inverse);
+  }
+
+  /* -- quote pill ----------------------------------------------------------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .6em;
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 9px 20px;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: .875rem;
+    color: var(--text-inverse);
+    text-decoration: none;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .pill:hover,
+  .pill[aria-current='page'] {
     background: var(--color-cyan);
     border-color: var(--color-cyan);
     color: var(--color-navy);
-    min-height: 44px;
-    padding: 10px 20px;
-    font-size: .9375rem;
-    white-space: nowrap;
   }
-  .site-header__btn:hover {
-    background: var(--color-cyan-light);
-    border-color: var(--color-cyan-light);
-  }
-  .site-header__cta {
+  .pill .sm {
     display: none;
   }
 
-  /* -- burger ------------------------------------------------------------ */
+  /* -- hamburger ------------------------------------------------------------ */
   .burger {
-    display: inline-flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--rule-current);
-    background: none;
-    border-radius: var(--radius);
+    flex: 0 0 auto;
     /* 44px target — the phone is the primary visitor (§13). */
     width: 44px;
     height: 44px;
     padding: 0;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, .32);
+    border-radius: var(--radius);
+    color: var(--text-inverse);
     cursor: pointer;
-    color: inherit;
+    transition: border-color .16s, background .16s;
   }
-  .burger__icon {
-    width: 22px;
-    height: 16px;
+  .burger:hover {
+    border-color: var(--text-inverse);
+  }
+  .bars {
+    position: relative;
     display: block;
+    width: 20px;
+    height: 14px;
   }
-  .burger__bar {
-    fill: currentColor;
-    transform-box: fill-box;
-    transform-origin: center;
-    transition: transform var(--dur-fast), opacity var(--dur-fast);
+  .bars i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: currentColor;
+    transition: transform .26s ease, opacity .16s ease, top .26s ease;
   }
-  .is-open .burger__bar--top {
-    transform: translateY(6px) rotate(45deg);
+  .bars i:nth-child(1) { top: 0; }
+  .bars i:nth-child(2) { top: 6px; }
+  .bars i:nth-child(3) { top: 12px; }
+  .burger[aria-expanded='true'] {
+    background: rgba(255, 255, 255, .08);
   }
-  .is-open .burger__bar--mid {
-    opacity: 0;
-  }
-  .is-open .burger__bar--bot {
-    transform: translateY(-6px) rotate(-45deg);
+  .burger[aria-expanded='true'] .bars i:nth-child(1) { top: 6px; transform: rotate(45deg); }
+  .burger[aria-expanded='true'] .bars i:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded='true'] .bars i:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+  /* -- scroll progress ------------------------------------------------------ */
+  .scrollbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--color-cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
   }
 
-  /* -- drawer, below desktop --------------------------------------------- */
-  @media (max-width: 1039px) {
-    /* An open drawer is always solid navy, whatever is behind the bar, so
-       the links never sit on a photograph. */
-    .site-header.is-open {
-      --rule-current: var(--rule-dark);
-      --fg-strong: var(--text-inverse);
-      --fg-muted: var(--on-dark-2);
-      --focus: var(--focus-dark);
-      background: var(--surface-primary);
-      box-shadow: none;
-    }
-    .site-header.is-open .lang-switch__option[aria-current='true'] {
-      background: var(--text-inverse);
-      color: var(--color-navy);
-    }
-
-    .site-nav {
-      position: absolute;
-      top: var(--header-h);
-      left: 0;
-      right: 0;
-      background: var(--surface-primary);
-      border-top: 1px solid var(--rule-dark);
-      box-shadow: var(--shadow-modal);
-      padding: 8px var(--wrap-pad-sm) 24px;
-      margin-left: 0;
-    }
-    .is-open .site-nav {
-      display: block;
-    }
-    .site-nav__list {
-      flex-direction: column;
-      gap: 0;
-    }
-    .site-nav__link {
-      display: flex;
-      min-height: 56px;
-      border-bottom: 1px solid var(--rule-dark);
-      color: var(--text-inverse);
-    }
-    .site-nav__link:hover,
-    .site-nav__link[aria-current='page'] {
-      border-bottom-color: var(--color-cyan-light);
-    }
-    .site-nav__cta {
-      display: flex;
-      width: 100%;
-      margin-top: 20px;
-    }
+  /* -- drawer --------------------------------------------------------------- */
+  .drawer {
+    display: none;
+    background: var(--color-navy-2);
+  }
+  .drawer.is-open {
+    display: block;
+    animation: drawer-in .22s ease both;
+  }
+  @keyframes drawer-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .drawer a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .13);
+    color: var(--text-inverse);
+    text-decoration: none;
+    font-family: var(--font-stack-display);
+    font-weight: 500;
+    font-size: 1.0625rem;
+  }
+  .drawer a::after {
+    content: '→';
+    color: var(--color-cyan);
+    font-size: .9rem;
+  }
+  .drawer a[aria-current='page'] {
+    color: var(--color-cyan-light);
+  }
+  .drawer .cta {
+    justify-content: center;
+    gap: .5em;
+    margin: 18px 0 22px;
+    padding: 14px;
+    border-bottom: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-cyan);
+    color: var(--color-navy);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .drawer .cta::after {
+    color: var(--color-navy);
   }
 
-  @media (min-width: 720px) and (max-width: 1039px) {
-    .site-nav {
-      padding-inline: var(--wrap-pad);
-    }
+  /* -- breakpoints (mockup order: 960, then 700) ---------------------------- */
+  @media (max-width: 960px) {
+    .mast-top { gap: 12px; }
+    .mast-nav { display: none; }
+    .lang { margin-left: auto; padding-left: 0; border-left: 0; }
+    .pill { padding: 9px 16px; font-size: .84rem; }
+    .pill .lg { display: none; }
+    .pill .sm { display: inline; }
+    .burger { display: inline-flex; }
   }
 
-  @media (min-width: 1040px) {
-    .site-nav {
-      display: flex;
-      align-items: center;
-    }
-    /* 1040px leaves ~985px of bar: tighten until the wrap has room. */
-    .site-header__bar {
-      gap: 24px;
-    }
-    .site-nav__list {
-      gap: 20px;
-    }
-    .site-header__tools {
-      margin-left: 0;
-    }
-    .site-header__cta {
-      display: inline-flex;
-    }
-    .burger {
-      display: none;
-    }
+  @media (max-width: 700px) {
+    .brand { height: var(--logo-h-sm); }
+    .brand-mark { font-size: 1.15rem; letter-spacing: .08em; }
   }
 
-  @media (min-width: 1280px) {
-    .site-header__bar {
-      gap: 32px;
-    }
-    .site-nav__list {
-      gap: 28px;
-    }
+  /* Phones: the bar holds logo, pill and burger only; the language link
+     moves into the drawer, which always carries it. */
+  @media (max-width: 560px) {
+    .lang { display: none; }
+    .pill { margin-left: auto; }
+  }
+
+  @media (min-width: 961px) {
+    /* The drawer is a mobile affordance. If the window widens while it is
+       open, hide it rather than leave it stuck under a full nav. */
+    .drawer.is-open { display: none; }
   }
 </style>

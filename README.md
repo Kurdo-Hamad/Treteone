@@ -1,6 +1,6 @@
-# Trete One
+# Treteone
 
-Marketing site for Trete One, an industrial supply and sourcing company in
+Marketing site for Treteone, an industrial supply and sourcing company in
 Guangzhou, China. Built to the spec in [`CLAUDE.md`](./CLAUDE.md); the approved
 single-file prototype is in [`reference/index.html`](./reference/index.html).
 
@@ -269,7 +269,7 @@ Two related changes:
 
 **`functions/api/quote.ts` is written, tested and inert until three environment
 variables exist.** §7 required a serverless function that emails
-info@treteone.com; no provider account was available, so I picked one and built
+sales@treteone.com; no provider account was available, so I picked one and built
 against it rather than leave the site's only conversion point unbuilt.
 
 **I chose [Resend](https://resend.com).** SMTP does not exist in the Cloudflare
@@ -282,8 +282,8 @@ Set in **Cloudflare Pages → Settings → Environment variables**:
 | Variable | | |
 |---|---|---|
 | `RESEND_API_KEY` | secret | from resend.com |
-| `QUOTE_FROM` | e.g. `Trete One <quotes@treteone.com>` | must be on a domain verified in Resend, with SPF and DKIM, or the mail is filed as spam |
-| `QUOTE_TO` | optional | defaults to info@treteone.com |
+| `QUOTE_FROM` | e.g. `Treteone <quotes@treteone.com>` | must be on a domain verified in Resend, with SPF and DKIM, or the mail is filed as spam |
+| `QUOTE_TO` | optional | defaults to sales@treteone.com |
 
 Until they are set the endpoint returns 502 and the form tells the buyer to
 email directly. That is deliberate: **it never pretends an enquiry was sent.**
@@ -669,7 +669,7 @@ simply absent.
 |---|---|
 | Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders as a dashed "TO BE SUPPLIED" chip in the footer and in the `/about/` company details, and softens the last About point until supplied. |
 | Business licence number | Same. |
-| Real photography — office, staff, goods packed, equipment handled | **33 images pending — still all 33.** The slots are currently filled with Unsplash stand-ins (see the top of this README and `src/assets/STAND-INS.md`); none of them is a photograph of Trete One, so none of them counts. 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
+| Real photography — office, staff, goods packed, equipment handled | **33 images pending — still all 33.** The slots are currently filled with Unsplash stand-ins (see the top of this README and `src/assets/STAND-INS.md`); none of them is a photograph of Treteone, so none of them counts. 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
 | Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty, so all 32 tiles render as the dashed name fallback — the expected state. Drop `<slug>.svg` in (slug from `brandSlug()` in `src/data/brands.ts`) and that tile becomes a logo. The build rejects an SVG that is really a raster (§8). **The open question is still which manufacturers may be shown as a logo at all.** |
 | Real reply-time commitment | Not shown anywhere: the StatBand is removed (§7). `src/data/stats.ts` holds the unconfirmed figure with `confirmed: false`. No page may state a reply time until the business confirms one. |
 | Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts`. The prototype's strings plus a first translation of everything added in the redesign (hero, homepage, page headers, closing CTA). None reviewed. Needs a native speaker. |

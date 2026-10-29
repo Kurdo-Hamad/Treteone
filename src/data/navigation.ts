@@ -28,8 +28,10 @@ export const categoryHref = (slug: string): string => `${productsHref}#${slug}`;
 /** An industry's own entry on /industries. */
 export const industryHref = (slug: string): string => `${industriesHref}#${slug}`;
 
-/** Header and drawer. Home is the wordmark; the quote route is the CTA. */
+/** Header and drawer, in the approved mockup's order. Home is listed as well
+ *  as being the wordmark. The quote route is the CTA pill, not a nav item. */
 export const primaryNav: readonly NavItem[] = [
+  { key: 'nav.homeShort', href: homeHref },
   { key: 'nav.products', href: productsHref },
   { key: 'nav.industries', href: industriesHref },
   { key: 'nav.sourcing', href: sourcingHref },
@@ -43,5 +45,15 @@ export const companyNav: readonly NavItem[] = [
   { key: 'nav.industries', href: industriesHref },
   { key: 'nav.sourcing', href: sourcingHref },
   { key: 'nav.brands', href: brandsHref },
+  { key: 'cta.quote', href: quoteHref },
+];
+
+/** The compact footer's single row of links (approved mockup). */
+export const footerNav: readonly NavItem[] = [
+  { key: 'nav.products', href: productsHref },
+  { key: 'nav.industries', href: industriesHref },
+  { key: 'nav.sourcing', href: sourcingHref },
+  { key: 'nav.brands', href: brandsHref },
+  { key: 'nav.about', href: aboutHref },
   { key: 'cta.quote', href: quoteHref },
 ];

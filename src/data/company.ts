@@ -28,10 +28,12 @@ const address: Address = {
 };
 
 export const company = {
-  tradingName: 'Trete One',
+  tradingName: 'Treteone',
 
-  /** §10 — registered Chinese company name. Not yet supplied. */
-  registeredName: PENDING as string | Pending,
+  /** Registered company name, as supplied by the client. */
+  registeredName: 'Guangzhou Treteone Trading Co., Ltd.',
+  /** §12 — registered Chinese company name. Not yet supplied. */
+  registeredNameZh: PENDING as string | Pending,
   /** §10 — business licence (统一社会信用代码). Not yet supplied. */
   licenceNumber: PENDING as string | Pending,
 
@@ -47,7 +49,7 @@ export const company = {
 
   address,
 
-  email: 'info@treteone.com',
+  email: 'sales@treteone.com',
   /** E.164, for tel: and wa.me links. */
   phoneE164: '+8619540094137',
   /** Display form. */

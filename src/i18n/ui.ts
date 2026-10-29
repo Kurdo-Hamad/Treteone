@@ -1,5 +1,5 @@
-import { en, type UIKey, type UIStrings } from './en';
-import { zh } from './zh';
+import { en, type UIKey, type UIStrings } from './en/index';
+import { zh } from './zh/index';
 
 /**
  * CLAUDE.md §2 — real localised routes, not a client-side text swap.

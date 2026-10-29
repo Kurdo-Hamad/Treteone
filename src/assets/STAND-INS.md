@@ -1,7 +1,7 @@
 # Temporary stand-in photography
 
 **Every image in this directory is a stand-in and must be replaced before
-launch.** They are Unsplash photographs, not photographs of Trete One. They
+launch.** They are Unsplash photographs, not photographs of Treteone. They
 exist so the design can be reviewed with real imagery instead of grey plates.
 
 CLAUDE.md §10 still lists all 33 as outstanding. Nothing here resolves it.

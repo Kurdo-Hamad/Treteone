@@ -1,4 +1,4 @@
-# Trete One — website build spec
+# Treteone — website build spec
 
 **Authority:** this file. It absorbs the locked visual system document
 (*Treteone — Locked Visual System & Hero Direction*) and supersedes the
@@ -12,7 +12,7 @@ prototype's ink/amber palette is dead.
 
 ## 1. What this is
 
-Marketing site for Trete One, an industrial supply and sourcing company in Guangzhou, China.
+Marketing site for Treteone, an industrial supply and sourcing company in Guangzhou, China.
 Audience: maintenance engineers and procurement buyers at plants worldwide.
 
 The site has two jobs:
@@ -64,20 +64,28 @@ Rules:
 
 ## 3. Site structure
 
-The site is **no longer a single scrolling page**. The homepage is a gateway;
-detail lives on its own routes.
+**Design authority for layout: `reference/mockup.html`** (approved October 2026).
+Where this file and the mockup disagree on presentation, the mockup wins and the
+disagreement is listed in §15 rather than silently resolved. The build plan that
+splits the work into parallel streams is `reference/BUILD-PLAN.md`.
 
-| Route | Holds |
+The homepage is a gateway; detail lives on its own routes.
+
+| Route | Holds (in order, per the mockup) |
 |---|---|
-| `/` | Hero, positioning line, product ecosystem entry, industries preview, hard-to-find band, brand strip, closing CTA |
-| `/products` | All 12 categories in full |
-| `/industries` | All 9 industries in full |
-| `/sourcing` | Hard-to-find and obsolete parts, the "what to send" checklist, the 5-step process |
-| `/brands` | Brand list with logo placeholders, trademark disclaimer |
-| `/about` | Company, the 6 points, registered details |
+| `/` | Rolling hero · intro ("We find the part. Then we supply it.") · positioning split · "Three ways an enquiry arrives" · "Treteone at a glance" · capability grid · hard-to-find navy band · brand marquee · "About our work" |
+| `/products` | Page head · 12 categories as index rows · navy five-step scope band (component → complete system) |
+| `/industries` | Page head · 9 sectors as index rows, spec line naming the duty data |
+| `/sourcing` | Page head · four definition blocks · navy "what to send" band · five-step process |
+| `/brands` | Page head · filterable brand directory (chips + search) · trademark disclaimer |
+| `/about` | Page head · six definition blocks · registered-details band on pale |
 | `/quote` | The form, on its own page |
 
 Each mirrored under `/zh/`. Fourteen routes.
+
+Every route shares the same masthead (`Header.astro`), the same compact footer
+(`Footer.astro`), and every detail route opens with the same page head (kicker,
+h1, lead), so the seven pages read as one product.
 
 **No per-category pages.** Twelve pages each holding one heading and a line of
 subcategory names is thin content — a buyer reads it as padding and Google treats it
@@ -86,10 +94,14 @@ as filler. One `/products` page until a real product database exists (§12).
 ```
 src/
   data/         categories.ts industries.ts brands.ts scope.ts process.ts
-                navigation.ts company.ts hero.ts stats.ts
-  i18n/         ui.ts en.ts zh.ts
+                navigation.ts company.ts hero.ts stats.ts …
+  i18n/         ui.ts                       helpers: t(), localisePath(), hreflang
+                en/  common home products industries sourcing brands about quote
+                     index.ts               barrel; fails the build on a duplicate key
+                zh/  the same eight modules, each typed against its en module
+                     index.ts
   styles/       tokens.css global.css
-  components/
+  components/   Header Footer ImagePlaceholder … one file per section
   scripts/      one module per interactive component
   layouts/      Base.astro
   assets/       all photography — processed by astro:assets
@@ -102,7 +114,19 @@ public/
   _headers _redirects
 functions/      the single quote endpoint
 scripts/        Node build tooling — not shipped, do not confuse with src/scripts/
+reference/      mockup.html (design authority), BUILD-PLAN.md, superseded material
 ```
+
+**i18n is split per route** so that parallel work on different routes never edits
+the same file. A stream owns its route's `en/<route>.ts` and `zh/<route>.ts`;
+`common` belongs to whoever owns the header and footer. `t('key')` works exactly
+as before — the barrel merges the modules into one dictionary. A key missing from
+a Chinese module fails `astro check`; a key defined in two modules fails the build.
+
+**Every photography slot renders `ImagePlaceholder.astro`** (`subject`, `variant`:
+`wide` | `small` | `hero`) until real photographs exist. The subject is a real,
+localised description of what the photo will show. Swapping in photography is a
+change to that one component.
 
 Styling order: `tokens.css` defines custom properties on `:root`; `global.css` imports
 tokens then Tailwind then bridges them via `@theme`; component-scoped `<style>` for
@@ -182,6 +206,17 @@ navy. `--focus-light` is unchanged and passes on white.
 
 ---
 
+### Mockup tokens
+
+The approved mockup adds tokens the locked document has no name for. They live in
+`tokens.css` §1f: `--color-navy-2` (drawer, hero ground), `--color-navy-deep`
+(footer), `--scrim-rgb`, `--surface-pale`, `--surface-pale-hover`, `--line`,
+`--line-dark`, `--placeholder-dash`, `--text-body-2` (#4B5563), `--text-quiet`
+(#5C6572 — not #6B7280, which fails AA on pale). Every colour in the mockup resolves
+to one of these or to the locked set above.
+
+---
+
 ## 5. Typography — LOCKED
 
 | Role | Stack |
@@ -233,74 +268,87 @@ Chinese overrides: line-height 1.85, letter-spacing 0 on headings, no italics.
 **Open conflicts — do not resolve silently:**
 - MX-BCS-001 §11.1 specifies DM Sans 500 for headings. The code uses General Sans.
 - The register specifies Roboto Mono 400. The stack falls back to system mono.
+- The approved mockup sets headings at **600** and uses a smaller, calmer scale
+  (`--fs-display`, `--fs-page-h1`, `--fs-sec-h2`, body 1rem). The site follows the
+  mockup; the locked §5 values above are kept in tokens.css but no longer drive the
+  base styles. See §15.
 
 ---
 
 ## 6. Hero
 
-Full-bleed rolling photography — five Unsplash stand-ins crossfading, as currently
-built, **restyled into the navy system**. The generated cinematic facility image and
-its hotspot layer from the locked document are **not being built**: the image cannot be
-produced in this pipeline, and hotspots are hover-driven, which §12 forbids as the
-primary interaction when the phone is the primary visitor.
+From the approved mockup. **Full-bleed**, flush under the masthead, no side
+margins, no gap above.
 
-- Navy overlay only where text legibility needs it. Do not tint the whole photograph
-  blue — industrial materials and detail must stay visible.
-- Text occupies roughly 40–45% of the composition, left. Visual interest right.
-- No text over highly detailed machinery.
-- Frame counter, localised caption, progress bars, as built.
-- Freezes under `prefers-reduced-motion`.
-- Subtle scroll cue at the bottom. Not a large animated arrow.
+- Height `clamp(400px, 52vh, 540px)`; below 560px, `aspect-ratio: 3/4`, min 430px.
+- Four slides, each a tab panel: spare parts & MRO · equipment & machinery ·
+  automation & instrumentation · hard-to-find & obsolete.
+- Until photography exists, each slide is an `ImagePlaceholder` with
+  `variant="hero"` carrying its real subject. When photographs arrive they are
+  Unsplash-style stand-ins only until Treteone's own are supplied (§12).
+- A left-to-right navy scrim (`rgb(var(--scrim-rgb) / a)`) keeps the overlay
+  legible. Do not tint the whole photograph blue.
+- Overlay bottom-left, aligned to the page gutter: eyebrow, rotating title, one
+  line, one text link whose target changes per slide.
+- Bar below the image, inside the same container: pause/play button plus four
+  40px progress segments with labels. 7s per slide.
+- **Below 700px: one segment only**, full width, labels visually hidden.
+- A real tablist: `role="tab"`, `aria-selected`, roving tabindex, arrow keys.
+- Freezes under `prefers-reduced-motion`: rests on slide one, play icon showing.
 
 ### Hero copy
+
 ```
 Eyebrow    INDUSTRIAL SUPPLY & SOURCING
-H1         The Parts, Equipment & Technology Behind Industry.
-Lead       From critical spare parts to complete industrial equipment, we source
-           and supply what keeps industrial operations running.
-Primary    EXPLORE PRODUCTS
-Secondary  REQUEST A QUOTE
-Tertiary   CAN'T FIND A PART?
+Slide 1    Spare parts & MRO
+           The consumables a maintenance team runs through every week — quoted
+           against the reference you already have.            → Explore spare parts
+Slide 2    Equipment & machinery
+           Pumps, motors, compressors and complete production lines, sized to the
+           duty rather than to whatever sits in stock.         → Explore equipment
+Slide 3    Automation & instrumentation
+           PLC and drive hardware, transmitters and analysers — specified from your
+           loop sheets or the failed module itself.            → Explore automation
+Slide 4    Hard-to-find & obsolete
+           Discontinued components and legacy automation. Send a nameplate
+           photograph and we work back to something that still exists.
+                                                               → How we trace a part
 ```
 
-Both languages.
+Below the hero, the page h1: **"We find the part. Then we supply it."** with
+"Request a quote" and "Hard-to-find parts" buttons. Both languages.
+
+The earlier hero copy ("The Parts, Equipment & Technology Behind Industry.", three
+buttons on the image) is superseded by the mockup.
 
 ---
 
 ## 7. Homepage rhythm
 
-Every block must be a **different composition**. Never heading → paragraph → four
-cards, repeated. That repetition is what makes a site read as a template.
+Every block a different composition — never heading → paragraph → four cards,
+repeated. From the mockup, in order:
 
-1. **Hero** — large cinematic composition
-2. **Positioning** — one short statement, generous white space
-3. **Product ecosystem** — large interactive category system, entry to `/products`
-4. **Industries** — image-led cards, entry to `/industries`
-5. **Hard-to-find** — dark navy conversion section
-6. **Brands** — clean white strip, entry to `/brands`
-7. **Closing CTA** — large navy closing statement
+1. **Rolling hero** — §6
+2. **Intro** — display h1, lead, two buttons, two-column on desktop
+3. **Positioning split** — image with a cyan offset block behind it, copy alongside
+   ("We hold no stock. That is the point.")
+4. **"Three ways an enquiry arrives"** — three image cards. Illustrative; the line
+   saying they name no client stays.
+5. **"Treteone at a glance"** — four figures on the pale band: 12 · 9 · Guangzhou ·
+   No account. 12 and 9 count up once when scrolled into view; the real number is
+   in the HTML.
+6. **Capability grid** — eight items, small placeholder, noun-plus-clause heading,
+   three lines.
+7. **Hard-to-find** — navy band, copy left, numbered "what to send" list right
+8. **Brand marquee** — two rows in opposite directions, pause on hover/focus, edge
+   fades; the moving rows are `aria-hidden` with a plain list for assistive tech
+9. **"About our work"** — two cards on the pale band
 
-**Removed from the homepage:** the search field (no product database behind it — §12),
-the amber ticker, and the count-up stat band. A scrolling marquee strip and ticking
-numbers both work against the premium positioning in §1.
+Nothing animates into existence that was not already readable. Reveals apply only
+to grids that start below the fold, and only once JS has run.
 
-The five detail routes carry the rest: the 12 categories, the 9 industries, the
-component-to-system scope ladder, the 5-step process, the brand list, the 6 about
-points, and the form.
-
-### Product ecosystem style
-Not generic SaaS cards. Large typography, equipment imagery, asymmetric layout, real
-hover and focus states, technical labels, strong whitespace:
-
-```
-01
-AUTOMATION
-& CONTROL
-
-PLC · DCS · SCADA · HMI · DRIVES
-
-EXPLORE →
-```
+**Not on the homepage:** a search field (no product database behind it — §12) and
+the amber ticker.
 
 ---
 
@@ -313,7 +361,7 @@ The only conversion point. It must work. Already built — keep the logic, resty
 - **No account, ever.**
 - Attachments: PDF, images, Excel. 10 MB per file, 5 files, **20 MB total** — 50 MB
   would pass validation then bounce at the provider.
-- Backend: one Cloudflare Pages Function → Resend → `info@treteone.com`, returns a
+- Backend: one Cloudflare Pages Function → Resend → `sales@treteone.com`, returns a
   reference number. Stores nothing.
 - Honeypot discards silently. Sub-3-second submission still sends, flagged `[CHECK]` —
   autofill is fast and binning those loses real enquiries.
@@ -390,9 +438,12 @@ mobile, accessibility 100.
 
 Do not invent any of this. Placeholder, and list it in the README.
 
-- Registered Chinese company name and business licence number
+- Registered **Chinese** company name. (The English registered name,
+  Guangzhou Treteone Trading Co., Ltd., is supplied and shown in the footer.)
+- Business licence number. **Not shown anywhere until supplied — no placeholder**
+  in the footer; the "To be supplied" marker was removed at the client's request.
 - **33 real photographs.** Everything in `src/assets/` is an Unsplash stand-in — see
-  `src/assets/STAND-INS.md`. None of them is a photograph of Trete One.
+  `src/assets/STAND-INS.md`. None of them is a photograph of Treteone.
 - Brand logo files, and confirmation of which brands may be shown as logos at all
 - Real reply-time commitment. The stat renders as an unconfirmed placeholder until
   `confirmed: true` in `src/data/stats.ts`
@@ -423,7 +474,37 @@ Before calling the redesign done, at normal browser zoom:
 - Is General Sans clearly visible in the headline hierarchy?
 - Does the hero communicate industrial scale?
 - Is the homepage focused rather than overloaded?
-- Can a visitor quickly understand what Trete One supplies, who it serves, how it
+- Can a visitor quickly understand what Treteone supplies, who it serves, how it
   sources, and how to request a quote?
 
 If any answer is no, revise.
+
+---
+
+## 15. Approved mockup vs this file — conflicts on record
+
+`reference/mockup.html` was approved after this file was written. Where they
+disagree on presentation the mockup has been followed, and each case is listed
+here so nobody "fixes" it back by accident:
+
+| Topic | This file said | Mockup / site now |
+|---|---|---|
+| Heading weight | H1/H2 700 (§5) | 600 |
+| Type scale | `--fs-h1` up to 4.5rem, body up to 1.35rem | `--fs-display` up to 3.4rem, body 1rem |
+| Buttons | General Sans 500, square, uppercase | General Sans 600, pill, sentence case |
+| Header | transparent over the hero, white after | solid navy always, single row, Home in the nav |
+| Footer | four columns, copy-address button, licence placeholder | compact: wordmark, registered name, address, one row of links, email and phone |
+| Hero | five photographs, three buttons on the image, frame counter | four tab panels, one rotating line and link, tab bar below the image |
+| Homepage | ecosystem, industries preview, closing CTA | the nine blocks in §7 |
+| Count-up stats | removed (§7, previous version) | 12 and 9 count up once on the at-a-glance band |
+| Content width | 1280px | 1180px |
+| Breakpoints | 720 / 1040px | 560 / 700 / 960px |
+
+**Not taken from the mockup:**
+- The mockup's Google Fonts link (Figtree, Roboto Mono). Fonts stay self-hosted
+  (§10); General Sans is the real face Figtree stood in for.
+- The mockup's hash router. Every page is a real route (§2).
+- The mockup has no language switch. The header adds a link to the same page in
+  the other language; on phones it lives in the drawer.
+- Footer legal text at .46 white (fails §11); raised to .54.
+

@@ -14,7 +14,7 @@
  */
 import { onRequestPost } from '../functions/api/quote.ts';
 
-const ENV = { RESEND_API_KEY: 'test-key', QUOTE_FROM: 'Trete One <q@treteone.com>' };
+const ENV = { RESEND_API_KEY: 'test-key', QUOTE_FROM: 'Treteone <q@treteone.com>' };
 let lastEmail = null;
 const realFetch = globalThis.fetch;
 globalThis.fetch = async (url, init) => {
@@ -94,7 +94,7 @@ check('  attachment base64-encoded and named', lastEmail?.attachments?.[0]?.file
 r = await onRequestPost({ request: post(base), env: {} });
 body = await r.json();
 check('unconfigured returns 502, not a fake success', r.status === 502 && body.ok === false);
-check('  error names the fallback address', String(body.message).includes('info@treteone.com'));
+check('  error names the fallback address', String(body.message).includes('sales@treteone.com'));
 
 // 8. no-JS path returns HTML with the reference
 lastEmail = null;

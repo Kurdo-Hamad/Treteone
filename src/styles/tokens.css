@@ -1,5 +1,5 @@
 /* ============================================================================
-   Trete One — design tokens
+   Treteone — design tokens
    CLAUDE.md §3: tokens.css defines custom properties on :root; arbitrary hex
    values in components are prohibited.
 
@@ -86,6 +86,44 @@
   --tracking-eyebrow: 0.08em;
 
   /* --------------------------------------------------------------------
+     1f. APPROVED MOCKUP — reference/mockup.html (approved 2026-10).
+     Values the mockup introduces that the locked document has no token for.
+     Every colour in the mockup resolves to one of these or to §4 above.
+     -------------------------------------------------------------------- */
+  --color-navy-2:     #0a2a4e;   /* drawer, hero placeholder ground */
+  --color-navy-deep:  #041324;   /* footer — one step below navy */
+  --scrim-rgb:        4 16 31;   /* hero scrim, used as rgb(var(--scrim-rgb) / a) */
+
+  --surface-pale:       #F2F4F6; /* .pale band, placeholder ground */
+  --surface-pale-hover: #EAEEF2; /* brand tile hover */
+  --line:               #E2E6EA; /* hairline rules on light grounds */
+  --line-dark:          rgba(255, 255, 255, .2);
+  --placeholder-dash:   #C3CBD4; /* dashed frame inside image/logo placeholders */
+
+  /* Body and quiet text on white and on --surface-pale. Measured:
+     #4B5563 is 7.6:1 on white, 6.9:1 on pale. #5C6572 is 5.9:1 / 5.4:1.
+     The mockup's first draft used #6B7280 for quiet text: 4.33:1 on pale, a
+     fail. Do not go back to it. */
+  --text-body-2: #4B5563;
+  --text-quiet:  #5C6572;
+
+  /* Type scale used by the approved mockup. Smaller and calmer than the §5
+     scale — see the open conflict recorded in CLAUDE.md §5. */
+  --fs-display: clamp(2.1rem, 1.6rem + 2.3vw, 3.4rem);   /* homepage h1 */
+  --fs-page-h1: clamp(1.8rem, 1.5rem + 1.4vw, 2.6rem);   /* detail-route h1 */
+  --fs-sec-h2:  clamp(1.4rem, 1.25rem + .7vw, 1.85rem);
+  --fs-hero-title: clamp(2.2rem, 1.5rem + 3.1vw, 4rem);  /* rotating hero line */
+  --fs-lead: 1.0625rem;
+  --fs-kicker: .75rem;
+  --tracking-kicker: .14em;
+  --weight-heading: 600;
+
+  /* Logo slot (Header): a fixed height, so artwork dropped in never moves
+     the bar. Width is free. */
+  --logo-h: 34px;
+  --logo-h-sm: 28px;
+
+  /* --------------------------------------------------------------------
      2. SYSTEM — carried from passes 1–5, not part of the locked document.
      Sizes below the locked scale. Text on navy: .50 white measures 5.1:1 on
      #051b38 — the §11 floor. Do not add a quieter tier.
@@ -103,13 +141,21 @@
   --rule-dark:  rgba(255, 255, 255, .16);
 
   /* Breakpoints, written literally in media queries (custom properties can't
-     be used there): 720px phone -> tablet, 1040px tablet -> desktop. */
-  --wrap-max: 1280px;
-  --wrap-pad: 28px;
+     be used there). From the approved mockup:
+       560px  phone -> large phone
+       700px  phone layout of the hero and logo slot
+       960px  hamburger -> full nav; most grids collapse here          */
+  --wrap-max: 1180px;
+  /* Gutter honours the notch on landscape phones. */
+  --wrap-pad: max(20px, env(safe-area-inset-left, 0px));
+  --wrap-pad-r: max(20px, env(safe-area-inset-right, 0px));
   --wrap-pad-sm: 20px;
-  --header-h: 72px;
+  /* 34px logo slot + 15px padding top and bottom. */
+  --header-h: 64px;
   --radius: 2px;
-  --section-y: clamp(64px, 8vw, 112px);
+  --radius-pill: 999px;
+  --section-y: clamp(44px, 5.5vw, 76px);
+  --section-y-tight: clamp(32px, 4vw, 52px);
 
   --dur-fast: .2s;
   --dur: .3s;
@@ -128,8 +174,11 @@
      light grounds take the link-light and focus-light values instead.
      -------------------------------------------------------------------- */
   --fg-strong: var(--text-primary);
-  --fg-body:   var(--text-body);
-  --fg-muted:  var(--text-secondary);
+  --fg-heading: var(--color-navy);
+  --fg-body:   var(--text-body-2);
+  /* text-quiet, not text-secondary: #6B7280 fails AA on --surface-pale. */
+  --fg-muted:  var(--text-quiet);
+  --fg-kicker: var(--text-muted);
   --fg-link:   var(--text-link-light);
   --fg-accent: var(--text-link-light);
   --rule-current: var(--rule-light);
@@ -139,9 +188,15 @@
   --focus: var(--focus-light);
 }
 
-/* A navy section sets its roles once; every child inherits. */
-.dark-surface {
+/* A navy section sets its roles once; every child inherits.
+   .navy is the mockup's name for the same thing; both are kept so existing
+   components and new ones read the same values. The masthead, drawer and
+   hero set these roles on themselves (see Header.astro and the hero). */
+.dark-surface,
+.navy {
   --fg-strong: var(--on-dark-1);
+  --fg-heading: var(--on-dark-1);
+  --fg-kicker: var(--color-cyan-light);
   --fg-body:   var(--on-dark-2);
   --fg-muted:  var(--on-dark-3);
   --fg-link:   var(--text-link-dark);

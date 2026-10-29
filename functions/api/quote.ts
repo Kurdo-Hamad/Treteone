@@ -7,16 +7,16 @@
  * are duplicated rather than shared; both copies carry the same warning.
  *
  * What it does, in order: reject bots, validate attachments, email
- * info@treteone.com with everything attached, and answer with a reference
+ * sales@treteone.com with everything attached, and answer with a reference
  * number. It stores nothing (§7).
  *
  * ── Configuration required before this works ────────────────────────────────
  *   RESEND_API_KEY   secret. From resend.com; the sending domain must be
  *                    verified there (SPF/DKIM) or mail will be filed as spam.
- *   QUOTE_FROM       e.g. "Trete One <quotes@treteone.com>". Must be on the
+ *   QUOTE_FROM       e.g. "Treteone <quotes@treteone.com>". Must be on the
  *                    verified domain — it is the envelope sender, not the
  *                    buyer's address. The buyer goes in Reply-To.
- *   QUOTE_TO         optional; defaults to info@treteone.com.
+ *   QUOTE_TO         optional; defaults to sales@treteone.com.
  *
  * Set them in Cloudflare Pages → Settings → Environment variables.
  * With RESEND_API_KEY unset the endpoint returns a clear error and the form
@@ -63,7 +63,7 @@ const ACCEPTED_EXTENSIONS = [
   '.csv',
 ];
 
-const DEFAULT_TO = 'info@treteone.com';
+const DEFAULT_TO = 'sales@treteone.com';
 
 /** Long enough for a full BOQ pasted into a note; short enough to stop abuse. */
 const MAX_FIELD_CHARS = 8000;
@@ -83,7 +83,7 @@ const MESSAGES = {
     errorTitle: 'That did not send.',
     errorBody: (email: string) =>
       `Something went wrong at our end. Please email ${email} directly — your enquiry matters more than this form.`,
-    back: 'Back to Trete One',
+    back: 'Back to Treteone',
   },
   zh: {
     successTitle: '需求已收到。',
@@ -91,7 +91,7 @@ const MESSAGES = {
     reference: '您的查询编号',
     errorTitle: '提交失败。',
     errorBody: (email: string) => `我们这边出现了问题。请直接发送邮件至 ${email}。`,
-    back: 'Back to Trete One',
+    back: 'Back to Treteone',
   },
 } as const;
 
