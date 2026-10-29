@@ -139,19 +139,34 @@ function measure(route, htmlPath) {
     }
   }
 
-  // Images, split by whether they actually load on arrival.
+  // Images, split by whether they load on arrival or only once the visitor
+  // gets there. The distinction is real and worth keeping honest:
   //
-  //   hero — all five. Every figure sits at inset:0, so the browser counts them
-  //          all as in-viewport and fetches them whatever their opacity.
-  //   rail — horizontally off-screen, so loading="lazy" really does defer them.
-  //          They are still counted against the budget: this check is meant to
-  //          be pessimistic, and a visitor who flicks the rail pays for them.
+  //   hero       every figure sits at inset:0 in the opening viewport, so the
+  //              browser counts all five as visible and fetches them whatever
+  //              their opacity. These are the ones that decide LCP.
+  //   rail       below the fold AND horizontally off-screen.
+  //   scope      below the fold — the sticky stack is nowhere near the opening
+  //              viewport, so lazy loading really does defer it.
+  //   industries below the fold, and eight of the nine panels are `hidden`,
+  //              which stops a lazy image loading until its panel is shown.
+  //
+  // Everything is still counted against the budget: a visitor who reads the
+  // page pays for all of it, and this check is meant to be pessimistic.
+  const SECTIONS = [
+    ['hero__slide', 'hero', false],
+    ['card__frame', 'rail', true],
+    ['scope__figure', 'scope', true],
+    ['industry-panel', 'industries', true],
+  ];
+
   let deferred = 0;
 
   for (const picture of html.match(/<picture[\s\S]*?<\/picture>/g) ?? []) {
     const index = html.indexOf(picture);
     const preceding = html.slice(Math.max(0, index - 400), index);
-    const isRail = preceding.includes('card__frame');
+    const section = SECTIONS.find(([marker]) => preceding.includes(marker));
+    const [, name = 'page', isDeferred = false] = section ?? [];
 
     const avif = picture.match(/<source[^>]+type="image\/avif"[^>]*>/)?.[0]
       ?? picture.match(/<source[^>]+srcset="([^"]+)"[^>]*>/)?.[0];
@@ -162,17 +177,10 @@ function measure(route, htmlPath) {
     if (!picked) continue;
 
     const bytes = size(picked.url);
-    if (isRail) deferred += bytes;
+    if (isDeferred) deferred += bytes;
     items.push({
-      label: `${picked.url} (${picked.width}w)${isRail ? ' — deferred, rail' : ''}`,
+      label: `${picked.url} (${picked.width}w) — ${name}${isDeferred ? ', deferred' : ''}`,
       bytes,
-    });
-  }
-
-  if (deferred > 0) {
-    items.push({
-      label: `  ↳ ${kb(deferred)} of the above is rail cards, fetched only as the rail is scrolled`,
-      bytes: 0,
     });
   }
 
@@ -186,6 +194,8 @@ function measure(route, htmlPath) {
   }
   console.log('─'.repeat(78));
   const pct = ((total / BUDGET) * 100).toFixed(0);
+  console.log(`  ${kb(total - deferred).padStart(10)}  on arrival — this is what decides LCP`);
+  console.log(`  ${kb(deferred).padStart(10)}  deferred until scrolled to or opened`);
   console.log(`  ${kb(total).padStart(10)}  TOTAL — ${pct}% of the 1.5 MB budget (§8)`);
 
   return total;

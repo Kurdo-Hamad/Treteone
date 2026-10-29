@@ -74,6 +74,16 @@ export const en = {
   'products.enquire': 'Enquire',
   'products.cardLabel': (name: string) => `${name} — send an enquiry`,
 
+  // ---- scope scroller (§6.6) ----------------------------------------------
+  'scope.heading': 'From the smallest component to a complete system.',
+  'scope.lede': 'Scroll through the scope. The same team handles all five.',
+  'scope.stepCount': (n: number, total: number) => `Stage ${n} of ${total}`,
+
+  // ---- industry picker (§6.7) ---------------------------------------------
+  'industries.heading': 'Built for the industries that keep moving.',
+  'industries.lede': 'Pick a plant. We will match the specification to the duty.',
+  'industries.listLabel': 'Industries',
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb':
     'Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop.',

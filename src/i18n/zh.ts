@@ -69,6 +69,16 @@ export const zh: UIStrings = {
   'products.enquire': '询价',
   'products.cardLabel': (name: string) => `${name} — 提交询价`,
 
+  // ---- scope scroller (§6.6) ----------------------------------------------
+  'scope.heading': '从最小的零件到整套系统。',
+  'scope.lede': '向下滚动查看供应范围。五个层级由同一团队负责。',
+  'scope.stepCount': (n: number, total: number) => `第 ${n} 级，共 ${total} 级`,
+
+  // ---- industry picker (§6.7) ---------------------------------------------
+  'industries.heading': '服务于不停运转的行业。',
+  'industries.lede': '选择您的行业，我们按工况匹配规格。',
+  'industries.listLabel': '行业',
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb': '工业供应与采购。为不能停机的工厂提供备件、设备与机械。',
   'footer.products': '产品',

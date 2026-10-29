@@ -92,6 +92,8 @@ src/
   assets/              source photography — Astro derives AVIF/WebP at build
     hero/              hero-0N.jpg
     products/          <category slug>.jpg
+    scope/             <stage slug>.jpg — portrait, the sticky media column
+    industries/        <industry slug>.jpg
   pages/
     index.astro
     zh/index.astro

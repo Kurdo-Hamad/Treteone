@@ -19,7 +19,7 @@ static output · Cloudflare Pages.
 | `npm run check` | `astro check` — TypeScript + template diagnostics |
 | `npm run budget` | §8 first-load payload check against the 1.5 MB budget (run after a build) |
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
-| `npm run placeholders` | Regenerate the §10 placeholder plates (hero and product cards) |
+| `npm run placeholders` | Regenerate all 31 §10 placeholder plates |
 
 `npm run build` is three steps, wired through npm's `prebuild`/`postbuild`, so
 they also run on Cloudflare:
@@ -42,7 +42,7 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 
 ## Build status
 
-**Passes 1 and 2 are complete.** Sections of CLAUDE.md §6 built so far:
+**Passes 1–3 are complete.** Sections of CLAUDE.md §6 built so far:
 
 | § | Section | Notes |
 |---|---|---|
@@ -51,33 +51,37 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 | 3 | `Ticker` | amber strip, hover pause — **no JavaScript at all** |
 | 4 | `StatBand` | count-up on first view; reply time marked unconfirmed (§10) |
 | 5 | `ProductRail` | 12 cards, drag / scroll / arrow keys, snap, progress bar |
+| 6 | `ScopeScroller` | sticky media, 5 stages, tag and image track the scroll |
+| 7 | `IndustryPicker` | 9 industries, real tablist with roving tabindex |
 | 13 | `Footer` | both address forms, copy button, §10 placeholders |
 
-Not built yet — sections 6–12: `ScopeScroller`, `IndustryPicker`,
-`SourcingBand`, `BrandMarquee`, `ProcessTimeline`, About, `QuoteForm`.
+Not built yet — sections 8–12: `SourcingBand`, `BrandMarquee`,
+`ProcessTimeline`, About, `QuoteForm`.
 
-Because of that, **`#scope`, `#industries`, `#sourcing`, `#brands`, `#about` and
-`#quote` still jump nowhere.** `#products` now resolves. Every "Request a quote"
-CTA — including the two hero buttons and all 12 rail cards — points at `#quote`,
+Because of that, **`#sourcing`, `#brands`, `#about` and `#quote` still jump
+nowhere.** `#products`, `#scope` and `#industries` now resolve. Every "Request a
+quote" CTA — the two hero buttons and all 12 rail cards — points at `#quote`,
 which does not exist until §12 lands.
 
 ### Verified, not assumed
 
-- `npm run check` — 31 files, 0 errors, 0 warnings, 0 hints.
+- `npm run check` — 36 files, 0 errors, 0 warnings, 0 hints.
 - No external host is referenced anywhere in `dist/` — no `googleapis`, no
   `gstatic`, no CDN. `grep -r googleapis src public` must stay empty.
 - No inline `<style>`, no `style="..."` attribute and no inline event handler in
   the output, so the `default-src 'self'` CSP in `public/_headers` needs no
   `'unsafe-inline'`. This required `vite.build.assetsInlineLimit: 0`; Astro
   otherwise writes small hoisted scripts straight into the document.
-- All 212 local paths referenced by the two HTML documents and their CSS exist
-  in `dist/`. No duplicate `id` on either page.
+- All 354 local paths referenced by the two HTML documents and their CSS exist
+  in `dist/`. No duplicate `id` on either page (28 each).
 - Every colour in the emitted CSS resolves through a token — each brand hex
   appears exactly once, in the token block. No component hardcodes a colour.
-- Payload, 412px viewport at 2× DPR: **`/` = 608 KB, `/zh/` = 608 KB** against
-  the 1.5 MB budget — 40%. 162 KB of that is rail cards that are only fetched
-  as the rail is scrolled.
-- `global.css` compiles to 32 KB. MesoAxis reached ~135 KB.
+- Payload, 412px viewport at 2× DPR: **`/` = 922.7 KB, `/zh/` = 921.9 KB**
+  against the 1.5 MB budget — **60%**. Of that, **484 KB arrives on load** and
+  **438 KB is deferred** until the visitor scrolls to it or opens a panel.
+- The tablist is a real one: 9 tabs, 9 panels, one `tabindex="0"` and eight
+  `tabindex="-1"`, eight panels `hidden`. Checked in the built HTML.
+- `global.css` compiles to 38 KB. MesoAxis reached ~135 KB.
 - The font verification **actually fails**. Tested end to end: Chinese copy
   routed into a page from a file type the source scan does not read exits
   `npm run build` with code 1 and names the glyph and the page.
@@ -109,9 +113,10 @@ Measured on the same content, at the end of pass 1:
 | Files in the repo | 98 | **1** |
 | `/zh/` first load | 1121 KB (73% of budget) | **397 KB (26%)** |
 
-Pass 2 added three sections of Chinese copy, so the subset grew with it — it is
-now **332 glyphs / 82.0 KB**, with a 3.4 KB stylesheet. That growth is the
-point: the font tracks the copy instead of shipping a fixed 4.6 MB.
+Passes 2 and 3 added five sections of Chinese copy, so the subset grew with
+them — it is now **358 glyphs / 88.3 KB**, with a 3.6 KB stylesheet. That growth
+is the point: the font tracks the copy instead of shipping a fixed 4.6 MB, and
+355 of those 358 glyphs are on the rendered pages.
 
 Three implementation notes worth knowing before touching it:
 
@@ -149,6 +154,77 @@ renders in the brand face. One line in `Base.astro` if you want it reverted.
 
 ---
 
+## Pass 3 notes
+
+### The industry picker is a real tablist, and that decided the crossfade
+
+§6.7 asks for "real `tablist` semantics", so this follows the WAI-ARIA tabs
+pattern rather than putting tab roles on a row of buttons:
+
+- **roving tabindex** — the whole control is *one* Tab stop, not nine. Arrow
+  keys move between tabs (both axes accepted, since the list is vertical on
+  desktop and stacked on a phone), Home and End jump to the ends.
+- **automatic activation** — selection follows focus, which is right when the
+  panels are already in the document.
+- **eight panels are `hidden`** — out of the accessibility tree and out of the
+  tab order, not merely transparent.
+
+That last point is why **the photo swap is instant rather than a crossfade**.
+`hidden` is `display: none`; it cannot be faded. The alternative — keeping all
+nine painted at `opacity: 0` — would put eight industries' worth of text in the
+accessibility tree at all times. §6.7 says "swaps", and correct semantics beat a
+0.6s fade. It also means the eight unshown photographs are never fetched until
+their panel is opened, which is 134 KB a visitor may never spend.
+
+If you want the fade back it is possible with `inert` + `aria-hidden` instead of
+`hidden`, at the cost of loading all nine photos up front. Say the word.
+
+### Hover previews without stealing focus
+
+Hovering a tab selects it, as §6.7 requires, but deliberately does **not** move
+DOM focus — a pointer sweeping down the list should not take the keyboard's
+place in the page. Touch pointers are ignored on `pointerenter` because a tap
+already sends a click.
+
+### The scope scroller has nothing to operate, by design
+
+It is prose with an illustration that keeps up. The media column is `aria-hidden`
+because the corner tag only repeats the stage heading sitting beside it, so what
+a screen reader gets is five headings and five paragraphs in order — which is
+the argument the section is actually making. Each stage also carries an
+`sr-only` "Stage 3 of 5", since the visible `03 / 05` is a mono glyph pair that
+reads poorly aloud.
+
+Under reduced motion the crossfade is dropped but the tracking stays: **which
+stage you are reading is information, not decoration.**
+
+### Another prototype contrast fix
+
+The prototype dims inactive scope headings to `opacity: .42`. Those headings are
+large enough that 4.34:1 would pass WCAG for large text — but §5 (as amended in
+pass 1) puts the floor on a dark ground at `.50` full stop, so inactive headings
+use `--on-dark-4` and the active one goes to white. One rule, no exceptions to
+remember.
+
+### All eight client scripts are now real modules
+
+`scope-scroller.ts` and `rolling-hero.ts` both declared a top-level `root`, and
+`astro check` failed: a file with no top-level `import` or `export` is a *global*
+script to TypeScript, so every script in `src/scripts/` was sharing one scope.
+Adding `export {}` to all eight fixes the collision and prevents the next one.
+They were always ES modules at runtime — only TypeScript's view was wrong.
+
+### `npm run budget` now separates arrival from deferral
+
+With five sections of photography the single total had stopped being useful, so
+it now splits by when an image is actually fetched: the hero's five load on
+arrival and decide LCP, while the rail (below the fold and horizontally
+off-screen), the scope stack (below the fold) and the industry panels (below the
+fold *and* `hidden`) do not. Both figures print; the total is still the number
+that has to pass, because a visitor who reads the whole page pays for all of it.
+
+---
+
 ## Pass 2 notes
 
 ### The reply-time figure is marked, not stated
@@ -172,9 +248,9 @@ the band cannot claim more than the site actually lists.
 ### `src/data/industries.ts` exists before the IndustryPicker does
 
 The StatBand claims "9 industries served". Writing `9` into a component would be
-a number with nothing behind it, so the nine industries are now a data module
-and the stat is `industries.length`. The picker (§6.7) still is not built; the
-module has no `image` field yet because §10 has not supplied that photography.
+a number with nothing behind it, so the nine industries are a data module and the
+stat is `industries.length`. (Pass 3 added the `image` field and built the
+picker on top of the same module.)
 
 ### The ticker ships zero JavaScript
 
@@ -316,7 +392,7 @@ simply absent.
 |---|---|
 | Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip. |
 | Business licence number | Same. |
-| Real photography — office, staff, goods packed, equipment handled | **17 images pending.** Five hero frames (`src/assets/hero/hero-0N.jpg`, ≥2400px) and twelve product cards (`src/assets/products/<slug>.jpg`, ≥1200px). All are generated plates reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show. Drop the real file in at the same path — nothing else changes. |
+| Real photography — office, staff, goods packed, equipment handled | **31 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px). All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
 | Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty. `BrandMarquee` is pass 2 and needs both the files and the answer to the second half of that question. |
 | Real reply-time commitment | `StatBand` is built. The figure renders as a marked **UNCONFIRMED** placeholder, never as a fact — see "Pass 2 notes". Set `confirmed: true` in `src/data/stats.ts` once the business has committed to a number. |
 | Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts` are the prototype's first pass, carried over unchanged and marked as such in the file headers. Needs a native-speaker review. |

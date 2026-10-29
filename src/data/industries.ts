@@ -1,20 +1,32 @@
+import type { ImageMetadata } from 'astro';
 import type { Localised } from '~/i18n/ui';
+
+import imgOilGas from '~/assets/industries/oil-gas.jpg';
+import imgRefiningPetrochemical from '~/assets/industries/refining-petrochemical.jpg';
+import imgPowerGeneration from '~/assets/industries/power-generation.jpg';
+import imgCement from '~/assets/industries/cement.jpg';
+import imgManufacturing from '~/assets/industries/manufacturing.jpg';
+import imgSteelMetals from '~/assets/industries/steel-metals.jpg';
+import imgMining from '~/assets/industries/mining.jpg';
+import imgWaterWastewater from '~/assets/industries/water-wastewater.jpg';
+import imgFacilitiesInstitutions from '~/assets/industries/facilities-institutions.jpg';
 
 /**
  * The 9 industries (CLAUDE.md §3).
  *
- * The IndustryPicker (§6.7) is not built yet — this module exists now because
- * the StatBand claims "9 industries served" and that number has to come from
- * the actual list rather than from a literal typed into a component. If an
- * industry is added or dropped, the stat follows on its own.
+ * Drives the IndustryPicker (§6.7) and the StatBand's "9 industries served" —
+ * that figure is `industries.length`, not a literal typed into a component, so
+ * adding or dropping an industry moves the stat on its own.
  *
- * No `image` field yet: the picker's photo panel is pass 3, and §10 has not
- * supplied that photography. Add the field when there is something behind it.
+ * ⚠ §10 — the photography has not been supplied. Every `image` is a
+ * "PHOTOGRAPH PENDING" plate from scripts/make-placeholders.mjs. Replace
+ * src/assets/industries/<slug>.jpg with the real file; nothing else changes.
  */
 export interface Industry {
   readonly slug: string;
   readonly name: Localised;
   readonly blurb: Localised;
+  readonly image: ImageMetadata;
 }
 
 export const industries: readonly Industry[] = [
@@ -25,6 +37,7 @@ export const industries: readonly Industry[] = [
       en: 'Pumps · valves · instrumentation · rotating equipment spares',
       zh: '泵 · 阀门 · 仪表 · 旋转设备备件',
     },
+    image: imgOilGas,
   },
   {
     slug: 'refining-petrochemical',
@@ -33,6 +46,7 @@ export const industries: readonly Industry[] = [
       en: 'Control valves · heat exchangers · seals · analysers',
       zh: '调节阀 · 换热器 · 密封件 · 分析仪',
     },
+    image: imgRefiningPetrochemical,
   },
   {
     slug: 'power-generation',
@@ -41,6 +55,7 @@ export const industries: readonly Industry[] = [
       en: 'Switchgear · transformers · turbine auxiliaries · protection',
       zh: '开关柜 · 变压器 · 汽机辅机 · 保护装置',
     },
+    image: imgPowerGeneration,
   },
   {
     slug: 'cement',
@@ -49,6 +64,7 @@ export const industries: readonly Industry[] = [
       en: 'Gearboxes · bearings · fans · wear parts · drives',
       zh: '减速机 · 轴承 · 风机 · 易损件 · 传动',
     },
+    image: imgCement,
   },
   {
     slug: 'manufacturing',
@@ -57,6 +73,7 @@ export const industries: readonly Industry[] = [
       en: 'PLC and drives · sensors · pneumatics · conveyors',
       zh: 'PLC与驱动 · 传感器 · 气动元件 · 输送设备',
     },
+    image: imgManufacturing,
   },
   {
     slug: 'steel-metals',
@@ -65,6 +82,7 @@ export const industries: readonly Industry[] = [
       en: 'Hydraulics · heavy bearings · motors · cooling systems',
       zh: '液压 · 重载轴承 · 电机 · 冷却系统',
     },
+    image: imgSteelMetals,
   },
   {
     slug: 'mining',
@@ -73,6 +91,7 @@ export const industries: readonly Industry[] = [
       en: 'Slurry pumps · crusher spares · couplings · lubrication',
       zh: '渣浆泵 · 破碎机备件 · 联轴器 · 润滑',
     },
+    image: imgMining,
   },
   {
     slug: 'water-wastewater',
@@ -81,6 +100,7 @@ export const industries: readonly Industry[] = [
       en: 'Pumps · dosing systems · level instruments · blowers',
       zh: '水泵 · 加药系统 · 液位仪表 · 鼓风机',
     },
+    image: imgWaterWastewater,
   },
   {
     slug: 'facilities-institutions',
@@ -89,5 +109,6 @@ export const industries: readonly Industry[] = [
       en: 'Generators · UPS · HVAC components · distribution',
       zh: '发电机 · UPS · 暖通部件 · 配电',
     },
+    image: imgFacilitiesInstitutions,
   },
 ];

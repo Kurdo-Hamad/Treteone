@@ -48,3 +48,9 @@ if (values.length > 0 && 'IntersectionObserver' in window) {
 
   for (const element of values) observer.observe(element);
 }
+
+/* This file is loaded as a module by its component and has no imports or
+   exports of its own, which would leave TypeScript treating it as a global
+   script — every top-level name shared with every other script in src/scripts.
+   The empty export makes it a module, so its scope is its own. */
+export {};

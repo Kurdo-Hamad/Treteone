@@ -9,8 +9,10 @@
  *   npm run placeholders
  *
  * Writes:
- *   src/assets/hero/hero-0N.jpg          5 hero frames,  2400x1500
- *   src/assets/products/<slug>.jpg      12 product cards, 1200x900
+ *   src/assets/hero/hero-0N.jpg          5 hero frames,     2400x1500
+ *   src/assets/products/<slug>.jpg      12 product cards,   1200x900
+ *   src/assets/scope/<slug>.jpg          5 scope stages,    1600x2000
+ *   src/assets/industries/<slug>.jpg     9 industry panels, 1600x1000
  *
  * To replace one: drop the real photograph in at the same path and size or
  * larger, and delete its entry here. Nothing else changes — Astro re-derives
@@ -56,6 +58,29 @@ const productCards = {
   'process-equipment': 'HEAT EXCHANGER AND FILTRATION',
   'industrial-machinery': 'GENERATOR SET ON SKID',
   'industrial-consumables': 'FILTERS, LUBRICANTS AND TOOLING',
+};
+
+/** Keyed by the slug in src/data/scope.ts. Tall — the media column is sticky
+    and full height, so these are portrait. */
+const scopeStages = {
+  component: 'BEARING, SEAL AND SENSOR IN HAND',
+  'spare-part': 'OEM PART BESIDE ITS EQUIVALENT',
+  assembly: 'VALVE AND ACTUATOR SET',
+  machine: 'PUMP SKID ON THE FLOOR',
+  'complete-system': 'PRODUCTION LINE INSTALLED',
+};
+
+/** Keyed by the slug in src/data/industries.ts. */
+const industryPanels = {
+  'oil-gas': 'OFFSHORE PLATFORM DECK',
+  'refining-petrochemical': 'REFINERY COLUMNS AT DUSK',
+  'power-generation': 'TURBINE HALL',
+  cement: 'CEMENT KILN AND SILOS',
+  manufacturing: 'ASSEMBLY LINE IN OPERATION',
+  'steel-metals': 'CASTING FLOOR',
+  mining: 'CRUSHER AND CONVEYOR',
+  'water-wastewater': 'TREATMENT BASINS',
+  'facilities-institutions': 'PLANT ROOM AND SWITCHBOARD',
 };
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -124,4 +149,33 @@ for (const [slug, subject] of Object.entries(productCards)) {
   total += await write(productDir, `${slug}.jpg`, svg);
 }
 console.log(`products: ${Object.keys(productCards).length} plates at 1200x900`);
+/* ------------------------------------------------------------------ scope */
+
+const scopeDir = join(root, 'src', 'assets', 'scope');
+await mkdir(scopeDir, { recursive: true });
+
+for (const [i, [slug, subject]] of Object.entries(scopeStages).entries()) {
+  const svg = plate({
+    width: 1600,
+    height: 2000,
+    badge: String(i + 1).padStart(2, '0'),
+    subject,
+    scale: 0.7,
+  });
+  total += await write(scopeDir, `${slug}.jpg`, svg);
+}
+console.log(`scope:    ${Object.keys(scopeStages).length} plates at 1600x2000`);
+
+/* ------------------------------------------------------------- industries */
+
+const industryDir = join(root, 'src', 'assets', 'industries');
+await mkdir(industryDir, { recursive: true });
+
+for (const [slug, subject] of Object.entries(industryPanels)) {
+  // The panel overlays the industry name itself, so no badge.
+  const svg = plate({ width: 1600, height: 1000, badge: null, subject, scale: 0.7 });
+  total += await write(industryDir, `${slug}.jpg`, svg);
+}
+console.log(`industry: ${Object.keys(industryPanels).length} plates at 1600x1000`);
+
 console.log(`total:    ${(total / 1024 / 1024).toFixed(1)} MB of source art (not shipped as-is)`);
