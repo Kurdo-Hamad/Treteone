@@ -1,0 +1,341 @@
+---
+import { brandTile } from '~/data/brand-logos';
+import { brandDirectory, brandGroupCounts, brandGroups } from '~/data/brands';
+import { quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * /brands — one filterable directory (approved mockup, #v-brands; CLAUDE.md §9).
+ *
+ *  - Every tile is rendered here, in HTML. src/scripts/brand-filter.ts only
+ *    sets `hidden`, so with JavaScript off the full list is on the page. The
+ *    chips and the search box ship `disabled` and the script enables them:
+ *    without it they would sit there doing nothing.
+ *  - Four chips (All + three disciplines) with counts taken from the data, and
+ *    a search box that filters on the name.
+ *  - No match shows the "Not on the list" panel with a link to the form —
+ *    never an empty grid.
+ *  - The count line is a polite live region, so a filter change is announced.
+ *  - Logos resolve at build time from public/logos/ (src/data/brand-logos.ts,
+ *    which also refuses a raster in an SVG wrapper). No file means the dashed
+ *    slot. No <img onerror> — the CSP forbids inline handlers.
+ *
+ * ⚠ §13 — "Brands we source", and the trademark disclaimer stays. Nothing here
+ * may imply authorisation, distributorship or agency.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const total = brandDirectory.length;
+const tiles = brandDirectory.map((brand) => ({ ...brandTile(brand.name), group: brand.group }));
+
+const chips = [
+  { filter: 'all', label: t('brands.group.all'), count: total },
+  ...brandGroups.map((group) => ({
+    filter: group,
+    label: t(`brands.group.${group}`),
+    count: brandGroupCounts[group],
+  })),
+];
+
+// The script fills {shown}; the total is fixed at build.
+const SENTINEL = 987654;
+const msgShowing = t('brands.showing')(SENTINEL, total).replace(String(SENTINEL), '{shown}');
+const msgAll = t('brands.showingAll')(total);
+
+/** Lower-cased name, as the script compares it. */
+const searchKey = (name: string): string => name.toLowerCase();
+---
+
+<div class="bdir" data-brand-filter data-msg-all={msgAll} data-msg-showing={msgShowing}>
+  <div class="bfilter">
+    <div class="bsearch">
+      <label class="sr-only" for="brand-search">{t('brands.search.label')}</label>
+      <svg viewBox="0 0 24 24" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="M16.5 16.5L21 21"></path>
+      </svg>
+      <input
+        id="brand-search"
+        type="search"
+        placeholder={t('brands.search.label')}
+        autocomplete="off"
+        spellcheck="false"
+        aria-controls="brand-grid"
+        disabled
+        data-brand-search
+      />
+    </div>
+    <div class="chips" role="group" aria-label={t('brands.filter.label')}>
+      {
+        chips.map((chip) => (
+          <button
+            class="chip"
+            type="button"
+            aria-pressed={chip.filter === 'all' ? 'true' : 'false'}
+            aria-controls="brand-grid"
+            disabled
+            data-brand-chip={chip.filter}
+          >
+            {chip.label} <b>{chip.count}</b>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <p class="bcount" aria-live="polite" data-brand-count>{msgAll}</p>
+
+  <ul class="bgrid" id="brand-grid" aria-label={t('brands.heading')} data-brand-grid>
+    {
+      tiles.map((tile) => (
+        <li class="btile" data-g={tile.group} data-n={searchKey(tile.name)}>
+          <span class:list={['box', { 'box--logo': tile.logo !== null }]} aria-hidden="true">
+            {tile.logo ? (
+              <img src={tile.logo} alt="" loading="lazy" decoding="async" />
+            ) : (
+              t('brands.logoSlot')
+            )}
+          </span>
+          <span class="name">{tile.name}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="bnone" hidden data-brand-none>
+    <h2 class="bnone__title">{t('brands.none.title')}</h2>
+    <p>{t('brands.none.body')}</p>
+    <p class="bnone__link">
+      <a class="rm" href={localisePath(quoteHref, lang)}>
+        {t('brands.none.link')} <span aria-hidden="true">→</span>
+      </a>
+    </p>
+  </div>
+
+  <p class="small bdisclaimer">{t('brands.disclaimer')}</p>
+</div>
+
+<script>
+  import '~/scripts/brand-filter';
+</script>
+
+<style>
+  /* -- filter bar ---------------------------------------------------------- */
+  .bfilter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 18px;
+    align-items: center;
+    margin-top: 30px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bsearch {
+    position: relative;
+    flex: 0 0 clamp(200px, 28vw, 280px);
+  }
+  .bsearch input {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 14px 11px 36px;
+    /* A form control's boundary needs 3:1 (WCAG 1.4.11). The mockup's
+       hairline (--line) is 1.2:1, so the control takes --rule-control. */
+    border: 1px solid var(--rule-control);
+    border-radius: 0;
+    background: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-stack-body);
+    /* 16px or more stops iOS zooming the page on focus. */
+    font-size: 1rem;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .bsearch input::placeholder {
+    color: var(--text-quiet);
+  }
+  .bsearch input:focus {
+    border-color: var(--color-navy);
+  }
+  .bsearch input:disabled {
+    cursor: default;
+  }
+  .bsearch svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1.6;
+    pointer-events: none;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--surface-page);
+    color: var(--text-body-2);
+    font-family: var(--font-stack-display);
+    font-weight: 500;
+    font-size: .84rem;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background var(--dur-fast),
+      border-color var(--dur-fast),
+      color var(--dur-fast);
+  }
+  .chip:hover:not(:disabled) {
+    border-color: var(--color-navy);
+    color: var(--color-navy);
+  }
+  .chip:disabled {
+    cursor: default;
+  }
+  .chip b {
+    margin-left: .2em;
+    font-family: var(--font-stack-mono);
+    font-weight: 400;
+    font-size: .72rem;
+    color: var(--text-quiet);
+  }
+  /* Pressed is a filled chip, not a hue change alone (§11). */
+  .chip[aria-pressed='true'] {
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    color: var(--text-inverse);
+  }
+  .chip[aria-pressed='true'] b {
+    color: var(--color-cyan-light);
+  }
+
+  .bcount {
+    margin-top: 20px;
+    font-family: var(--font-stack-mono);
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* -- grid ---------------------------------------------------------------- */
+  .bgrid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(12px, 1.8vw, 20px);
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .bgrid[hidden],
+  .btile[hidden] {
+    display: none;
+  }
+
+  .btile {
+    text-align: center;
+  }
+  .box {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 3 / 2;
+    padding: 12px;
+    background: var(--surface-pale);
+    font-family: var(--font-stack-mono);
+    font-size: .6rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .box::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed var(--placeholder-dash);
+    pointer-events: none;
+  }
+  .box--logo::after {
+    display: none;
+  }
+  /* §9 — logos greyscale, full colour on hover. */
+  .box img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: .8;
+    transition: filter var(--dur-fast), opacity var(--dur-fast);
+  }
+  .btile:hover .box img {
+    filter: none;
+    opacity: 1;
+  }
+  .name {
+    display: block;
+    margin-top: 9px;
+    font-size: .78rem;
+    line-height: 1.4;
+    color: var(--text-quiet);
+  }
+
+  /* -- no match ------------------------------------------------------------ */
+  .bnone {
+    margin-top: 26px;
+    padding: 26px;
+    max-width: 62ch;
+    background: var(--surface-pale);
+  }
+  .bnone[hidden] {
+    display: none;
+  }
+  .bnone__title {
+    margin-bottom: 8px;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
+  .bnone p {
+    font-size: .9375rem;
+    color: var(--text-body-2);
+  }
+  .bnone .bnone__link {
+    margin-top: 14px;
+  }
+
+  .bdisclaimer {
+    margin-top: 36px;
+    max-width: 78ch;
+  }
+
+  @media (max-width: 960px) {
+    .bfilter {
+      gap: 12px;
+    }
+    .bsearch {
+      flex: 1 1 100%;
+    }
+    .bgrid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .bgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
