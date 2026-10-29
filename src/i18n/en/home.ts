@@ -165,29 +165,6 @@ export const home = {
     'A registered company in Liwan District, Guangzhou, working with maintenance and procurement teams in plants that cannot stand still.',
   'home.work.more': 'Read more',
 
-  // ---- legacy -------------------------------------------------------------
-  // Read only by components the new homepage no longer renders (Positioning,
-  // ProductEcosystem, IndustriesPreview, BrandStrip). Kept so those files still
-  // type-check until integration removes them; delete with them.
-  'home.position.label': 'About Treteone',
-  'home.position.statement':
-    'An industrial supply and sourcing company in Guangzhou, finding the parts, equipment and systems that plants run on — from a single component to a complete line.',
-  'home.position.base': 'Guangzhou, China',
-  'home.position.categories': (n: number) => `${n} product categories`,
-  'home.position.industries': (n: number) => `${n} industries`,
-  'home.position.link': 'How we work',
-
-  'home.eco.eyebrow': 'Product ecosystem',
-  'home.eco.heading': 'From control systems to consumables.',
-  'home.eco.explore': 'Explore',
-  'home.eco.linkLabel': (name: string) => `Explore ${name}`,
-  'home.eco.all': 'All product categories',
-
-  'home.industries.eyebrow': 'Industries',
-  'home.industries.also': 'Also',
-  'home.industries.all': (n: number) => `All ${n} industries`,
-
-  'home.brands.all': 'All brands',
 };
 
 export type HomeStrings = typeof home;

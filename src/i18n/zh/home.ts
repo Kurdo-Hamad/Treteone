@@ -145,24 +145,4 @@ export const home: HomeStrings = {
   'home.work.who.body': '一家在广州荔湾区注册的公司，服务于那些无法停工的工厂的维修与采购团队。',
   'home.work.more': '了解更多',
 
-  // ---- legacy (see the English module) ------------------------------------
-  'home.position.label': '关于 Treteone',
-  'home.position.statement':
-    '一家位于广州的工业供应与采购公司，为工厂寻找赖以运转的零部件、设备与系统——从单个零件到整条产线。',
-  'home.position.base': '中国广州',
-  'home.position.categories': (n: number) => `${n} 个产品大类`,
-  'home.position.industries': (n: number) => `${n} 个行业`,
-  'home.position.link': '我们的工作方式',
-
-  'home.eco.eyebrow': '产品体系',
-  'home.eco.heading': '从控制系统到工业耗材。',
-  'home.eco.explore': '查看',
-  'home.eco.linkLabel': (name: string) => `查看${name}`,
-  'home.eco.all': '全部产品大类',
-
-  'home.industries.eyebrow': '行业',
-  'home.industries.also': '以及',
-  'home.industries.all': (n: number) => `全部 ${n} 个行业`,
-
-  'home.brands.all': '全部品牌',
 };

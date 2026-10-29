@@ -15,9 +15,6 @@ export const quote: QuoteStrings = {
   'quote.eyebrow': '索取报价',
   'quote.heading': '告诉我们您的需求。',
   'quote.lede': '永远无需注册账户。发送部件号、照片或整份清单，我们会回复价格与交期。',
-  'quote.directIntro': '更想直接联系？',
-  'quote.required': '只有联系方式为必填项。',
-  'quote.processLink': '提交之后会发生什么',
   'quote.formLabel': '索取报价',
 
   'quote.type.label': '您需要什么',
@@ -38,8 +35,6 @@ export const quote: QuoteStrings = {
   'quote.notes.label': '其他需要说明的信息',
   'quote.name.label': '姓名与公司',
   'quote.contact.label': '邮箱或 WhatsApp（必填）',
-  'quote.contact.hint': '便于我们回复报价。其余信息均非必填。',
-  'quote.optional': '选填',
   'quote.submit': '提交需求',
   'quote.hint': '只有联系方式为必填项。一张模糊的铭牌照片，加上一个联系方式，就足以开始。',
 

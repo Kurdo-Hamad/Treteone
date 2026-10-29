@@ -46,17 +46,6 @@ export const about = {
   'about.registered.enquiries': 'Enquiries',
   'about.registered.address': 'Registered address',
 
-  // ---- legacy -------------------------------------------------------------
-  // Read by components the homepage stream is replacing (About,
-  // CompanyDetails). Kept so the build stays green; integration removes them
-  // with those components.
-  'about.eyebrow': 'About',
-  'about.title': 'Industrial supply and sourcing, from Guangzhou.',
-  'about.heading': 'Why buyers work with us',
-  'about.lede':
-    'Treteone is an industrial supply and sourcing company based in Guangzhou, China, working with maintenance and procurement teams in demanding plants.',
-  'about.details.heading': 'Company details',
-  'about.details.lede': 'The details a buyer should be able to check before placing an order.',
 };
 
 export type AboutStrings = typeof about;

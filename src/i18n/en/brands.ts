@@ -22,9 +22,6 @@ export const brands = {
   'brands.title': 'The manufacturers buyers ask for by name.',
   'brands.lede':
     'Filter by discipline or type a name. The list reflects what is requested most often, not the limit of what can be sourced — if yours is missing, send the enquiry anyway. Logo artwork is pending; names are shown until it is supplied.',
-  'brands.count': (n: number) => `${n} manufacturers listed`,
-  'brands.listLabel': 'Manufacturers we source',
-  'brands.ask': 'Ask about another brand',
 
   // Directory filter (approved mockup). The script fills {n}, {shown} and
   // {total}; it holds no copy of its own.

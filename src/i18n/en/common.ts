@@ -25,16 +25,13 @@ export const common = {
   'nav.skip': 'Skip to main content',
   'nav.home': 'Treteone — home',
   'nav.homeShort': 'Home',
-  'nav.breadcrumb': 'Breadcrumb',
 
-  'lang.label': 'Language',
   'lang.switchTo': (label: string) => `Switch to ${label}`,
 
   // ---- calls to action ----------------------------------------------------
   'cta.quote': 'Request a quote',
   /** Short form of cta.quote, for the header pill on phones. */
   'cta.quoteShort': 'Quote',
-  'cta.email': 'Email',
   'cta.whatsapp': 'WhatsApp',
 
   // ---- image placeholder (ImagePlaceholder.astro) -------------------------
@@ -42,26 +39,9 @@ export const common = {
   'placeholder.image': 'Image',
   'placeholder.label': (subject: string) => `Photograph to come: ${subject}`,
 
-  // ---- detail-page header -------------------------------------------------
-  'page.meta': 'Page summary',
-
-  // ---- closing CTA --------------------------------------------------------
-  'closing.eyebrow': 'Request a quote',
-  'closing.heading': 'Tell us what you need.',
-  'closing.lede':
-    'No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.',
-  'closing.direct': 'Or write to us directly',
-
   // ---- footer -------------------------------------------------------------
-  'footer.address': 'Address',
-  'footer.registeredName': 'Registered name',
-  'footer.licence': 'Business licence',
   'footer.label': 'Footer',
   'footer.rights': (year: number, name: string) => `© ${year} ${name}`,
-  'footer.placeholder': 'To be supplied',
-  'footer.whatsapp': 'WhatsApp',
-  'footer.email': 'Email',
-  'footer.phone': 'Phone',
 };
 
 export type CommonStrings = typeof common;

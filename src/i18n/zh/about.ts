@@ -41,12 +41,4 @@ export const about: AboutStrings = {
   'about.registered.enquiries': '询价联系',
   'about.registered.address': '注册地址',
 
-  // ---- legacy (see the English module) ------------------------------------
-  'about.eyebrow': '关于我们',
-  'about.title': '工业供应与采购，立足广州。',
-  'about.heading': '客户选择我们的原因',
-  'about.lede':
-    'Treteone 是一家位于中国广州的工业供应与采购公司，服务于各类工厂的维修与采购团队。',
-  'about.details.heading': '公司信息',
-  'about.details.lede': '下单之前，买家应当能够核实的信息。',
 };

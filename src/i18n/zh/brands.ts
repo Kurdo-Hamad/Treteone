@@ -19,9 +19,6 @@ export const brands: BrandsStrings = {
   'brands.title': '买家点名询价的制造商。',
   'brands.lede':
     '可按专业类别筛选，或直接输入名称。此列表反映的是最常见的询价需求，而非我们可采购范围的上限——如果您需要的品牌不在其中，照样可以发来询价。品牌标志图稿尚待提供，在此之前仅显示名称。',
-  'brands.count': (n: number) => `列出 ${n} 个制造商`,
-  'brands.listLabel': '我们可采购的制造商',
-  'brands.ask': '询问其他品牌',
 
   'brands.search.label': '搜索制造商',
   'brands.filter.label': '按专业类别筛选',

@@ -49,25 +49,6 @@ export const sourcing = {
   /** n is already zero-padded ("01"). Shown in capitals by CSS. */
   'process.stepLabel': (n: string) => `Step ${n}`,
 
-  // ---- legacy -------------------------------------------------------------
-  // Read by components the homepage stream is replacing (HardToFind,
-  // SourcingChecklist, ProcessTimeline). Kept so the build stays green;
-  // integration removes them with those components.
-  'sourcing.eyebrow': 'Sourcing',
-  'sourcing.heading': 'Can’t find the part? Give us the number.',
-  'sourcing.lede':
-    'Obsolete, discontinued, legacy automation, unmarked castings, or just a photo of a nameplate — send whatever you have and we will investigate it.',
-  'sourcing.cta': 'Upload your requirement',
-  'sourcing.checklistLabel': 'What to send',
-  'sourcing.checklistLede': 'Any one of these is enough to start an enquiry.',
-  'sourcing.send.partNumber': 'Part number or manufacturer reference',
-  'sourcing.send.nameplate': 'Equipment model and nameplate photo',
-  'sourcing.send.datasheet': 'Datasheet, drawing or PDF',
-  'sourcing.send.boq': 'Excel BOQ or multi-line request',
-  'sourcing.send.description': 'A description, if that is all you have',
-  'process.heading': 'From requirement to delivery.',
-  'process.lede': 'What happens to an enquiry, first to last.',
-  'process.stepCount': (n: number, total: number) => `Step ${n} of ${total}`,
 };
 
 export type SourcingStrings = typeof sourcing;

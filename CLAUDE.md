@@ -73,7 +73,7 @@ The homepage is a gateway; detail lives on its own routes.
 
 | Route | Holds (in order, per the mockup) |
 |---|---|
-| `/` | Rolling hero · intro ("We find the part. Then we supply it.") · positioning split · "Three ways an enquiry arrives" · "Treteone at a glance" · capability grid · hard-to-find navy band · brand marquee · "About our work" |
+| `/` | Rolling hero · intro ("We find the part. Then we supply it.") · "Three ways an enquiry arrives" · "Treteone at a glance" · positioning split · capability grid · hard-to-find navy band · brand marquee · "About our work" |
 | `/products` | Page head · 12 categories as index rows · navy five-step scope band (component → complete system) |
 | `/industries` | Page head · 9 sectors as index rows, spec line naming the duty data |
 | `/sourcing` | Page head · four definition blocks · navy "what to send" band · five-step process |
@@ -316,7 +316,8 @@ Slide 4    Hard-to-find & obsolete
 ```
 
 Below the hero, the page h1: **"We find the part. Then we supply it."** with
-"Request a quote" and "Hard-to-find parts" buttons. Both languages.
+"Send a part number" and "See what we supply" buttons (the mockup's wording).
+Both languages.
 
 The earlier hero copy ("The Parts, Equipment & Technology Behind Industry.", three
 buttons on the image) is superseded by the mockup.
@@ -330,13 +331,13 @@ repeated. From the mockup, in order:
 
 1. **Rolling hero** — §6
 2. **Intro** — display h1, lead, two buttons, two-column on desktop
-3. **Positioning split** — image with a cyan offset block behind it, copy alongside
-   ("We hold no stock. That is the point.")
-4. **"Three ways an enquiry arrives"** — three image cards. Illustrative; the line
+3. **"Three ways an enquiry arrives"** — three image cards. Illustrative; the line
    saying they name no client stays.
-5. **"Treteone at a glance"** — four figures on the pale band: 12 · 9 · Guangzhou ·
+4. **"Treteone at a glance"** — four figures on the pale band: 12 · 9 · Guangzhou ·
    No account. 12 and 9 count up once when scrolled into view; the real number is
-   in the HTML.
+   in the HTML. Both are counted from `categories.ts` and `industries.ts`.
+5. **Positioning split** — image with a cyan offset block behind it, copy alongside
+   ("We hold no stock. That is the point.")
 6. **Capability grid** — eight items, small placeholder, noun-plus-clause heading,
    three lines.
 7. **Hard-to-find** — navy band, copy left, numbered "what to send" list right
@@ -500,6 +501,9 @@ here so nobody "fixes" it back by accident:
 | Content width | 1280px | 1180px |
 | Breakpoints | 720 / 1040px | 560 / 700 / 960px |
 
+| Homepage order | split second | split fifth, after the at-a-glance band (mockup order, §7) |
+| Hero eyebrow | — | cyan, uppercase (the mockup never styled its class) |
+
 **Not taken from the mockup:**
 - The mockup's Google Fonts link (Figtree, Roboto Mono). Fonts stay self-hosted
   (§10); General Sans is the real face Figtree stood in for.
@@ -507,4 +511,10 @@ here so nobody "fixes" it back by accident:
 - The mockup has no language switch. The header adds a link to the same page in
   the other language; on phones it lives in the drawer.
 - Footer legal text at .46 white (fails §11); raised to .54.
+- Hero text swapped in by `innerHTML`. Each hero tab panel holds its own copy, so
+  the page reads correctly without JavaScript.
+- Plain cyan step labels on white (2.4:1). They use link-blue on white and
+  cyan-light on navy.
+- Form-control borders at ~1.2:1. Controls use `--rule-control` (3:1 or better).
+- "Licence number" in the /about registered-company line — not supplied, not claimed.
 

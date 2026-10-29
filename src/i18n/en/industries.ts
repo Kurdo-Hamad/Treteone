@@ -19,19 +19,8 @@ export const industries = {
   /** The action at the end of every index row. */
   'industries.rows.enquire': 'Enquire',
 
-  // ---- legacy -------------------------------------------------------------
-  // Read by components the homepage stream is replacing (IndustryIndex,
-  // IndustriesPreview). Kept so the build stays green; integration removes
-  // them with those components.
-  'industries.eyebrow': 'Industries',
-  'industries.heading': 'Built for the industries that keep moving.',
-  'industries.lede':
-    'The sectors we most often source for. The specification is matched to the duty, not to a catalogue.',
-  'industries.count': (n: number) => `${n} industries`,
-  /** Also the accessible name of the /industries index list. */
+  /** Accessible name of the industry list (IndexRows). */
   'industries.listLabel': 'Industries',
-  'industries.enquire': 'Request a quote',
-  'industries.cardLabel': (name: string) => `Request a quote for ${name}`,
 };
 
 export type IndustriesStrings = typeof industries;

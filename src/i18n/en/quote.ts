@@ -17,9 +17,6 @@ export const quote = {
   'quote.heading': 'Tell us what you need.',
   'quote.lede':
     'No account, ever. Send a part number, a photograph or a whole list and we reply with price and lead time.',
-  'quote.directIntro': 'Prefer to write directly?',
-  'quote.required': 'Only the contact field is required.',
-  'quote.processLink': 'What happens after you send',
   'quote.formLabel': 'Request a quote',
 
   'quote.type.label': 'What do you need',
@@ -41,8 +38,6 @@ export const quote = {
   'quote.notes.label': 'Anything else we should know',
   'quote.name.label': 'Name and company',
   'quote.contact.label': 'Email or WhatsApp — required',
-  'quote.contact.hint': 'So we can send you the quote. Nothing else is required.',
-  'quote.optional': 'optional',
   'quote.submit': 'Send request',
   'quote.hint':
     'Only the contact field is required. A blurred nameplate photograph and a way to reach you is enough to start.',

@@ -23,19 +23,6 @@ export const products: ProductsStrings = {
   'scope.band.kicker': '供应范围',
   'scope.band.title': '从单个零件到整条生产线。',
 
-  // ---- legacy (see the English module) ------------------------------------
-  'products.eyebrow': '产品',
-  'products.heading': '工厂背后的一切。',
-  'products.lede': '十二个大类，覆盖机械、电气、自动化、仪器仪表与旋转设备。',
-  'products.count': (n: number) => `${n} 个大类`,
+  // ---- list labels ---------------------------------------------------------
   'products.listLabel': '产品大类',
-  'products.enquire': '索取报价',
-  'products.cardLabel': (name: string) => `为${name}索取报价`,
-  'products.notListed.heading': '列表里没有？',
-  'products.notListed.body':
-    '以上是最常询价的大类，并非我们寻源的全部范围。把部件号发给我们，我们来查。',
-  'products.notListed.cta': '难寻件寻源',
-  'scope.heading': '从最小的零件到整套系统。',
-  'scope.lede': '向下滚动查看供应范围。五个层级由同一团队负责。',
-  'scope.stepCount': (n: number, total: number) => `第 ${n} 级，共 ${total} 级`,
 };

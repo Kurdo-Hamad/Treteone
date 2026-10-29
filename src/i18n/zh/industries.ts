@@ -19,12 +19,6 @@ export const industries: IndustriesStrings = {
     '同一个标称型号，用在渣浆里、酸性工况下或粉尘弥漫的窑线上，表现各不相同。下面列出各行业常询的物品，以及决定选型的工况信息。',
   'industries.rows.enquire': '询价',
 
-  // ---- legacy (see the English module) ------------------------------------
-  'industries.eyebrow': '行业',
-  'industries.heading': '服务于不停运转的行业。',
-  'industries.lede': '我们最常服务的行业。规格按工况匹配，而不是按目录。',
-  'industries.count': (n: number) => `${n} 个行业`,
+  // ---- list labels ---------------------------------------------------------
   'industries.listLabel': '行业',
-  'industries.enquire': '索取报价',
-  'industries.cardLabel': (name: string) => `为${name}索取报价`,
 };

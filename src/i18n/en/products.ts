@@ -24,26 +24,8 @@ export const products = {
   'scope.band.kicker': 'Scope',
   'scope.band.title': 'From one component to a complete line.',
 
-  // ---- legacy -------------------------------------------------------------
-  // Read by components the homepage stream is replacing (CategoryIndex,
-  // ScopeScroller) and by nothing on the new /products. Kept so the build
-  // stays green; integration removes them with those components.
-  'products.eyebrow': 'Products',
-  'products.heading': 'Everything behind the plant.',
-  'products.lede':
-    'Twelve categories covering mechanical, electrical, automation, instrumentation and rotating equipment.',
-  'products.count': (n: number) => `${n} categories`,
-  /** Also the accessible name of the /products index list. */
+  /** Accessible name of the category list (IndexRows). */
   'products.listLabel': 'Product categories',
-  'products.enquire': 'Request a quote',
-  'products.cardLabel': (name: string) => `Request a quote for ${name}`,
-  'products.notListed.heading': 'Not on the list?',
-  'products.notListed.body':
-    'These are the categories most often requested, not the limit of what we look for. Send the part number and we will investigate it.',
-  'products.notListed.cta': 'Hard-to-find parts',
-  'scope.heading': 'From the smallest component to a complete system.',
-  'scope.lede': 'Scroll through the scope. The same team handles all five.',
-  'scope.stepCount': (n: number, total: number) => `Stage ${n} of ${total}`,
 };
 
 export type ProductsStrings = typeof products;
