@@ -25,7 +25,16 @@ import imgFacilitiesInstitutions from '~/assets/industries/facilities-institutio
 export interface Industry {
   readonly slug: string;
   readonly name: Localised;
+  /** Short tag line used by the older homepage components. */
   readonly blurb: Localised;
+  /**
+   * The mono spec line on the /industries index rows, from the approved
+   * mockup, verbatim: what the sector asks for, then — after the dash — the
+   * duty data that decides the answer (area classification and sour service
+   * for oil and gas, abrasion and solids content for mining…). That
+   * vocabulary is the point of the page; do not paraphrase it.
+   */
+  readonly spec: Localised;
   readonly image: ImageMetadata;
 }
 
@@ -37,6 +46,10 @@ export const industries: readonly Industry[] = [
       en: 'Pumps · valves · instrumentation · rotating equipment spares',
       zh: '泵 · 阀门 · 仪表 · 旋转设备备件',
     },
+    spec: {
+      en: 'Rotating spares · valves · instrumentation — area classification, sour service, pressure class',
+      zh: '旋转设备备件 · 阀门 · 仪表 — 防爆区域等级、酸性（含硫）工况、压力等级',
+    },
     image: imgOilGas,
   },
   {
@@ -45,6 +58,10 @@ export const industries: readonly Industry[] = [
     blurb: {
       en: 'Control valves · heat exchangers · seals · analysers',
       zh: '调节阀 · 换热器 · 密封件 · 分析仪',
+    },
+    spec: {
+      en: 'Control valves · exchangers · seals · analysers — temperature, medium, trim material',
+      zh: '调节阀 · 换热器 · 密封件 · 分析仪 — 温度、介质、阀内件材质',
     },
     image: imgRefiningPetrochemical,
   },
@@ -55,6 +72,10 @@ export const industries: readonly Industry[] = [
       en: 'Switchgear · transformers · turbine auxiliaries · protection',
       zh: '开关柜 · 变压器 · 汽机辅机 · 保护装置',
     },
+    spec: {
+      en: 'Switchgear · transformers · turbine auxiliaries — voltage, breaking capacity, protection scheme',
+      zh: '开关柜 · 变压器 · 汽轮机辅机 — 电压等级、分断能力、保护方案',
+    },
     image: imgPowerGeneration,
   },
   {
@@ -63,6 +84,10 @@ export const industries: readonly Industry[] = [
     blurb: {
       en: 'Gearboxes · bearings · fans · wear parts · drives',
       zh: '减速机 · 轴承 · 风机 · 易损件 · 传动',
+    },
+    spec: {
+      en: 'Gearboxes · heavy bearings · fans · wear parts — load, dust ingress, duty cycle',
+      zh: '减速机 · 重载轴承 · 风机 · 易损件 — 载荷、粉尘侵入、工作制',
     },
     image: imgCement,
   },
@@ -73,6 +98,10 @@ export const industries: readonly Industry[] = [
       en: 'PLC and drives · sensors · pneumatics · conveyors',
       zh: 'PLC与驱动 · 传感器 · 气动元件 · 输送设备',
     },
+    spec: {
+      en: 'PLC and drives · sensors · pneumatics · conveyors — control platform, I/O count, cycle time',
+      zh: 'PLC与驱动 · 传感器 · 气动元件 · 输送设备 — 控制平台、I/O点数、节拍时间',
+    },
     image: imgManufacturing,
   },
   {
@@ -81,6 +110,10 @@ export const industries: readonly Industry[] = [
     blurb: {
       en: 'Hydraulics · heavy bearings · motors · cooling systems',
       zh: '液压 · 重载轴承 · 电机 · 冷却系统',
+    },
+    spec: {
+      en: 'Hydraulics · heavy bearings · motors · cooling — ambient temperature, shock loading',
+      zh: '液压 · 重载轴承 · 电机 · 冷却 — 环境温度、冲击载荷',
     },
     image: imgSteelMetals,
   },
@@ -91,6 +124,10 @@ export const industries: readonly Industry[] = [
       en: 'Slurry pumps · crusher spares · couplings · lubrication',
       zh: '渣浆泵 · 破碎机备件 · 联轴器 · 润滑',
     },
+    spec: {
+      en: 'Slurry pumps · crusher spares · couplings — abrasion, solids content, wear life',
+      zh: '渣浆泵 · 破碎机备件 · 联轴器 — 磨蚀性、固含量、磨损寿命',
+    },
     image: imgMining,
   },
   {
@@ -100,6 +137,10 @@ export const industries: readonly Industry[] = [
       en: 'Pumps · dosing systems · level instruments · blowers',
       zh: '水泵 · 加药系统 · 液位仪表 · 鼓风机',
     },
+    spec: {
+      en: 'Pumps · dosing · level instruments · blowers — chemical compatibility, submersion rating',
+      zh: '水泵 · 加药 · 液位仪表 · 鼓风机 — 化学相容性、浸没防护等级',
+    },
     image: imgWaterWastewater,
   },
   {
@@ -108,6 +149,10 @@ export const industries: readonly Industry[] = [
     blurb: {
       en: 'Generators · UPS · HVAC components · distribution',
       zh: '发电机 · UPS · 暖通部件 · 配电',
+    },
+    spec: {
+      en: 'Generators · UPS · HVAC components · distribution — load profile, autonomy, footprint',
+      zh: '发电机 · UPS · 暖通部件 · 配电 — 负荷曲线、后备时长、占地尺寸',
     },
     image: imgFacilitiesInstitutions,
   },

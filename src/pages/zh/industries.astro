@@ -1,23 +1,11 @@
 ---
-import ClosingCta from '~/components/ClosingCta.astro';
-import IndustryIndex from '~/components/IndustryIndex.astro';
-import PageHero from '~/components/PageHero.astro';
-import { industries } from '~/data/industries';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
-import Base from '~/layouts/Base.astro';
+import Page from '../industries.astro';
 
-/** /industries — all 9 industries in full (CLAUDE.md §3). */
-
-const t = useTranslations(getLangFromUrl(Astro.url));
+/**
+ * /zh/industries — the same page as /industries. Every string resolves from
+ * the route's language (getLangFromUrl reads /zh/ from Astro.url), so the two
+ * languages share one template and cannot drift apart.
+ */
 ---
 
-<Base title={t('meta.industries.title')} description={t('meta.industries.description')}>
-  <PageHero
-    eyebrow={t('industries.eyebrow')}
-    title={t('industries.heading')}
-    lede={t('industries.lede')}
-    facts={[t('industries.count')(industries.length)]}
-  />
-  <IndustryIndex />
-  <ClosingCta />
-</Base>
+<Page />

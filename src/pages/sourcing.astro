@@ -1,26 +1,129 @@
 ---
-import ClosingCta from '~/components/ClosingCta.astro';
-import PageHero from '~/components/PageHero.astro';
-import ProcessTimeline from '~/components/ProcessTimeline.astro';
-import SourcingChecklist from '~/components/SourcingChecklist.astro';
+import DefinitionGrid from '~/components/DefinitionGrid.astro';
+import PageHead from '~/components/PageHead.astro';
+import ProcessSteps from '~/components/ProcessSteps.astro';
 import { quoteHref } from '~/data/navigation';
-import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import { processSteps } from '~/data/process';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
 /**
- * /sourcing — hard-to-find and obsolete parts, the "what to send" checklist,
- * and the 5-step process (CLAUDE.md §3).
+ * /sourcing — page head, four definition blocks, the navy "what to send"
+ * band, then the five-step process (CLAUDE.md §3; mockup #v-sourcing).
+ *
+ * Rendered for both languages: src/pages/zh/sourcing.astro renders this file,
+ * and every string resolves from the route's language.
  */
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const pad = (n: number): string => String(n).padStart(2, '0');
+
+const definitions = [
+  { title: t('sourcing.def.superseded.title'), body: t('sourcing.def.superseded.body') },
+  { title: t('sourcing.def.nameplate.title'), body: t('sourcing.def.nameplate.body') },
+  { title: t('sourcing.def.equivalents.title'), body: t('sourcing.def.equivalents.body') },
+  { title: t('sourcing.def.documentation.title'), body: t('sourcing.def.documentation.body') },
+];
+
+const toSend = [
+  t('sourcing.what.reference'),
+  t('sourcing.what.nameplate'),
+  t('sourcing.what.drawing'),
+  t('sourcing.what.boq'),
+  t('sourcing.what.description'),
+];
+
+const steps = processSteps.map((step, i) => ({
+  label: t('process.stepLabel')(pad(i + 1)),
+  title: pick(step.name, lang),
+  body: pick(step.description, lang),
+}));
 ---
 
 <Base title={t('meta.sourcing.title')} description={t('meta.sourcing.description')}>
-  <PageHero eyebrow={t('sourcing.eyebrow')} title={t('sourcing.heading')} lede={t('sourcing.lede')}>
-    <a class="btn" href={localisePath(quoteHref, lang)}>{t('sourcing.cta')}</a>
-  </PageHero>
-  <SourcingChecklist />
-  <ProcessTimeline />
-  <ClosingCta />
+  <div class="wrap sec">
+    <PageHead
+      kicker={t('sourcing.page.kicker')}
+      title={t('sourcing.page.title')}
+      lead={t('sourcing.page.lead')}
+    >
+      <DefinitionGrid items={definitions} />
+    </PageHead>
+  </div>
+
+  <section class="navy" aria-labelledby="send-title">
+    <div class="wrap sec">
+      <div class="split">
+        <div>
+          <p class="kicker">{t('sourcing.what.kicker')}</p>
+          <h2 id="send-title">{t('sourcing.what.title')}</h2>
+          <p class="lead split__lead">{t('sourcing.what.lead')}</p>
+          <p class="split__cta">
+            <a class="btn" href={localisePath(quoteHref, lang)}>{t('sourcing.what.cta')}</a>
+          </p>
+        </div>
+        <ol class="checklist">
+          {
+            toSend.map((item, i) => (
+              <li>
+                <span class="checklist__k mono" aria-hidden="true">{pad(i + 1)}</span>
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="process-title">
+    <p class="kicker">{t('process.kicker')}</p>
+    <h2 id="process-title">{t('process.title')}</h2>
+    <ProcessSteps steps={steps} />
+  </section>
 </Base>
+
+<style>
+  /* Mockup .split: copy left, list right; one column below 960px. */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: clamp(26px, 4vw, 60px);
+    align-items: center;
+  }
+  .split__lead {
+    margin-top: 16px;
+  }
+  .split__cta {
+    margin-top: 24px;
+  }
+
+  /* Mockup .checklist, on navy. */
+  .checklist {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line-dark);
+  }
+  .checklist li {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 14px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--line-dark);
+    font-size: .9375rem;
+    color: var(--on-dark-2);
+  }
+  .checklist__k {
+    padding-top: 3px;
+    font-size: .72rem;
+    color: var(--fg-accent);
+  }
+
+  @media (max-width: 960px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

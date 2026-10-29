@@ -1,31 +1,137 @@
 ---
-import About from '~/components/About.astro';
-import ClosingCta from '~/components/ClosingCta.astro';
-import CompanyDetails from '~/components/CompanyDetails.astro';
-import PageHero from '~/components/PageHero.astro';
-import ScopeScroller from '~/components/ScopeScroller.astro';
-import { company } from '~/data/company';
-import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
+import DefinitionGrid from '~/components/DefinitionGrid.astro';
+import PageHead from '~/components/PageHead.astro';
+import { company, mailHref, telHref } from '~/data/company';
+import { getLangFromUrl, languages, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
 /**
- * /about — the company, the 6 points, the scope ladder and the registered
- * details (CLAUDE.md §3).
+ * /about — page head, six definition blocks, then the registered-details
+ * band on pale (CLAUDE.md §3; mockup #v-about).
+ *
+ * Every company fact comes from src/data/company.ts, so it cannot drift from
+ * the footer. The business licence number has not been supplied and is shown
+ * nowhere — no field, no placeholder (§12). The registered Chinese company
+ * name is also pending, so the English registered name is shown on both
+ * routes.
+ *
+ * Rendered for both languages: src/pages/zh/about.astro renders this file,
+ * and every string resolves from the route's language.
  */
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+// Text in the other script gets its own lang, so it is read and shaped right.
+const latinLang = lang === 'en' ? undefined : 'en';
+const hanziLang = lang === 'zh' ? undefined : languages.zh.htmlLang;
+
+const definitions = [
+  { title: t('about.def.specification.title'), body: t('about.def.specification.body') },
+  { title: t('about.def.brandNeutral.title'), body: t('about.def.brandNeutral.body') },
+  { title: t('about.def.hardToFind.title'), body: t('about.def.hardToFind.body') },
+  { title: t('about.def.oneChannel.title'), body: t('about.def.oneChannel.body') },
+  { title: t('about.def.documentation.title'), body: t('about.def.documentation.body') },
+  {
+    title: t('about.def.registered.title'),
+    body: t('about.def.registered.body')(company.registeredName),
+  },
+];
 ---
 
 <Base title={t('meta.about.title')} description={t('meta.about.description')}>
-  <PageHero
-    eyebrow={t('about.eyebrow')}
-    title={t('about.title')}
-    lede={t('about.lede')}
-    facts={[pick(company.district, lang)]}
-  />
-  <About />
-  <ScopeScroller />
-  <CompanyDetails />
-  <ClosingCta />
+  <div class="wrap sec">
+    <PageHead
+      kicker={t('about.page.kicker')}
+      title={t('about.page.title')}
+      lead={t('about.page.lead')(company.registeredName)}
+    >
+      <DefinitionGrid items={definitions} />
+    </PageHead>
+  </div>
+
+  <section class="pale" aria-labelledby="registered-title">
+    <div class="wrap sec">
+      <h2 id="registered-title">{t('about.registered.title')}</h2>
+      <dl class="reg">
+        <div class="reg__item">
+          <dt>{t('about.registered.name')}</dt>
+          <dd lang={latinLang}>{company.registeredName}</dd>
+        </div>
+        <div class="reg__item">
+          <dt>{t('about.registered.enquiries')}</dt>
+          <dd>
+            <a href={mailHref}>{company.email}</a><br />
+            {t('cta.whatsapp')} <a href={telHref}>{company.phoneDisplay}</a>
+          </dd>
+        </div>
+        <div class="reg__item reg__item--wide">
+          <dt>{t('about.registered.address')}</dt>
+          <dd>
+            <span lang={latinLang}>{company.address.latin}</span><br />
+            <span lang={hanziLang}>{company.address.hanzi}</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
 </Base>
+
+<style>
+  /* Mockup: the .glance grid with smaller headings (1.1rem), address across
+     two columns. */
+  .reg {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(22px, 3vw, 40px);
+    margin: 28px 0 0;
+  }
+  .reg__item--wide {
+    grid-column: span 2;
+  }
+
+  .reg dt {
+    font-family: var(--font-stack-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    color: var(--fg-heading);
+  }
+  html[lang^='zh'] .reg dt {
+    letter-spacing: 0;
+  }
+
+  .reg dd {
+    margin: 6px 0 0;
+    font-size: .8125rem;
+    line-height: 1.5;
+    color: var(--fg-muted);
+    overflow-wrap: anywhere;
+  }
+  /* The mockup shows these as plain text; as links they take link-blue and
+     an underline, so they never read as links by colour alone (§11). */
+  .reg a {
+    color: var(--fg-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .reg a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  @media (max-width: 960px) {
+    .reg {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .reg {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .reg__item--wide {
+      grid-column: auto;
+    }
+  }
+</style>

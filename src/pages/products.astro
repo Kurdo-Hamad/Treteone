@@ -1,23 +1,44 @@
 ---
-import ClosingCta from '~/components/ClosingCta.astro';
-import CategoryIndex from '~/components/CategoryIndex.astro';
-import PageHero from '~/components/PageHero.astro';
+import IndexRows from '~/components/IndexRows.astro';
+import PageHead from '~/components/PageHead.astro';
+import ScopeSteps from '~/components/ScopeSteps.astro';
 import { categories } from '~/data/categories';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+import { quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
-/** /products — all 12 categories in full (CLAUDE.md §3). */
+/**
+ * /products — page head, the 12 categories as index rows, then the navy
+ * five-step scope band (CLAUDE.md §3; mockup #v-products).
+ *
+ * Rendered for both languages: src/pages/zh/products.astro renders this file,
+ * and every string resolves from the route's language.
+ */
 
-const t = useTranslations(getLangFromUrl(Astro.url));
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const rows = categories.map((category) => ({
+  id: category.slug,
+  name: pick(category.name, lang),
+  spec: pick(category.spec, lang),
+}));
 ---
 
 <Base title={t('meta.products.title')} description={t('meta.products.description')}>
-  <PageHero
-    eyebrow={t('products.eyebrow')}
-    title={t('products.heading')}
-    lede={t('products.lede')}
-    facts={[t('products.count')(categories.length)]}
-  />
-  <CategoryIndex />
-  <ClosingCta />
+  <div class="wrap sec">
+    <PageHead
+      kicker={t('products.page.kicker')(categories.length)}
+      title={t('products.page.title')}
+      lead={t('products.page.lead')}
+    >
+      <IndexRows
+        rows={rows}
+        href={localisePath(quoteHref, lang)}
+        action={t('products.rows.enquire')}
+        label={t('products.listLabel')}
+      />
+    </PageHead>
+  </div>
+  <ScopeSteps />
 </Base>

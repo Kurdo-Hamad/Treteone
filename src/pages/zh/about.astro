@@ -1,31 +1,11 @@
 ---
-import About from '~/components/About.astro';
-import ClosingCta from '~/components/ClosingCta.astro';
-import CompanyDetails from '~/components/CompanyDetails.astro';
-import PageHero from '~/components/PageHero.astro';
-import ScopeScroller from '~/components/ScopeScroller.astro';
-import { company } from '~/data/company';
-import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
-import Base from '~/layouts/Base.astro';
+import Page from '../about.astro';
 
 /**
- * /about — the company, the 6 points, the scope ladder and the registered
- * details (CLAUDE.md §3).
+ * /zh/about — the same page as /about. Every string resolves from the route's
+ * language (getLangFromUrl reads /zh/ from Astro.url), so the two languages
+ * share one template and cannot drift apart.
  */
-
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 ---
 
-<Base title={t('meta.about.title')} description={t('meta.about.description')}>
-  <PageHero
-    eyebrow={t('about.eyebrow')}
-    title={t('about.title')}
-    lede={t('about.lede')}
-    facts={[pick(company.district, lang)]}
-  />
-  <About />
-  <ScopeScroller />
-  <CompanyDetails />
-  <ClosingCta />
-</Base>
+<Page />
