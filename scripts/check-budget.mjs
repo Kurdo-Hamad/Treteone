@@ -48,8 +48,8 @@ const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
  * Handles what this site actually uses: a list of `(min-width: Npx) <length>`
  * conditions with a bare fallback, where a length is px or vw.
  *
- * Without this the rail cards get costed at their 1020w rendition instead of
- * the 680w one a phone really fetches — a 25% overstatement on the images.
+ * Without this, images get costed at a wider rendition than a phone fetches —
+ * a 25% overstatement on the pass-2 product rail.
  */
 function resolveSizes(sizes) {
   if (!sizes) return VIEWPORT;
@@ -140,43 +140,35 @@ function measure(route, htmlPath) {
   }
 
   // Images, split by whether they load on arrival or only once the visitor
-  // gets there. The distinction is real and worth keeping honest:
+  // gets there. Classified by what the browser actually does:
   //
-  //   hero       every figure sits at inset:0 in the opening viewport, so the
-  //              browser counts all five as visible and fetches them whatever
-  //              their opacity. These are the ones that decide LCP.
-  //   rail       below the fold AND horizontally off-screen.
-  //   scope      below the fold — the sticky stack is nowhere near the opening
-  //              viewport, so lazy loading really does defer it.
-  //   industries below the fold, and eight of the nine panels are `hidden`,
-  //              which stops a lazy image loading until its panel is shown.
-  //   sourcing,
-  //   about      below the fold, single lazy image each.
+  //   hero            every frame sits at inset:0 in the opening viewport, so
+  //                   the browser counts all five as visible and fetches them
+  //                   whatever their opacity or loading attribute. Arrival.
+  //   eco__media      the homepage ecosystem's desktop photograph panel. It is
+  //                   display:none below 1040px and every image in it is lazy,
+  //                   and a lazy image with no layout box is never fetched. At
+  //                   a 412px viewport it costs nothing, and is listed as such.
+  //   everything else loading="lazy" is deferred until scrolled near;
+  //                   anything eager is counted as arriving.
   //
-  // Everything is still counted against the budget: a visitor who reads the
-  // page pays for all of it, and this check is meant to be pessimistic.
-  const SECTIONS = [
-    ['hero__slide', 'hero', false],
-    ['card__frame', 'rail', true],
-    ['scope__figure', 'scope', true],
-    ['industry-panel', 'industries', true],
-    ['sourcing__frame', 'sourcing', true],
-    ['about__media', 'about', true],
+  // Everything that can load is still counted against the budget: a visitor
+  // who reads the whole page pays for all of it, and this check is meant to be
+  // pessimistic.
+  const MARKERS = [
+    ['hero__slide', 'hero', 'arrival'],
+    ['eco__figure', 'ecosystem panel', 'desktop-only'],
   ];
 
-  // A picture that matches none of the above is counted as arriving, which is
-  // the pessimistic reading — but it almost certainly means a new section was
-  // added without a marker here, so say so rather than quietly mis-filing it.
-  const unclassified = [];
-
   let deferred = 0;
+  let skipped = 0;
 
   for (const picture of html.match(/<picture[\s\S]*?<\/picture>/g) ?? []) {
     const index = html.indexOf(picture);
-    const preceding = html.slice(Math.max(0, index - 400), index);
-    const section = SECTIONS.find(([marker]) => preceding.includes(marker));
-    const [, name = 'UNCLASSIFIED', isDeferred = false] = section ?? [];
-    if (!section) unclassified.push(name);
+    const preceding = html.slice(Math.max(0, index - 300), index);
+    const marker = MARKERS.find(([cls]) => preceding.includes(cls));
+    const lazy = /<img[^>]+loading="lazy"/.test(picture);
+    const [, name, mode] = marker ?? [null, lazy ? 'lazy image' : 'eager image', lazy ? 'deferred' : 'arrival'];
 
     const avif = picture.match(/<source[^>]+type="image\/avif"[^>]*>/)?.[0]
       ?? picture.match(/<source[^>]+srcset="([^"]+)"[^>]*>/)?.[0];
@@ -186,21 +178,24 @@ function measure(route, htmlPath) {
     const picked = pickCandidate(srcset, avif?.match(/\ssizes="([^"]+)"/)?.[1]);
     if (!picked) continue;
 
+    if (mode === 'desktop-only') {
+      skipped += 1;
+      continue;
+    }
+
     const bytes = size(picked.url);
-    if (isDeferred) deferred += bytes;
+    if (mode === 'deferred') deferred += bytes;
     items.push({
-      label: `${picked.url} (${picked.width}w) — ${name}${isDeferred ? ', deferred' : ''}`,
+      label: `${picked.url} (${picked.width}w) — ${name}${mode === 'deferred' ? ', deferred' : ''}`,
       bytes,
     });
   }
 
-  if (unclassified.length > 0) {
-    console.warn(
-      `
-  ! ${unclassified.length} image(s) matched no section marker in check-budget.mjs.
-` +
-        '    They are counted as arriving. Add their marker to SECTIONS.',
-    );
+  if (skipped > 0) {
+    items.push({
+      label: `  ↳ ${skipped} desktop-only image(s) not fetched at ${VIEWPORT}px (display:none + lazy)`,
+      bytes: 0,
+    });
   }
 
   const total = items.reduce((sum, item) => sum + item.bytes, 0);
@@ -215,19 +210,38 @@ function measure(route, htmlPath) {
   const pct = ((total / BUDGET) * 100).toFixed(0);
   console.log(`  ${kb(total - deferred).padStart(10)}  on arrival — this is what decides LCP`);
   console.log(`  ${kb(deferred).padStart(10)}  deferred until scrolled to or opened`);
-  console.log(`  ${kb(total).padStart(10)}  TOTAL — ${pct}% of the 1.5 MB budget (§8)`);
+  console.log(`  ${kb(total).padStart(10)}  TOTAL — ${pct}% of the 1.5 MB budget (§10)`);
 
-  return total;
+  return { total, deferred };
 }
 
-const routes = [
-  ['/  (English)', 'index.html'],
-  ['/zh/  (Chinese)', 'zh/index.html'],
-];
+const PAGES = ['', 'products/', 'industries/', 'sourcing/', 'brands/', 'about/', 'quote/'];
+
+// All fourteen routes (§3): seven pages, each in both languages.
+const routes = ['', 'zh/'].flatMap((prefix) =>
+  PAGES.map((page) => [`/${prefix}${page}`, `${prefix}${page}index.html`]),
+);
 
 let worst = 0;
+const summary = [];
 for (const [label, path] of routes) {
-  if (existsSync(join(dist, path))) worst = Math.max(worst, measure(label, path));
+  // A route that did not build is a failure, not something to skip quietly.
+  if (!existsSync(join(dist, path))) {
+    console.error(`FAIL — ${label} was not built (expected dist/${path}).`);
+    process.exit(1);
+  }
+  const { total, deferred } = measure(label, path);
+  summary.push([label, total, deferred]);
+  worst = Math.max(worst, total);
+}
+
+console.log('\nSummary');
+console.log('─'.repeat(78));
+console.log(`  ${"route".padEnd(16)}${"arrival".padStart(12)}${"deferred".padStart(12)}${"total".padStart(12)}  budget`);
+for (const [label, total, deferred] of summary) {
+  console.log(
+    `  ${label.padEnd(16)}${kb(total - deferred).padStart(12)}${kb(deferred).padStart(12)}${kb(total).padStart(12)}  ${((total / BUDGET) * 100).toFixed(0)}%`,
+  );
 }
 
 console.log('');

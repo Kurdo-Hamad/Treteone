@@ -1,5 +1,5 @@
 /**
- * The brand list (CLAUDE.md §3), driving the BrandMarquee (§6.9).
+ * The brand list (CLAUDE.md §3, §9), driving the homepage BrandStrip and the /brands BrandGrid.
  *
  * ⚠ §11 — "Never claim authorised distributor, agent or partner status. Wording
  * stays 'Brands we source'." Nothing in this module or the component that reads
@@ -11,7 +11,7 @@
  * tile currently renders as the dashed name fallback. That is the expected
  * state, not a bug.
  *
- * A logo appears the moment public/logos/<slug>.svg exists — BrandMarquee reads
+ * A logo appears the moment public/logos/<slug>.svg exists — src/data/brand-logos.ts reads
  * that directory at build time. It also refuses to build if such a file turns
  * out to be a raster in an SVG wrapper (§8).
  */

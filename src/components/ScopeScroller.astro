@@ -4,8 +4,8 @@ import { scopeStages } from '~/data/scope';
 import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §6.6 — sticky image left, 5 stages scrolling right, image and
- * corner tag swap per stage. Stacks on mobile.
+ * /about — the component-to-system scope ladder. Sticky image left, five
+ * stages scrolling right, image and corner tag swap per stage. Stacks on mobile.
  *
  * Every stage's tag is rendered here at build time and the script only toggles
  * which one is visible, so no translation reaches the browser and the first
@@ -16,7 +16,7 @@ import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
  * gets is five headings and five paragraphs in order, which is the argument the
  * section is actually making.
  *
- * ⚠ §10 — the five photographs are "PHOTOGRAPH PENDING" plates.
+ * ⚠ §12 — the five photographs are stand-ins.
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -26,7 +26,7 @@ const total = scopeStages.length;
 const pad = (n: number): string => String(n).padStart(2, '0');
 ---
 
-<section class="scope dark-surface" id="scope" data-scope>
+<section class="scope dark-surface" id="scope" aria-labelledby="scope-title" data-scope>
   <div class="scope__grid">
     <div class="scope__media" aria-hidden="true">
       {
@@ -60,7 +60,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 
     <div class="scope__steps">
       <div class="scope__intro">
-        <h2>{t('scope.heading')}</h2>
+        <h2 id="scope-title">{t('scope.heading')}</h2>
         <p class="lede scope__lede">{t('scope.lede')}</p>
       </div>
 
@@ -108,7 +108,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     top: var(--header-h);
     height: 56svh;
     overflow: hidden;
-    background: var(--ink-3);
+    background: var(--surface-primary);
   }
 
   .scope__figure {
@@ -131,7 +131,6 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(.4) contrast(1.05);
   }
 
   .scope__frame {
@@ -147,9 +146,11 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     left: 28px;
     bottom: 28px;
     z-index: 3;
+    padding: 6px 10px;
+    background: var(--color-navy);
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--signal);
+    color: var(--color-cyan-light);
     opacity: 0;
     transition: opacity .4s var(--ease);
   }
@@ -159,7 +160,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
   .scope:not(.is-live) .scope__tag:first-of-type {
     opacity: 1;
   }
-  /* §4 — no letter-spacing on Chinese headings, and uppercasing does nothing
+  /* §5 — no letter-spacing on Chinese headings, and uppercasing does nothing
      to Hanzi but would still stretch any Latin mixed into it. */
   :global(html[lang^='zh']) .scope__tag {
     letter-spacing: 0;
@@ -192,21 +193,20 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     transition: color var(--dur);
   }
   .scope__step.is-on .scope__step-no {
-    color: var(--signal);
+    color: var(--color-cyan-light);
   }
 
   .scope__step-title {
     font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-    font-weight: 500;
-    letter-spacing: var(--meso-ls-h2);
-    /* The prototype dims inactive headings to 42% opacity. §5 puts the floor on
+    letter-spacing: var(--tracking-h23);
+    /* The prototype dims inactive headings to 42% opacity. §11 puts the floor on
        a dark ground at .50 — 5.05:1 — so the emphasis is carried by a token
        rather than by fading text below the contrast floor. */
     color: var(--on-dark-4);
     transition: color var(--dur);
   }
   .scope__step.is-on .scope__step-title {
-    color: var(--white);
+    color: var(--text-inverse);
   }
 
   .scope__step-body {
@@ -216,7 +216,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     max-width: 36ch;
   }
 
-  /* §9 — nothing fades. Which stage is current is information, so it still
+  /* §11 — nothing fades. Which stage is current is information, so it still
      tracks the scroll; it just changes instantly instead of crossfading. */
   @media (prefers-reduced-motion: reduce) {
     .scope__figure,

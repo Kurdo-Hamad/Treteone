@@ -3,18 +3,17 @@ import { processSteps } from '~/data/process';
 import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §6.10 — 5 steps, amber line fills on scroll.
+ * /sourcing — 5 steps; the connecting line fills as the steps come into view.
  *
- * The steps are an ordered list, because they are one: this is what happens to
- * an enquiry, first to last. A screen reader gets "list, 5 items" and the order
- * for free, which is the whole content of the section.
+ * The steps are an ordered list, because they are one: what happens to an
+ * enquiry, first to last. A screen reader gets "list, 5 items" and the order.
  *
- * §9 — under reduced motion the line is simply drawn full and every step is
- * marked reached. Nothing grows. The CSS does that on its own; the script
- * checks the same query and declines to run.
+ * §11 — under reduced motion the line is simply drawn full and every step is
+ * marked reached. The line is also full when the script has not run, so a
+ * failed bundle leaves a finished timeline rather than an empty one.
  *
- * The line is also full when the script has not run at all, so a failed bundle
- * leaves a finished-looking timeline rather than a permanently empty one.
+ * A reached step is marked by fill AND by the navy knot changing from outline
+ * to solid, so the state is never colour alone.
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -23,10 +22,11 @@ const t = useTranslations(lang);
 const total = processSteps.length;
 ---
 
-<section class="process" id="process" data-process>
+<section class="process" id="process" aria-labelledby="process-title" data-process>
   <div class="wrap">
     <div class="process__head rv">
-      <h2>{t('process.heading')}</h2>
+      <h2 id="process-title">{t('process.heading')}</h2>
+      <p class="process__lede">{t('process.lede')}</p>
     </div>
 
     <div class="process__track">
@@ -42,8 +42,8 @@ const total = processSteps.length;
                 {i + 1}
               </span>
               <span class="sr-only">{t('process.stepCount')(i + 1, total)}</span>
-              <b class="pstep__name">{pick(step.name, lang)}</b>
-              <small class="pstep__body">{pick(step.description, lang)}</small>
+              <h3 class="pstep__name">{pick(step.name, lang)}</h3>
+              <p class="pstep__body">{pick(step.description, lang)}</p>
             </li>
           ))
         }
@@ -59,93 +59,81 @@ const total = processSteps.length;
 <style>
   .process {
     padding-block: var(--section-y);
+    background: var(--surface-card);
+    border-top: 1px solid var(--rule-light);
   }
 
-  .process__head {
-    margin-bottom: 44px;
+  .process__lede {
+    margin-top: 16px;
+    color: var(--text-body);
   }
 
   .process__track {
     position: relative;
-    margin-top: 44px;
+    margin-top: clamp(40px, 5vw, 64px);
   }
 
-  /* The connecting line only makes sense when the steps sit in a row, so it is
-     drawn from the desktop breakpoint up. */
+  /* The connecting line only makes sense when the steps sit in a row. */
   .process__line {
     display: none;
   }
 
   .process__steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 32px;
-    position: relative;
-  }
-
-  .pstep {
-    display: block;
   }
 
   .pstep__knot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid var(--rule);
-    background: var(--paper);
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--color-navy);
+    border-radius: 50%;
+    background: var(--surface-card);
     font-family: var(--font-stack-mono);
-    font-size: .62rem;
-    color: var(--steel);
+    font-size: .8125rem;
+    color: var(--color-navy);
     transition:
-      border-color var(--dur),
       background var(--dur),
       color var(--dur);
   }
   .pstep.is-on .pstep__knot {
-    border-color: var(--signal);
-    background: var(--signal);
-    color: var(--ink);
+    background: var(--color-navy);
+    color: var(--text-inverse);
   }
 
   .pstep__name {
-    display: block;
-    font-family: var(--font-stack-display);
-    font-size: 1.15rem;
-    font-weight: 500;
-    margin: 18px 0 6px;
+    margin: 20px 0 8px;
+    font-size: 1.375rem;
   }
   .pstep__body {
-    display: block;
-    color: var(--steel);
-    font-size: .88rem;
-    line-height: 1.5;
-    max-width: 26ch;
+    max-width: 30ch;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text-body);
   }
 
-  /* Once the script is running it owns the state: it takes the line back to
-     zero and re-marks each step as it is reached. Before that — and if the
-     bundle never arrives — everything above leaves the timeline complete. */
+  /* Once the script runs it owns the state: line back to zero, each step
+     re-marked as it is reached. */
   .process.is-live .process__fill {
     width: 0;
   }
   .process.is-live .pstep:not(.is-on) .pstep__knot {
-    border-color: var(--rule);
-    background: var(--paper);
-    color: var(--steel);
+    background: var(--surface-card);
+    color: var(--color-navy);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pstep__knot {
-      transition: none;
-    }
+    .pstep__knot,
     .process__fill {
       transition: none;
     }
@@ -163,17 +151,17 @@ const total = processSteps.length;
       position: absolute;
       left: 0;
       right: 0;
-      top: 11px;
+      top: 15px;
       height: 2px;
-      background: var(--rule);
+      background: var(--rule-light);
     }
     .process__fill {
       position: absolute;
       left: 0;
       top: 0;
-      height: 100%;
       width: 100%;
-      background: var(--signal);
+      height: 100%;
+      background: var(--color-navy);
       transition: width .9s var(--ease);
     }
     .process__steps {

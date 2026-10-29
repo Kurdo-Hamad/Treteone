@@ -7,8 +7,7 @@
  * dictionary can hold different text and still satisfy the same type.
  *
  * Product, industry and process copy is not here — it lives beside its data in
- * src/data/*.ts, because one definition has to drive the nav, the rail and the
- * footer at once (§3). This file is chrome only.
+ * src/data/*.ts, because one definition drives several routes at once (§3).
  */
 export const en = {
   // ---- document -----------------------------------------------------------
@@ -16,6 +15,26 @@ export const en = {
   'site.title': 'Trete One — Industrial supply and sourcing',
   'site.description':
     'Industrial supply and sourcing from Guangzhou, China. Spare parts, equipment and machinery for plants that cannot stop. Send a part number, a photo or a whole list.',
+
+  // One title and description per route (§3).
+  'meta.products.title': 'Products — Trete One',
+  'meta.products.description':
+    'Twelve industrial product categories sourced from Guangzhou: automation, instrumentation, electrical, motors and drives, pumps, compressors, valves, MRO spares and more.',
+  'meta.industries.title': 'Industries — Trete One',
+  'meta.industries.description':
+    'Industrial supply and sourcing for oil and gas, refining, power, cement, manufacturing, steel, mining, water and facilities.',
+  'meta.sourcing.title': 'Hard-to-find and obsolete parts — Trete One',
+  'meta.sourcing.description':
+    'Obsolete, discontinued and unmarked industrial parts. Send a part number, a nameplate photo or a BOQ and we investigate it. How an enquiry is handled, in five steps.',
+  'meta.brands.title': 'Brands we source — Trete One',
+  'meta.brands.description':
+    'Manufacturers most often requested from Trete One. We are not an authorised distributor, agent or partner of any brand listed.',
+  'meta.about.title': 'About — Trete One',
+  'meta.about.description':
+    'Trete One is an industrial supply and sourcing company in Guangzhou, China. How we work, what we supply and our company details.',
+  'meta.quote.title': 'Request a quote — Trete One',
+  'meta.quote.description':
+    'Send a part number, a photo or a whole list. No account needed — only a contact is required.',
 
   // ---- header -------------------------------------------------------------
   'nav.label': 'Primary',
@@ -28,12 +47,16 @@ export const en = {
   'nav.closeMenu': 'Close menu',
   'nav.skip': 'Skip to main content',
   'nav.home': 'Trete One — home',
+  'nav.homeShort': 'Home',
+  'nav.breadcrumb': 'Breadcrumb',
 
   'lang.label': 'Language',
   'lang.switchTo': (label: string) => `Switch to ${label}`,
 
   // ---- calls to action ----------------------------------------------------
   'cta.quote': 'Request a quote',
+  'cta.email': 'Email',
+  'cta.whatsapp': 'WhatsApp',
 
   // ---- hero ---------------------------------------------------------------
   // §6 locked copy. Uppercase on the eyebrow and buttons is applied in CSS.
@@ -47,83 +70,122 @@ export const en = {
   'hero.scrollCue': 'Explore Trete One',
   'hero.region': 'Featured photography',
   'hero.slideLabel': (n: number, total: number) => `Show image ${n} of ${total}`,
-  'hero.counter': (n: number, total: number) => `Image ${n} of ${total}`,
 
-  // ---- ticker (§6.3) ------------------------------------------------------
-  // The category names come from src/data/categories.ts. These three are the
-  // extra phrases the prototype's strip carries alongside them.
-  'ticker.hardToFind': 'Hard-to-find parts',
-  'ticker.obsolete': 'Obsolete components',
-  'ticker.globalSourcing': 'Global sourcing',
+  // ---- homepage (§7) ------------------------------------------------------
+  'home.position.label': 'About Trete One',
+  'home.position.statement':
+    'An industrial supply and sourcing company in Guangzhou, finding the parts, equipment and systems that plants run on — from a single component to a complete line.',
+  'home.position.base': 'Guangzhou, China',
+  'home.position.categories': (n: number) => `${n} product categories`,
+  'home.position.industries': (n: number) => `${n} industries`,
+  'home.position.link': 'How we work',
 
-  // ---- stat band (§6.4) ---------------------------------------------------
-  'stats.label': 'Trete One at a glance',
-  'stats.categories': 'product categories',
-  'stats.industries': 'industries served',
-  'stats.base': 'China · supplying worldwide',
-  'stats.reply': 'target reply to an enquiry',
-  // §10 — shown in place of any figure the business has not confirmed.
-  'stats.unconfirmed': 'Unconfirmed',
-  'stats.unconfirmedNote': 'This figure has not been confirmed and is not a commitment.',
+  'home.eco.eyebrow': 'Product ecosystem',
+  'home.eco.heading': 'From control systems to consumables.',
+  'home.eco.explore': 'Explore',
+  'home.eco.linkLabel': (name: string) => `Explore ${name}`,
+  'home.eco.all': 'All product categories',
 
-  // ---- product rail (§6.5) ------------------------------------------------
+  'home.industries.eyebrow': 'Industries',
+  'home.industries.also': 'Also',
+  'home.industries.all': (n: number) => `All ${n} industries`,
+
+  'home.sourcing.eyebrow': 'Hard-to-find & obsolete',
+  'home.sourcing.sendLabel': 'Any one of these is enough',
+  'home.sourcing.cta': 'Send a part number',
+  'home.sourcing.link': 'What to send, and how it works',
+
+  'home.brands.all': 'All brands',
+
+  // ---- detail-page header -------------------------------------------------
+  'page.meta': 'Page summary',
+
+  // ---- closing CTA --------------------------------------------------------
+  'closing.eyebrow': 'Request a quote',
+  'closing.heading': 'Tell us what you need.',
+  'closing.lede':
+    'No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.',
+  'closing.direct': 'Or write to us directly',
+
+  // ---- products (/products) -----------------------------------------------
+  'products.eyebrow': 'Products',
   'products.heading': 'Everything behind the plant.',
   'products.lede':
     'Twelve categories covering mechanical, electrical, automation, instrumentation and rotating equipment.',
-  'products.railLabel': 'Product categories',
-  'products.railHint': 'Use the left and right arrow keys to scroll through the categories.',
-  'products.previous': 'Scroll to previous categories',
-  'products.next': 'Scroll to next categories',
-  'products.enquire': 'Enquire',
-  'products.cardLabel': (name: string) => `${name} — send an enquiry`,
+  'products.count': (n: number) => `${n} categories`,
+  'products.listLabel': 'Product categories',
+  'products.enquire': 'Request a quote',
+  'products.cardLabel': (name: string) => `Request a quote for ${name}`,
+  'products.notListed.heading': 'Not on the list?',
+  'products.notListed.body':
+    'These are the categories most often requested, not the limit of what we look for. Send the part number and we will investigate it.',
+  'products.notListed.cta': 'Hard-to-find parts',
 
-  // ---- scope scroller (§6.6) ----------------------------------------------
+  // ---- scope ladder (/about) ----------------------------------------------
   'scope.heading': 'From the smallest component to a complete system.',
   'scope.lede': 'Scroll through the scope. The same team handles all five.',
   'scope.stepCount': (n: number, total: number) => `Stage ${n} of ${total}`,
 
-  // ---- industry picker (§6.7) ---------------------------------------------
+  // ---- industries (/industries) -------------------------------------------
+  'industries.eyebrow': 'Industries',
   'industries.heading': 'Built for the industries that keep moving.',
-  'industries.lede': 'Pick a plant. We will match the specification to the duty.',
+  'industries.lede':
+    'The sectors we most often source for. The specification is matched to the duty, not to a catalogue.',
+  'industries.count': (n: number) => `${n} industries`,
   'industries.listLabel': 'Industries',
+  'industries.enquire': 'Request a quote',
+  'industries.cardLabel': (name: string) => `Request a quote for ${name}`,
 
-  // ---- sourcing band (§6.8) -----------------------------------------------
+  // ---- sourcing (/sourcing) -----------------------------------------------
+  'sourcing.eyebrow': 'Sourcing',
   'sourcing.heading': 'Can’t find the part? Give us the number.',
   'sourcing.lede':
     'Obsolete, discontinued, legacy automation, unmarked castings, or just a photo of a nameplate — send whatever you have and we will investigate it.',
   'sourcing.cta': 'Upload your requirement',
   'sourcing.checklistLabel': 'What to send',
+  'sourcing.checklistLede': 'Any one of these is enough to start an enquiry.',
   'sourcing.send.partNumber': 'Part number or manufacturer reference',
   'sourcing.send.nameplate': 'Equipment model and nameplate photo',
   'sourcing.send.datasheet': 'Datasheet, drawing or PDF',
   'sourcing.send.boq': 'Excel BOQ or multi-line request',
   'sourcing.send.description': 'A description, if that is all you have',
 
-  // ---- brand marquee (§6.9) -----------------------------------------------
-  // §11 — this wording is fixed. Never "authorised distributor", "agent",
+  // ---- process (/sourcing) ------------------------------------------------
+  'process.heading': 'From requirement to delivery.',
+  'process.lede': 'What happens to an enquiry, first to last.',
+  'process.stepCount': (n: number, total: number) => `Step ${n} of ${total}`,
+
+  // ---- brands (/brands) ---------------------------------------------------
+  // §13 — this wording is fixed. Never "authorised distributor", "agent",
   // "partner" or anything that implies them.
+  'brands.eyebrow': 'Brands',
   'brands.heading': 'Brands we source',
   'brands.lede':
     'A selection of the manufacturers most often requested. If yours is not listed, ask.',
+  'brands.count': (n: number) => `${n} manufacturers listed`,
   'brands.listLabel': 'Manufacturers we source',
+  'brands.ask': 'Ask about another brand',
   'brands.disclaimer':
     'Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.',
 
-  // ---- process timeline (§6.10) -------------------------------------------
-  'process.heading': 'From requirement to delivery.',
-  'process.stepCount': (n: number, total: number) => `Step ${n} of ${total}`,
-
-  // ---- about (§6.11) ------------------------------------------------------
+  // ---- about (/about) -----------------------------------------------------
+  'about.eyebrow': 'About',
+  'about.title': 'Industrial supply and sourcing, from Guangzhou.',
   'about.heading': 'Why buyers work with us',
   'about.lede':
     'Trete One is an industrial supply and sourcing company based in Guangzhou, China, working with maintenance and procurement teams in demanding plants.',
+  'about.details.heading': 'Company details',
+  'about.details.lede': 'The details a buyer should be able to check before placing an order.',
 
-  // ---- quote form (§6.12, §7) ---------------------------------------------
+  // ---- quote form (/quote, §8) --------------------------------------------
   // The only conversion point on the site. Every string here is load-bearing.
+  'quote.eyebrow': 'Request a quote',
   'quote.heading': 'Tell us what you need.',
   'quote.lede':
     'No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.',
-  'quote.directIntro': 'Or message us directly:',
+  'quote.directIntro': 'Prefer to write directly?',
+  'quote.required': 'Only the contact field is required.',
+  'quote.processLink': 'What happens after you send',
   'quote.formLabel': 'Request a quote',
 
   'quote.type.label': 'What do you need?',
@@ -149,7 +211,7 @@ export const en = {
   'quote.submit': 'Send request',
   'quote.sending': 'Sending…',
 
-  // Honeypot (§7). Never seen by a person; a bot that fills it is discarded.
+  // Honeypot (§8). Never seen by a person; a bot that fills it is discarded.
   'quote.honeypot.label': 'Company website',
 
   'quote.success.title': 'Request received.',

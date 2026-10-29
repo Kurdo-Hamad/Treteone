@@ -1,7 +1,7 @@
 ---
 import { footerCategories } from '~/data/categories';
 import { company, mailHref, telHref } from '~/data/company';
-import { companyNav, homeHref, productsHref } from '~/data/navigation';
+import { categoryHref, companyNav, homeHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 
 /**
@@ -39,7 +39,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
           {
             footerCategories.map((category) => (
               <li>
-                <a class="site-footer__link" href={localisePath(productsHref, lang)}>
+                <a class="site-footer__link" href={localisePath(categoryHref(category.slug), lang)}>
                   {pick(category.name, lang)}
                 </a>
               </li>
@@ -135,6 +135,7 @@ const [markLead = '', markTail = ''] = company.tradingName.split(' ');
     background: var(--surface-anchor);
     color: var(--on-dark-3);
     padding-block: 80px 32px;
+    border-top: 1px solid var(--rule-dark);
     font-size: 1rem;
     line-height: 1.6;
   }

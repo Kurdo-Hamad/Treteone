@@ -1,0 +1,174 @@
+---
+import { Picture } from 'astro:assets';
+import { categories } from '~/data/categories';
+import { quoteHref, sourcingHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * /products — all 12 categories in full (§3).
+ *
+ * Replaces the homepage product rail. A horizontal rail shows three cards and
+ * hides nine; on the one page whose job is to show every category, nothing is
+ * hidden. Two columns from tablet up, one on a phone, no script.
+ *
+ * Each entry's id is its slug, so the homepage ecosystem links straight to it.
+ * One link per entry, to the form — there are no per-category pages (§3).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const pad = (n: number): string => String(n).padStart(2, '0');
+const total = categories.length;
+const quote = localisePath(quoteHref, lang);
+---
+
+<section class="cat-index" aria-labelledby="cat-index-title">
+  <div class="wrap">
+    <h2 class="sr-only" id="cat-index-title">{t('products.listLabel')}</h2>
+
+    <ol class="cat-index__list">
+      {
+        categories.map((category, i) => (
+          <li class="cat" id={category.slug}>
+            <div class="cat__frame">
+              <Picture
+                src={category.image}
+                formats={['avif', 'webp']}
+                fallbackFormat="jpg"
+                widths={[400, 640, 960]}
+                sizes="(min-width: 1280px) 600px, (min-width: 720px) 46vw, 100vw"
+                alt=""
+                class="cat__img"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="cat__body">
+              <p class="mono cat__no" aria-hidden="true">{pad(i + 1)} / {pad(total)}</p>
+              <h3 class="cat__name">{pick(category.name, lang)}</h3>
+              <p class="mono cat__tags">{pick(category.blurb, lang)}</p>
+              <a
+                class="link-arrow cat__go"
+                href={quote}
+                aria-label={t('products.cardLabel')(pick(category.name, lang))}
+              >
+                {t('products.enquire')}
+                <svg class="link-arrow__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M1 7.25h11.19L7.47 2.53l1.06-1.06L15.06 8l-6.53 6.53-1.06-1.06 4.72-4.72H1z" fill="currentColor" />
+                </svg>
+              </a>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="cat-index__more">
+    <div class="wrap cat-index__more-inner">
+      <h2 class="cat-index__more-title">{t('products.notListed.heading')}</h2>
+      <p class="cat-index__more-body">{t('products.notListed.body')}</p>
+      <a class="link-arrow" href={localisePath(sourcingHref, lang)}>
+        {t('products.notListed.cta')}
+        <svg class="link-arrow__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M1 7.25h11.19L7.47 2.53l1.06-1.06L15.06 8l-6.53 6.53-1.06-1.06 4.72-4.72H1z" fill="currentColor" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cat-index {
+    padding-top: var(--section-y);
+  }
+
+  .cat-index__list {
+    display: grid;
+    gap: clamp(48px, 6vw, 72px) 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .cat {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+  }
+
+  .cat__frame {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--surface-card-tinted);
+  }
+  .cat__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cat__body {
+    display: grid;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 2px solid var(--color-navy);
+  }
+  .cat__no {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+  .cat__name {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    line-height: var(--leading-h23);
+    text-wrap: balance;
+  }
+  .cat__tags {
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  :global(html[lang^='zh']) .cat__tags {
+    text-transform: none;
+  }
+  .cat__go {
+    justify-self: start;
+    margin-top: 4px;
+  }
+
+  /* -- not on the list --------------------------------------------------- */
+  .cat-index__more {
+    margin-top: var(--section-y);
+    padding-block: clamp(48px, 6vw, 80px);
+    background: var(--surface-tinted);
+  }
+  .cat-index__more-inner {
+    display: grid;
+    gap: 16px;
+    align-items: center;
+  }
+  .cat-index__more-title {
+    font-size: var(--fs-h2);
+  }
+  .cat-index__more-body {
+    max-width: 52ch;
+    color: var(--text-body);
+  }
+  .cat-index__more .link-arrow {
+    justify-self: start;
+  }
+
+  @media (min-width: 720px) {
+    .cat-index__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1040px) {
+    .cat-index__more-inner {
+      grid-template-columns: 4fr 6fr auto;
+      gap: 48px;
+    }
+  }
+</style>

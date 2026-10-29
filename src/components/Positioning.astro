@@ -1,0 +1,115 @@
+---
+import { categories } from '~/data/categories';
+import { aboutHref } from '~/data/navigation';
+import { industries } from '~/data/industries';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * §7.2 — one short statement, generous white space.
+ *
+ * Composition: a small label in the left margin, the statement offset into the
+ * right two-thirds, a mono fact line beneath. The counts are derived from the
+ * data that drives /products and /industries, so they cannot overstate what
+ * the site lists (§13).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const facts = [
+  t('home.position.base'),
+  t('home.position.categories')(categories.length),
+  t('home.position.industries')(industries.length),
+];
+---
+
+<section class="position" aria-labelledby="position-label">
+  <div class="wrap position__grid">
+    <h2 class="eyebrow position__label" id="position-label">{t('home.position.label')}</h2>
+
+    <div class="position__body rv">
+      <p class="position__statement">{t('home.position.statement')}</p>
+
+      <div class="position__foot">
+        <ul class="position__facts">
+          {facts.map((fact) => <li class="mono position__fact">{fact}</li>)}
+        </ul>
+        <a class="link-arrow" href={localisePath(aboutHref, lang)}>
+          {t('home.position.link')}
+          <svg class="link-arrow__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M1 7.25h11.19L7.47 2.53l1.06-1.06L15.06 8l-6.53 6.53-1.06-1.06 4.72-4.72H1z" fill="currentColor" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .position {
+    padding-block: clamp(96px, 14vw, 200px);
+    background: var(--surface-page);
+  }
+
+  .position__grid {
+    display: grid;
+    gap: 28px;
+  }
+
+  .position__label {
+    padding-top: 12px;
+    border-top: 2px solid var(--color-navy);
+    width: fit-content;
+    color: var(--text-primary);
+  }
+
+  .position__statement {
+    max-width: 30ch;
+    font-family: var(--font-stack-display);
+    font-size: var(--fs-h2);
+    font-weight: 500;
+    line-height: var(--leading-h23);
+    letter-spacing: var(--tracking-h23);
+    color: var(--text-primary);
+    text-wrap: pretty;
+  }
+  :global(html[lang^='zh']) .position__statement {
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+
+  .position__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-top: 20px;
+    border-top: 1px solid var(--rule-light);
+  }
+
+  .position__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .position__fact {
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  :global(html[lang^='zh']) .position__fact {
+    text-transform: none;
+  }
+
+  @media (min-width: 1040px) {
+    .position__grid {
+      grid-template-columns: 3fr 9fr;
+      gap: 48px;
+    }
+  }
+</style>

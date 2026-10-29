@@ -1,5 +1,5 @@
 /**
- * Quote form (CLAUDE.md §7): client-side validation, in-page success and
+ * Quote form (CLAUDE.md §8): client-side validation, in-page success and
  * failure, and the timing half of the spam check.
  *
  * This file is an enhancement, not the mechanism. The form is a real <form>
@@ -28,7 +28,7 @@ if (form) {
   const maxFileBytes = num('maxFileBytes');
   const maxTotalBytes = num('maxTotalBytes');
 
-  /* -- §7 timing check --------------------------------------------------- */
+  /* -- §8 timing check --------------------------------------------------- */
   // Stamped now, compared server side. A person cannot read the form, attach a
   // datasheet and submit within the window; a script firing immediately can.
   if (timeField) timeField.value = String(Date.now());
@@ -71,7 +71,7 @@ if (form) {
     delete result.dataset['state'];
   };
 
-  /* -- §7 attachment validation, client side ----------------------------- */
+  /* -- §8 attachment validation, client side ----------------------------- */
 
   const accepted = (data['accept'] ?? '')
     .split(',')

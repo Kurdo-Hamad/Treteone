@@ -1,0 +1,26 @@
+---
+import ClosingCta from '~/components/ClosingCta.astro';
+import PageHero from '~/components/PageHero.astro';
+import ProcessTimeline from '~/components/ProcessTimeline.astro';
+import SourcingChecklist from '~/components/SourcingChecklist.astro';
+import { quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import Base from '~/layouts/Base.astro';
+
+/**
+ * /sourcing — hard-to-find and obsolete parts, the "what to send" checklist,
+ * and the 5-step process (CLAUDE.md §3).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Base title={t('meta.sourcing.title')} description={t('meta.sourcing.description')}>
+  <PageHero eyebrow={t('sourcing.eyebrow')} title={t('sourcing.heading')} lede={t('sourcing.lede')}>
+    <a class="btn" href={localisePath(quoteHref, lang)}>{t('sourcing.cta')}</a>
+  </PageHero>
+  <SourcingChecklist />
+  <ProcessTimeline />
+  <ClosingCta />
+</Base>

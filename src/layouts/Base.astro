@@ -6,7 +6,6 @@ import {
   defaultLang,
   getLangFromUrl,
   languages,
-  localisePath,
   useTranslations,
 } from '~/i18n/ui';
 import '~/styles/global.css';
@@ -31,6 +30,9 @@ const { title = t('site.title'), description = t('site.description') } = Astro.p
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const alternates = alternateLinks(Astro.url);
+// x-default is this page in the default language, not the homepage.
+const defaultAlternate =
+  alternates.find((alternate) => alternate.lang === defaultLang)?.href ?? '/';
 ---
 
 <!doctype html>
@@ -60,7 +62,7 @@ const alternates = alternateLinks(Astro.url);
     <link
       rel="alternate"
       hreflang="x-default"
-      href={new URL(localisePath('/', defaultLang), Astro.site).href}
+      href={new URL(defaultAlternate, Astro.site).href}
     />
 
     {/*

@@ -38,12 +38,12 @@ import sharp from 'sharp';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-// Tokens, repeated here because a build script cannot read tokens.css.
-const INK_3 = '#0F1215';
-const INK_2 = '#1E2327';
-const SIGNAL = '#F2A900';
-const STEEL = '#6B7178';
-const PAPER = '#F7F7F5';
+// §4 locked tokens, repeated here because a build script cannot read tokens.css.
+const NAVY = '#051b38';
+const INK = '#0a0816';
+const CYAN = '#06b6d4';
+const MUTED_BLUE = '#88acda';
+const WHITE = '#ffffff';
 
 const heroFrames = [
   'SUBSTATION PIPEWORK AND VALVES',
@@ -92,7 +92,7 @@ const industryPanels = {
   'facilities-institutions': 'PLANT ROOM AND SWITCHBOARD',
 };
 
-/** The single plate in the SourcingBand (§6.8). */
+/** The single plate beside the /sourcing checklist. */
 const sourcingPlate = 'GOODS PACKED AND LABELLED FOR DESPATCH';
 
 /** The sticky portrait in the About section (§6.11). §10 lists office and staff
@@ -113,20 +113,20 @@ function plate({ width, height, badge, subject, scale }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
     <pattern id="hatch" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-      <rect width="56" height="56" fill="${INK_3}"/>
-      <rect width="28" height="56" fill="${INK_2}"/>
+      <rect width="56" height="56" fill="${NAVY}"/>
+      <rect width="28" height="56" fill="${INK}"/>
     </pattern>
   </defs>
   <rect width="${width}" height="${height}" fill="url(#hatch)"/>
-  <rect x="${s(70)}" y="${s(70)}" width="${width - s(140)}" height="${height - s(140)}" fill="none" stroke="${STEEL}" stroke-width="${s(3)}" stroke-dasharray="${s(18)} ${s(14)}"/>
+  <rect x="${s(70)}" y="${s(70)}" width="${width - s(140)}" height="${height - s(140)}" fill="none" stroke="${MUTED_BLUE}" stroke-width="${s(3)}" stroke-dasharray="${s(18)} ${s(14)}"/>
   ${
     badge
-      ? `<text x="${pad}" y="${s(330)}" font-family="Arial, Helvetica, sans-serif" font-size="${s(260)}" font-weight="700" fill="${SIGNAL}" letter-spacing="${s(-12)}">${badge}</text>`
+      ? `<text x="${pad}" y="${s(330)}" font-family="Arial, Helvetica, sans-serif" font-size="${s(260)}" font-weight="700" fill="${CYAN}" letter-spacing="${s(-12)}">${badge}</text>`
       : ''
   }
-  <text x="${pad}" y="${height - s(300)}" font-family="Arial, Helvetica, sans-serif" font-size="${s(96)}" font-weight="700" fill="${PAPER}" letter-spacing="${s(-2)}">PHOTOGRAPH PENDING</text>
-  <text x="${pad}" y="${height - s(200)}" font-family="Consolas, monospace" font-size="${s(52)}" fill="${SIGNAL}" letter-spacing="${s(6)}">${esc(subject)}</text>
-  <text x="${pad}" y="${height - s(120)}" font-family="Consolas, monospace" font-size="${s(40)}" fill="${STEEL}" letter-spacing="${s(4)}">CLAUDE.md &#167;10 &#183; NOT YET SUPPLIED</text>
+  <text x="${pad}" y="${height - s(300)}" font-family="Arial, Helvetica, sans-serif" font-size="${s(96)}" font-weight="700" fill="${WHITE}" letter-spacing="${s(-2)}">PHOTOGRAPH PENDING</text>
+  <text x="${pad}" y="${height - s(200)}" font-family="Consolas, monospace" font-size="${s(52)}" fill="${CYAN}" letter-spacing="${s(6)}">${esc(subject)}</text>
+  <text x="${pad}" y="${height - s(120)}" font-family="Consolas, monospace" font-size="${s(40)}" fill="${MUTED_BLUE}" letter-spacing="${s(4)}">CLAUDE.md &#167;10 &#183; NOT YET SUPPLIED</text>
 </svg>`;
 }
 

@@ -1,0 +1,161 @@
+---
+import { homeHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * The opening band of every detail route (§3). One component, so all six pages
+ * share the same header treatment, type scale and focus behaviour (§13 — one
+ * coherent product).
+ *
+ * Typographic only. The homepage hero carries the photography; a second
+ * full-bleed image on every route would cost the budget (§10) and repeat
+ * stand-in stock photographs a buyer has already seen.
+ *
+ * `data-header-dark-zone` makes the sticky header start dark over this band.
+ */
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  /** Short factual labels, set in mono to the right on desktop. */
+  facts?: readonly string[];
+}
+
+const { eyebrow, title, lede, facts = [] } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const hasActions = Astro.slots.has('default');
+---
+
+<section class="page-hero dark-surface" data-header-dark-zone aria-labelledby="page-title">
+  <div class="wrap page-hero__inner">
+    <nav class="page-hero__crumbs" aria-label={t('nav.breadcrumb')}>
+      <ol>
+        <li><a href={localisePath(homeHref, lang)}>{t('nav.homeShort')}</a></li>
+        <li aria-current="page">{eyebrow}</li>
+      </ol>
+    </nav>
+
+    <div class="page-hero__grid">
+      <div class="page-hero__copy">
+        <p class="eyebrow page-hero__eyebrow">{eyebrow}</p>
+        <h1 class="page-hero__title" id="page-title">{title}</h1>
+        <p class="page-hero__lede">{lede}</p>
+        {hasActions && <div class="page-hero__actions"><slot /></div>}
+      </div>
+
+      {
+        facts.length > 0 && (
+          <ul class="page-hero__facts" aria-label={t('page.meta')}>
+            {facts.map((fact) => (
+              <li class="mono page-hero__fact">{fact}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    /* slides under the transparent sticky header, like the homepage hero */
+    margin-top: calc(-1 * var(--header-h));
+    padding-top: calc(var(--header-h) + clamp(28px, 4vw, 48px));
+    padding-bottom: clamp(56px, 8vw, 104px);
+    border-bottom: 1px solid var(--rule-dark);
+  }
+
+  .page-hero__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-small);
+    color: var(--on-dark-3);
+  }
+  .page-hero__crumbs li + li::before {
+    content: '/';
+    margin-right: 10px;
+    color: var(--on-dark-4);
+  }
+  .page-hero__crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--on-dark-2);
+    text-underline-offset: 4px;
+  }
+  .page-hero__crumbs a:hover {
+    color: var(--text-inverse);
+  }
+  .page-hero__crumbs li[aria-current] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .page-hero__grid {
+    display: grid;
+    gap: 40px;
+    margin-top: clamp(24px, 4vw, 56px);
+  }
+
+  .page-hero__eyebrow {
+    color: var(--color-cyan-light);
+  }
+  .page-hero__title {
+    margin-top: 16px;
+    max-width: 18ch;
+    color: var(--text-inverse);
+    text-wrap: balance;
+  }
+  .page-hero__lede {
+    margin-top: 24px;
+    max-width: 52ch;
+    font-size: var(--fs-hero-lead);
+    line-height: 1.55;
+    color: var(--on-dark-2);
+  }
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .page-hero__facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    align-self: end;
+  }
+  .page-hero__fact {
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    color: var(--color-muted-blue);
+  }
+  :global(html[lang^='zh']) .page-hero__fact {
+    text-transform: none;
+  }
+
+  @media (min-width: 1040px) {
+    .page-hero__grid {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .page-hero__facts {
+      flex-direction: column;
+      align-items: flex-end;
+      padding-left: 32px;
+      border-left: 1px solid var(--rule-dark);
+    }
+  }
+</style>

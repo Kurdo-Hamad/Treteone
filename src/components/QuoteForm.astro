@@ -1,5 +1,6 @@
 ---
-import { company, mailHref } from '~/data/company';
+import { company, mailHref, telHref } from '~/data/company';
+import { sourcingHref } from '~/data/navigation';
 import {
   ACCEPT_ATTRIBUTE,
   QUOTE_ENDPOINT,
@@ -7,29 +8,27 @@ import {
   enquiryTypes,
   mb,
 } from '~/data/quote';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §6.12 and §7 — the only conversion point on the site. It must work.
+ * /quote — CLAUDE.md §8, the only conversion point on the site. It must work.
+ * The logic is unchanged from pass 5; the redesign restyles it only.
  *
- * Everything here follows from that one sentence:
- *
- *  - **No account, ever** (§7). One contact field, and nothing else required.
+ *  - **No account, ever.** One contact field, and nothing else required.
  *    A buyer with only a blurry nameplate photo can still send it.
  *  - **It is a real <form> with a real action.** With JavaScript it posts by
- *    fetch and renders the result in place, never a redirect (§7). Without
+ *    fetch and renders the result in place, never a redirect. Without
  *    JavaScript the browser posts it normally and the function answers with a
- *    plain confirmation page carrying the same reference number. A form that
- *    only works with JavaScript is a form that loses enquiries.
- *  - **The spam defence is a honeypot plus a timing check** (§7). No CAPTCHA —
+ *    plain confirmation page (public/form-response.css) carrying the same
+ *    reference number.
+ *  - **The spam defence is a honeypot plus a timing check.** No CAPTCHA —
  *    engineers on plant networks abandon them.
  *  - **Validation is strict about attachments and permissive about everything
- *    else.** Size and type are technical limits that would otherwise bounce.
- *    Nothing else blocks a submission, because a rejected enquiry is worse
- *    than an untidy one.
+ *    else.** A rejected enquiry is worse than an untidy one.
  *
- * Limits come from src/data/quote.ts and are rendered into data attributes, so
- * src/scripts/quote-form.ts holds neither numbers nor copy.
+ * The page heading and lede are in PageHero above this section. Limits come
+ * from src/data/quote.ts through data attributes, so src/scripts/quote-form.ts
+ * holds neither numbers nor copy.
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -39,26 +38,37 @@ const maxFileMb = mb(QUOTE_LIMITS.maxFileBytes);
 const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 ---
 
-<section class="quote dark-surface" id="quote">
+<section class="quote" id="quote" aria-label={t('quote.formLabel')}>
   <div class="wrap quote__grid">
-    <div class="quote__intro rv">
-      <h2 class="quote__heading">{t('quote.heading')}</h2>
-      <p class="lede quote__lede">{t('quote.lede')}</p>
+    <aside class="quote__aside">
+      <p class="quote__required">{t('quote.required')}</p>
 
-      <p class="quote__direct">
-        <span>{t('quote.directIntro')}</span>
-        <a class="quote__direct-link" href={mailHref}>{company.email}</a>
-        <a
-          class="quote__direct-link"
-          href={company.whatsappUrl}
-          rel="noopener noreferrer"
-          target="_blank">WhatsApp {company.phoneDisplay}</a
-        >
-      </p>
-    </div>
+      <div class="quote__direct">
+        <h2 class="eyebrow quote__direct-title">{t('quote.directIntro')}</h2>
+        <ul class="quote__direct-list">
+          <li><a class="quote__direct-link" href={mailHref}>{company.email}</a></li>
+          <li>
+            <a
+              class="quote__direct-link"
+              href={company.whatsappUrl}
+              rel="noopener noreferrer"
+              target="_blank">{t('cta.whatsapp')} {company.phoneDisplay}</a
+            >
+          </li>
+          <li><a class="quote__direct-link" href={telHref}>{company.phoneDisplay}</a></li>
+        </ul>
+      </div>
+
+      <a class="link-arrow" href={localisePath(`${sourcingHref}#process`, lang)}>
+        {t('quote.processLink')}
+        <svg class="link-arrow__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M1 7.25h11.19L7.47 2.53l1.06-1.06L15.06 8l-6.53 6.53-1.06-1.06 4.72-4.72H1z" fill="currentColor" />
+        </svg>
+      </a>
+    </aside>
 
     <form
-      class="quote__form rv"
+      class="quote__form"
       method="post"
       action={QUOTE_ENDPOINT}
       enctype="multipart/form-data"
@@ -85,7 +95,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       data-msg-files-selected={t('quote.files.selected')(0).replace('0', '{n}')}
     >
       <input type="hidden" name="lang" value={lang} />
-      {/* §7 timing check. Set by the script on load; empty means no script ran,
+      {/* §8 timing check. Set by the script on load; empty means no script ran,
           which the function treats as a pass rather than as spam. */}
       <input type="hidden" name="rendered_at" value="" data-quote-time />
 
@@ -192,7 +202,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       </div>
 
       {/*
-        §7 honeypot. Hidden from sight, from the tab order and from assistive
+        §8 honeypot. Hidden from sight, from the tab order and from assistive
         technology, so no person will ever fill it in. Anything that does is
         discarded server side — and told it succeeded, so it does not retry.
       */}
@@ -214,7 +224,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       </div>
 
       {/*
-        Success and failure are rendered here, in place (§7). role="status" so a
+        Success and failure are rendered here, in place (§8). role="status" so a
         screen reader is told without the focus being yanked away.
       */}
       <div class="quote__result" role="status" data-quote-result></div>
@@ -228,106 +238,122 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 
 <style>
   .quote {
-    padding-block: var(--section-y);
+    padding-block: clamp(48px, 7vw, 96px) var(--section-y);
+    background: var(--surface-page);
   }
 
   .quote__grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(32px, 5vw, 72px);
+    gap: 40px;
     align-items: start;
   }
 
-  .quote__heading {
-    font-size: var(--meso-fs-h1);
-    line-height: var(--meso-lh-display);
-    letter-spacing: var(--meso-ls-display);
+  /* -- aside ------------------------------------------------------------- */
+  .quote__aside {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
   }
-  .quote__lede {
-    margin-top: 18px;
-    color: var(--on-dark-2);
+  .quote__required {
+    padding-left: 14px;
+    border-left: 2px solid var(--color-navy);
+    font-size: 1rem;
+    color: var(--text-primary);
   }
-
-  .quote__direct {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: .85rem;
-    color: var(--on-dark-3);
+  .quote__direct-title {
+    color: var(--text-secondary);
+  }
+  .quote__direct-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
   }
   .quote__direct-link {
-    color: var(--signal);
-    text-decoration: none;
-    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    color: var(--text-link-light);
+    text-underline-offset: 4px;
   }
   .quote__direct-link:hover {
-    text-decoration: underline;
+    text-decoration-thickness: 2px;
   }
 
-  /* -- fields ------------------------------------------------------------ */
-
+  /* -- form card --------------------------------------------------------- */
   .quote__form {
     display: grid;
-    gap: 16px;
+    gap: 20px;
+    padding: clamp(20px, 4vw, 40px);
+    background: var(--surface-card);
+    border: 1px solid var(--rule-light);
+    box-shadow: var(--shadow-raised);
   }
 
   .field-row {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
 
   .field__label {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: baseline;
-    font-size: .82rem;
-    color: var(--on-dark-3);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    font-family: var(--font-stack-display);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
   }
   .field__optional {
-    color: var(--on-dark-4);
-    font-size: .74rem;
+    font-family: var(--font-stack-body);
+    font-size: .875rem;
+    font-weight: 400;
+    color: var(--text-secondary);
   }
 
   .field__control {
     width: 100%;
-    padding: 13px 14px;
-    border: 1px solid var(--rule-dark);
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--rule-control);
     border-radius: var(--radius);
+    background: var(--surface-page);
+    color: var(--text-primary);
     font-family: var(--font-stack-body);
-    font-size: .95rem;
-    background: color-mix(in srgb, var(--white) 4%, transparent);
-    color: var(--white);
+    /* 16px or more stops iOS zooming the page on focus. */
+    font-size: 1rem;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .field__control:hover {
+    border-color: var(--color-navy);
   }
   .field__control::placeholder {
-    color: var(--on-dark-4);
+    color: var(--text-secondary);
   }
   .field__control--area {
-    min-height: 110px;
+    min-height: 120px;
     resize: vertical;
   }
   .field__control--file {
     padding: 10px 14px;
   }
-  /* select options are painted by the OS, which does not inherit our ground */
-  .field__control option {
-    background: var(--ink);
-    color: var(--white);
-  }
 
   .field__hint {
     margin-top: 6px;
-    font-size: .78rem;
-    color: var(--on-dark-4);
+    font-size: .875rem;
+    color: var(--text-secondary);
   }
 
+  /* Invalid is marked by a doubled red border, not the colour alone, and the
+     script writes the reason into the result box beneath. */
   .field__control[aria-invalid='true'] {
-    border-color: var(--signal);
+    border-color: var(--feedback-error);
+    box-shadow: inset 0 0 0 1px var(--feedback-error);
   }
 
-  /* §7 honeypot — off-screen rather than display:none, which some bots skip. */
+  /* §8 honeypot — off-screen rather than display:none, which some bots skip. */
   .honeypot {
     position: absolute;
     left: -9999px;
@@ -339,34 +365,48 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   .quote__actions {
     margin-top: 4px;
   }
+  .quote__submit {
+    width: 100%;
+  }
   .quote__submit[aria-disabled='true'] {
     opacity: .6;
     cursor: progress;
   }
 
   /* -- result ------------------------------------------------------------ */
-
   .quote__result:empty {
     display: none;
   }
   .quote__result {
-    border: 1px solid var(--rule-dark);
-    border-radius: var(--radius);
     padding: 20px 22px;
+    border: 1px solid var(--rule-light);
+    border-left-width: 4px;
+    background: var(--surface-page);
   }
   .quote__result[data-state='success'] {
-    border-color: var(--signal);
+    border-left-color: var(--feedback-success);
+  }
+  .quote__result[data-state='error'] {
+    border-left-color: var(--feedback-error);
   }
 
   @media (min-width: 720px) {
     .field-row {
       grid-template-columns: 1fr 1fr;
     }
+    .quote__submit {
+      width: auto;
+    }
   }
 
   @media (min-width: 1040px) {
     .quote__grid {
-      grid-template-columns: .85fr 1.15fr;
+      grid-template-columns: 4fr 8fr;
+      gap: 64px;
+    }
+    .quote__aside {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
     }
   }
 </style>
@@ -376,28 +416,28 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
      because the script builds these nodes, so they carry no scope hash. */
   .quote-result__title {
     display: block;
-    font-family: var(--font-stack-display);
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--white);
     margin-bottom: 8px;
+    font-family: var(--font-stack-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
   }
   .quote-result__body {
     display: block;
-    font-size: .9rem;
-    color: var(--on-dark-2);
+    font-size: 1rem;
+    color: var(--text-body);
   }
   .quote-result__reference {
     display: block;
     margin-top: 14px;
     font-family: var(--font-stack-mono);
-    font-size: .78rem;
-    letter-spacing: var(--meso-ls-mono);
-    color: var(--signal);
+    font-size: .875rem;
+    letter-spacing: var(--tracking-mono);
+    color: var(--text-link-light);
   }
   .quote-result__reference b {
     font-family: var(--font-stack-mono);
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 400;
+    font-size: 1.0625rem;
   }
 </style>

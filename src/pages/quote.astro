@@ -1,0 +1,15 @@
+---
+import PageHero from '~/components/PageHero.astro';
+import QuoteForm from '~/components/QuoteForm.astro';
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+import Base from '~/layouts/Base.astro';
+
+/** /quote — the form, on its own page (CLAUDE.md §3, §8). */
+
+const t = useTranslations(getLangFromUrl(Astro.url));
+---
+
+<Base title={t('meta.quote.title')} description={t('meta.quote.description')}>
+  <PageHero eyebrow={t('quote.eyebrow')} title={t('quote.heading')} lede={t('quote.lede')} />
+  <QuoteForm />
+</Base>

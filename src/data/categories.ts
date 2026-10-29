@@ -15,10 +15,8 @@ import imgIndustrialMachinery from '~/assets/products/industrial-machinery.jpg';
 import imgIndustrialConsumables from '~/assets/products/industrial-consumables.jpg';
 
 /**
- * The 12 product categories (CLAUDE.md §3). One definition drives the product
- * rail, the ticker and the footer's Products column.
- *
- * The footer, the ticker and the product rail all read this one array.
+ * The 12 product categories (CLAUDE.md §3). One definition drives the homepage
+ * ecosystem, the /products index and the footer's Products column.
  *
  * ⚠ §10 — the real photography has not been supplied. Every `image` below is a
  * clearly-marked "PHOTOGRAPH PENDING" plate from scripts/make-placeholders.mjs.

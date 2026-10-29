@@ -1,13 +1,12 @@
 import type { UIKey } from '~/i18n/ui';
 
 /**
- * CLAUDE.md §3 — one definition drives the header, the mobile drawer and the
- * footer's Company column. Labels are i18n keys; `href` is a site-root path
- * that localisePath() prefixes per route.
+ * CLAUDE.md §3 — the seven routes, and the one definition that drives the
+ * header, the mobile drawer, the footer and every internal link.
  *
- * ⚠ Redesign pass 1 points everything at the seven §3 routes. Only `/` exists
- * until pass 2 builds the other six, so every link below except home 404s in
- * this build.
+ * Paths carry their trailing slash. The build writes directory-format pages
+ * (products/index.html), so `/products/` is the address Cloudflare serves
+ * without a redirect hop. localisePath() adds the /zh prefix per route.
  */
 export interface NavItem {
   /** i18n key for the visible label. */
@@ -17,12 +16,17 @@ export interface NavItem {
 }
 
 export const homeHref = '/';
-export const productsHref = '/products';
-export const industriesHref = '/industries';
-export const sourcingHref = '/sourcing';
-export const brandsHref = '/brands';
-export const aboutHref = '/about';
-export const quoteHref = '/quote';
+export const productsHref = '/products/';
+export const industriesHref = '/industries/';
+export const sourcingHref = '/sourcing/';
+export const brandsHref = '/brands/';
+export const aboutHref = '/about/';
+export const quoteHref = '/quote/';
+
+/** A category's own entry on /products. The slug is the element id there. */
+export const categoryHref = (slug: string): string => `${productsHref}#${slug}`;
+/** An industry's own entry on /industries. */
+export const industryHref = (slug: string): string => `${industriesHref}#${slug}`;
 
 /** Header and drawer. Home is the wordmark; the quote route is the CTA. */
 export const primaryNav: readonly NavItem[] = [

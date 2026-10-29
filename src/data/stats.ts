@@ -1,53 +1,25 @@
-import { categories } from '~/data/categories';
-import { company } from '~/data/company';
-import { industries } from '~/data/industries';
-import type { Localised, UIKey } from '~/i18n/ui';
+import type { Localised } from '~/i18n/ui';
 
 /**
- * The StatBand's four figures (CLAUDE.md §6.4 — "Only real numbers").
+ * The reply-time commitment (CLAUDE.md §12).
  *
- * Two of them are counted from the data that drives the rest of the site rather
- * than typed in, so the band cannot drift out of step with the product rail or
- * the industry picker. The third is where the company is.
+ * The StatBand that used to render this was removed from the site in the
+ * seven-route redesign (§7 — no count-up stat band). Nothing renders this file
+ * today. It is kept because §12 names it as the place the business confirms a
+ * reply time: until `confirmed` is true, no page may state one.
  *
- * The fourth is a claim about how fast we answer, and §10 lists the real
- * reply-time commitment as still missing. It is carried here — the prototype's
- * figure, so the slot and the layout are right — but flagged `confirmed: false`,
- * which makes StatBand render it as a marked placeholder instead of a fact.
- * Setting that flag to true is a decision about the business, not the site.
+ * If a confirmed figure is later shown anywhere, read it from here and render
+ * it only when `confirmed` is true.
  */
-export interface Stat {
-  readonly id: string;
-  /** A number counts up on first view (§6.4). A Localised value is shown as-is. */
-  readonly value: number | Localised;
-  readonly labelKey: UIKey;
-  /** false — §10 has not supplied or confirmed this figure. Never state it as fact. */
+export interface Commitment {
+  readonly value: Localised;
+  readonly label: Localised;
+  /** false — §12 has not supplied or confirmed this figure. Never state it as fact. */
   readonly confirmed: boolean;
 }
 
-export const stats: readonly Stat[] = [
-  {
-    id: 'categories',
-    value: categories.length,
-    labelKey: 'stats.categories',
-    confirmed: true,
-  },
-  {
-    id: 'industries',
-    value: industries.length,
-    labelKey: 'stats.industries',
-    confirmed: true,
-  },
-  {
-    id: 'base',
-    value: company.city,
-    labelKey: 'stats.base',
-    confirmed: true,
-  },
-  {
-    id: 'reply',
-    value: { en: '1 working day', zh: '1个工作日' },
-    labelKey: 'stats.reply',
-    confirmed: false,
-  },
-];
+export const replyTime: Commitment = {
+  value: { en: '1 working day', zh: '1个工作日' },
+  label: { en: 'target reply to an enquiry', zh: '询价回复目标时间' },
+  confirmed: false,
+};

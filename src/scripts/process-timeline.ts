@@ -1,12 +1,12 @@
 /**
- * ProcessTimeline (CLAUDE.md §6.10): the amber line fills as the five steps
- * come into view.
+ * ProcessTimeline (/sourcing): the connecting line fills as the five steps come
+ * into view.
  *
  * The fill is decoration over content that is already complete — all five steps
  * are ordinary headings and paragraphs in the HTML, in order, so the section
  * reads correctly with this file absent, and every knot is legible either way.
  *
- * §9 — under prefers-reduced-motion the line is drawn full immediately by CSS
+ * §11 — under prefers-reduced-motion the line is drawn full immediately by CSS
  * and this script does not run, so nothing grows, slides or fades.
  */
 
@@ -20,9 +20,9 @@ if (root && 'IntersectionObserver' in window) {
     const fill = root.querySelector<HTMLElement>('[data-process-fill]');
 
     if (steps.length > 0) {
-      // Nothing is reached yet: CSS leaves the line full so a broken bundle
-      // cannot leave the timeline looking unfinished. Taking it back to zero is
-      // this script's first act, and only once it is certain to run.
+      // CSS leaves the line full so a broken bundle cannot leave the timeline
+      // looking unfinished. Taking it back to zero is this script's first act,
+      // and only once it is certain to run.
       root.classList.add('is-live');
 
       let reached = -1;
@@ -36,8 +36,7 @@ if (root && 'IntersectionObserver' in window) {
             if (!Number.isFinite(index) || index <= reached) continue;
             reached = index;
 
-            // The line only ever advances. Scrolling back up should not unwind
-            // it — a step you have read stays read.
+            // The line only ever advances. A step you have read stays read.
             for (let i = 0; i <= index; i += 1) steps[i]?.classList.add('is-on');
             if (fill) fill.style.width = `${((index + 1) / steps.length) * 100}%`;
           }
@@ -50,8 +49,5 @@ if (root && 'IntersectionObserver' in window) {
   }
 }
 
-/* This file is loaded as a module by its component and has no imports or
-   exports of its own, which would leave TypeScript treating it as a global
-   script — every top-level name shared with every other script in src/scripts.
-   The empty export makes it a module, so its scope is its own. */
+/* A module, so its top-level names are its own. */
 export {};

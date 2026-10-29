@@ -3,7 +3,7 @@
    CLAUDE.md §3: tokens.css defines custom properties on :root; arbitrary hex
    values in components are prohibited.
 
-   Four layers:
+   Three layers:
      1. LOCKED    §4 colour and §5 type, names and values exactly as specified.
                   Never overridden anywhere.
      2. SYSTEM    space, motion, layout — not in the locked document, carried
@@ -11,8 +11,6 @@
      3. CONTEXT   the few roles that flip between a light and a navy ground.
                   A navy section sets .dark-surface once and every child reads
                   the dark values.
-     4. LEGACY    ⚠ temporary. Old pass 1–5 names, re-pointed at locked values
-                  so the un-restyled sections still render. Delete in pass 2.
    ========================================================================= */
 
 :root {
@@ -135,30 +133,10 @@
   --fg-link:   var(--text-link-light);
   --fg-accent: var(--text-link-light);
   --rule-current: var(--rule-light);
+  /* Form-control borders need 3:1 against their ground (WCAG 1.4.11). A
+     hairline rule is 1.25:1, so controls take text-secondary (4.8:1). */
+  --rule-control: var(--text-secondary);
   --focus: var(--focus-light);
-
-  /* --------------------------------------------------------------------
-     4. LEGACY ⚠ — pass 1–5 names still read by the section components that
-     pass 2 redistributes. No superseded value survives: each points at a
-     locked token. Delete this block once `grep -r "var(--signal"` and friends
-     come back empty.
-     -------------------------------------------------------------------- */
-  --ink:    var(--color-navy);
-  --ink-2:  var(--color-ink);
-  --ink-3:  var(--color-navy);
-  --steel:  var(--text-secondary);
-  --paper:  var(--surface-card);
-  --white:  var(--color-white);
-  --signal: var(--accent-electric);
-  --rule:   var(--rule-light);
-
-  --meso-fs-h1: var(--fs-h1);
-  --meso-fs-hero-lead: var(--fs-hero-lead);
-  --meso-lh-display: var(--leading-display);
-  --meso-ls-display: var(--tracking-display);
-  --meso-ls-h2: var(--tracking-h23);
-  --meso-ls-h3: var(--tracking-h23);
-  --meso-ls-mono: var(--tracking-mono);
 }
 
 /* A navy section sets its roles once; every child inherits. */
@@ -169,6 +147,7 @@
   --fg-link:   var(--text-link-dark);
   --fg-accent: var(--color-cyan-light);
   --rule-current: var(--rule-dark);
+  --rule-control: var(--on-dark-4);
   --focus: var(--focus-dark);
 
   background: var(--surface-primary);

@@ -17,7 +17,7 @@ static output · Cloudflare Pages.
 | `npm run build` | Static build into `dist/`. Runs the two font steps below around it. |
 | `npm run preview` | Serve `dist/` locally |
 | `npm run check` | `astro check` — TypeScript + template diagnostics |
-| `npm run budget` | §8 first-load payload check against the 1.5 MB budget (run after a build) |
+| `npm run budget` | §10 first-load payload check, all 14 routes, against the 1.5 MB budget (run after a build) |
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
 | `npm run placeholders` | Fill any image slot that has no file with a §10 plate. Add `-- --force` to replace existing images. |
 | `npm run test:quote` | Exercise the §7 quote endpoint offline (22 assertions) |
@@ -43,62 +43,78 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 
 ## Build status
 
-**All thirteen sections of CLAUDE.md §6 are built.**
+**Navy/cyan redesign complete: seven routes, fourteen pages** (CLAUDE.md §3).
+The amber single-page build from passes 1–5 is gone; the pass notes further
+down describe that build and are kept for the reasoning, not the design.
 
-| § | Section | Notes |
-|---|---|---|
-| 1 | `Header` | sticky, transparent over the hero, mobile drawer |
-| 2 | `RollingHero` | 5 frames, 6s crossfade, counter, captions, progress bars |
-| 3 | `Ticker` | amber strip, hover pause — **no JavaScript at all** |
-| 4 | `StatBand` | count-up on first view; reply time marked unconfirmed (§10) |
-| 5 | `ProductRail` | 12 cards, drag / scroll / arrow keys, snap, progress bar |
-| 6 | `ScopeScroller` | sticky media, 5 stages, tag and image track the scroll |
-| 7 | `IndustryPicker` | 9 industries, real tablist with roving tabindex |
-| 8 | `SourcingBand` | photo plate + "what to send" checklist — **no JavaScript** |
-| 9 | `BrandMarquee` | two rows, opposite directions, all 32 tiles on fallback |
-| 10 | `ProcessTimeline` | 5 steps, amber line fills on scroll |
-| 11 | `About` | 6 points, sticky portrait; last point self-corrects (see below) |
-| 12 | `QuoteForm` | §7 in full — no account, honeypot + timing, in-page states |
-| 13 | `Footer` | both address forms, copy button, §10 placeholders |
+### Routes
 
-**Every nav anchor now resolves** — `#products`, `#scope`, `#industries`,
-`#sourcing`, `#brands`, `#about`, `#quote`. There are no dead links left on
-either route.
+| Route | Holds |
+|---|---|
+| `/` | `RollingHero` · `Positioning` · `ProductEcosystem` · `IndustriesPreview` · `HardToFind` · `BrandStrip` · `ClosingCta` |
+| `/products/` | `PageHero` · `CategoryIndex` (all 12, plus "not on the list?") · `ClosingCta` |
+| `/industries/` | `PageHero` · `IndustryIndex` (all 9) · `ClosingCta` |
+| `/sourcing/` | `PageHero` (the hard-to-find claim) · `SourcingChecklist` · `ProcessTimeline` · `ClosingCta` |
+| `/brands/` | `PageHero` · `BrandGrid` (static, all 32, disclaimer) · `ClosingCta` |
+| `/about/` | `PageHero` · `About` (6 points) · `ScopeScroller` · `CompanyDetails` · `ClosingCta` |
+| `/quote/` | `PageHero` · `QuoteForm` |
+
+Each mirrored under `/zh/`. `Header` and `Footer` wrap every page from
+`Base.astro`. Every detail route opens with the same `PageHero` and closes with
+the same `ClosingCta`, so the six read as one product (§13).
+
+### Removed, and why
+
+- **`Ticker`, `StatBand`** — removed per §7. `src/data/stats.ts` is kept only as
+  the place §12 says the reply time gets confirmed; nothing renders it.
+- **`ProductRail` → `CategoryIndex`.** §3 puts "all 12 categories in full" on
+  `/products`. A horizontal rail shows three and hides nine, most of all on a
+  phone, so the page that exists to show every category now shows every
+  category, in a grid, with no script.
+- **`IndustryPicker` → `IndustryIndex`.** Same reasoning: a tablist shows one
+  panel and hides eight, and its preview was hover-driven (§13). All nine are
+  visible rows now.
+- **`SourcingBand` → `SourcingChecklist`**, **`BrandMarquee` → `BrandStrip`** —
+  renamed because their jobs changed. Build-time logo resolution and the
+  raster-in-SVG guard moved to `src/data/brand-logos.ts`, shared by the strip
+  and the grid.
 
 ### Verified, not assumed
 
-- `npm run check` — 48 files, 0 errors, 0 warnings, 0 hints. `tsc --noEmit`
-  over the whole project, including `functions/`, is also clean.
-- `npm run test:quote` — **22/22**. Covers the happy path, the honeypot, the
-  timing flag, every attachment rule, the unconfigured case, and both no-JS
-  paths. Runs offline; the provider call is stubbed and nothing is sent.
-- No external host is referenced anywhere in `dist/` — no `googleapis`, no
-  `gstatic`, no CDN. `grep -r googleapis src public` must stay empty.
-- No inline `<style>`, no `style="..."` attribute and no inline event handler in
-  the output, so the `default-src 'self'` CSP in `public/_headers` needs no
-  `'unsafe-inline'`. This required `vite.build.assetsInlineLimit: 0`; Astro
-  otherwise writes small hoisted scripts straight into the document.
-- All 376 local paths referenced by the two HTML documents and their CSS exist
-  in `dist/`. No duplicate `id` on either page (46 each).
-- Every colour in the emitted CSS resolves through a token — each brand hex
-  appears exactly once, in the token block. No component hardcodes a colour.
-- Payload, 412px viewport at 2× DPR, **with the stand-in photography in place**:
-  **`/` = 1252.4 KB, `/zh/` = 1251.5 KB** — **82%** of the 1.5 MB budget.
-  **547 KB arrives on load**, **706 KB is deferred**. (With grey plates instead
-  it was 840 KB / 55%.)
-- Zero external hosts even with real photography: every image is committed and
-  served from our own origin, and the word "unsplash" appears nowhere in the
-  built site. The CSP is byte-for-byte unchanged.
-- §11 wording holds: no "authorised distributor", "agent" or "partner" claim
-  appears in either rendered page, and the trademark disclaimer is on both.
-- The §8 raster-in-SVG guard **actually fails the build**. Tested: a logo that
-  wraps a base64 PNG stops `npm run build` naming the file and the rule.
-- The tablist is a real one: 9 tabs, 9 panels, one `tabindex="0"` and eight
-  `tabindex="-1"`, eight panels `hidden`. Checked in the built HTML.
-- `global.css` compiles to 48 KB. MesoAxis reached ~135 KB.
-- The font verification **actually fails**. Tested end to end: Chinese copy
-  routed into a page from a file type the source scan does not read exits
-  `npm run build` with code 1 and names the glyph and the page.
+- `npm run check` — 66 files, 0 errors, 0 warnings, 0 hints.
+- `npm run test:quote` — 22/22. The form's logic is unchanged; only its styling.
+- **Every internal link resolves.** 596 `href`s across the 14 built pages,
+  including every `#slug` anchor into `/products/` and `/industries/`, checked
+  against the built HTML. Every link carries its trailing slash, so none costs
+  a redirect hop.
+- The sitemap lists all 14 routes; hreflang alternates pair each page with its
+  counterpart, and `x-default` points at the same page in English.
+- One `<h1>` per page, correct `lang` per route, no duplicate ids, no dangling
+  `aria-labelledby` / `aria-describedby` / `aria-controls`.
+- No inline `<style>`, `<script>`, `style=""` or event handler in any page.
+- **No superseded colour survives** in `src/`, `public/`, `functions/`,
+  `scripts/` or the built `dist/` — no amber, ink or graphite hex and no
+  pass 1–5 token name. The LEGACY alias block in `tokens.css` is deleted. The
+  only hex outside `tokens.css` is in files that cannot read it: the favicon,
+  `theme-color`, and the standalone `form-response.css`, all locked §4 values.
+- **Focus rings:** one global rule. `--focus-light` (#0369a1) on every light
+  ground, `--focus-dark` (#67e8f9) inside any `.dark-surface`. No component sets
+  its own outline colour. The old ProductRail cyan-on-white card border
+  (2.4:1) went with the component.
+- Payload, 412px @2×, stand-in photography in place, fonts counted worst case:
+
+| Route | Arrival | Deferred | Total | Budget |
+|---|---|---|---|---|
+| `/` | 525.6 KB | 91.7 KB | 617.4 KB | 40% |
+| `/products/` | 353.4 KB | 371.7 KB | 725.1 KB | 47% |
+| `/industries/` | 346.3 KB | 320.2 KB | 666.5 KB | 43% |
+| `/sourcing/` | 337.5 KB | 27.5 KB | 365.0 KB | 24% |
+| `/brands/` | 335.5 KB | 0 | 335.5 KB | 22% |
+| `/about/` | 348.6 KB | 225.6 KB | 574.2 KB | 37% |
+| `/quote/` | 339.3 KB | 0 | 339.3 KB | 22% |
+| `/zh/…` | within 0.5 KB of each English route | | | |
+
+`npm run budget` now measures all 14 and fails if any route did not build.
 
 ---
 
@@ -299,6 +315,9 @@ browsers without AVIF and never counted in the budget.
 ---
 
 ## Pass 5 notes
+
+> Passes 2–5 notes describe the amber single-page build. Components named here
+> may since have been renamed or removed — see "Build status" above.
 
 ### The About section's last point corrects itself
 
@@ -554,6 +573,10 @@ against numbers from the previous pass.
 
 ## Decisions applied
 
+> Passes 1–5. The palette items below (`--ink-3`, the amber interpunct) were
+> superseded by the locked navy/cyan system; the contrast and CSP reasoning
+> still holds.
+
 Recorded here because CLAUDE.md now reflects them and the reasoning should not
 be lost.
 
@@ -644,14 +667,14 @@ simply absent.
 
 | Item | Status |
 |---|---|
-| Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip, and softens the About section's last point until supplied. |
+| Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders as a dashed "TO BE SUPPLIED" chip in the footer and in the `/about/` company details, and softens the last About point until supplied. |
 | Business licence number | Same. |
 | Real photography — office, staff, goods packed, equipment handled | **33 images pending — still all 33.** The slots are currently filled with Unsplash stand-ins (see the top of this README and `src/assets/STAND-INS.md`); none of them is a photograph of Trete One, so none of them counts. 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
 | Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty, so all 32 tiles render as the dashed name fallback — the expected state. Drop `<slug>.svg` in (slug from `brandSlug()` in `src/data/brands.ts`) and that tile becomes a logo. The build rejects an SVG that is really a raster (§8). **The open question is still which manufacturers may be shown as a logo at all.** |
-| Real reply-time commitment | `StatBand` is built. The figure renders as a marked **UNCONFIRMED** placeholder, never as a fact — see "Pass 2 notes". Set `confirmed: true` in `src/data/stats.ts` once the business has committed to a number. |
-| Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts` are the prototype's first pass, carried over unchanged and marked as such in the file headers. Needs a native-speaker review. |
+| Real reply-time commitment | Not shown anywhere: the StatBand is removed (§7). `src/data/stats.ts` holds the unconfirmed figure with `confirmed: false`. No page may state a reply time until the business confirms one. |
+| Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts`. The prototype's strings plus a first translation of everything added in the redesign (hero, homepage, page headers, closing CTA). None reviewed. Needs a native speaker. |
 | Open Graph image | Deliberately absent rather than fabricated. `summary` card only until there is a real photograph. |
-| Favicon | `public/favicon.svg` is provisional — a "T" and the amber dot, real vector paths, no raster. Replace if there is a real mark. |
+| Favicon | `public/favicon.svg` is provisional — a white "T" and a cyan dot on navy, real vector paths, no raster. Replace if there is a real mark. |
 | Font licence texts | See `public/fonts/LICENSES.md`. The OFL *requires* its text to ship with Noto Sans SC. |
 | Legacy URLs | `public/_redirects` is empty. If a previous site exists, map its paths before launch — a 404 on a URL a buyer already has is a lost enquiry. |
 
@@ -696,26 +719,30 @@ field. Re-approve with `npm approve-scripts esbuild` if esbuild's version moves.
 
 ---
 
-## Notes for whoever builds pass 2
+## Notes for the next pass
 
-- `src/data/categories.ts` holds all 12 categories with both languages and
-  their photography. The footer, the ticker and the rail all read that one
-  array. `src/data/industries.ts` holds the 9 and already feeds the StatBand;
-  the IndustryPicker can read it as-is.
-- Scroll reveal is live: mark a block `.rv` and `src/scripts/reveal.ts`, loaded
-  once from `Base.astro`, handles the rest. Do not import it per component.
-- Dark sections get `class="dark-surface"`, which flips the foreground role
-  tokens and the focus-ring colour in one place. Do not restate colours.
-- Component media queries use 720px and 1040px. Those are the only two
-  breakpoints the site has; they are documented in `tokens.css`.
-- Never set a `style` attribute, and never `setAttribute('style', …)` — both are
-  blocked by the CSP. Assigning `el.style.foo` from script is fine.
-- **Adding Chinese copy needs nothing extra.** Put it in `src/i18n/zh.ts` or in a
-  `Localised` field under `src/data/`; the next build picks the new glyphs up
-  and rebuilds the font. You will see `noto-sans-sc: glyph set changed,
-  rebuilding…` — commit the regenerated `public/fonts/noto-sans-sc.*`.
-- If the build ever stops with `verify-noto-sans-sc: FAIL`, the copy reached the
-  page from somewhere the source scan does not read — a `.json`, a `.md`, an API
-  response. Move it into a scanned file rather than widening the subset by hand.
-- Re-run `npm run budget` at the end of each pass. The §8 headroom is real now
-  (26% used), but ten sections of photography is what spends it.
+- **Data drives several routes at once.** `src/data/categories.ts` feeds the
+  homepage ecosystem, `/products/` and the footer; `src/data/industries.ts`
+  feeds the homepage preview and `/industries/`. Each entry's `slug` is its
+  element id on the detail page — `categoryHref()` / `industryHref()` in
+  `src/data/navigation.ts` build the links. Rename a slug and the link follows.
+- **A new detail route** is `PageHero` + its sections + `ClosingCta`, a page in
+  `src/pages/` and its twin in `src/pages/zh/`, a `meta.*` title and
+  description in both dictionaries, and an entry in `PAGES` in
+  `scripts/check-budget.mjs`.
+- Scroll reveal: mark a block `.rv`; `src/scripts/reveal.ts`, loaded once from
+  `Base.astro`, handles the rest.
+- Navy sections get `class="dark-surface"`, which flips the foreground roles,
+  the control border and the focus ring in one place. `PageHero` and
+  `RollingHero` also carry `data-header-dark-zone`, which starts the header dark.
+- Cyan `#06b6d4` is 2.4:1 on white. It is a fill (buttons on navy, the header
+  CTA) or a decoration — never text, never a focus ring, on a light ground.
+- Component media queries use 720px and 1040px only.
+- Never set a `style` attribute or `setAttribute('style', …)` — CSP. Assigning
+  `el.style.foo` from script is fine.
+- **Adding Chinese copy needs nothing extra.** Put it in `src/i18n/zh.ts` or a
+  `Localised` field under `src/data/`; the next build rebuilds the font subset.
+  Commit the regenerated `public/fonts/noto-sans-sc.*`.
+- Re-run `npm run budget` at the end of every pass. The worst route is at 47%
+  with stand-ins; real photography is what spends the rest (see "Real
+  photography vs the §8 budget" above).

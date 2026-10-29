@@ -65,7 +65,7 @@ export type { UIKey, UIStrings };
 
 /**
  * A value that exists in every language. Data modules under src/data use this
- * so that one definition drives the nav, the rail and the footer at once (§3),
+ * so that one definition drives the nav, the page indexes and the footer at once (§3),
  * while components still never hold a hardcoded string.
  */
 export type Localised = Record<Lang, string>;

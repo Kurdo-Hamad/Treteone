@@ -1,40 +1,26 @@
 ---
-import About from '~/components/About.astro';
-import BrandMarquee from '~/components/BrandMarquee.astro';
-import IndustryPicker from '~/components/IndustryPicker.astro';
-import ProcessTimeline from '~/components/ProcessTimeline.astro';
-import ProductRail from '~/components/ProductRail.astro';
-import QuoteForm from '~/components/QuoteForm.astro';
+import BrandStrip from '~/components/BrandStrip.astro';
+import ClosingCta from '~/components/ClosingCta.astro';
+import HardToFind from '~/components/HardToFind.astro';
+import IndustriesPreview from '~/components/IndustriesPreview.astro';
+import Positioning from '~/components/Positioning.astro';
+import ProductEcosystem from '~/components/ProductEcosystem.astro';
 import RollingHero from '~/components/RollingHero.astro';
-import ScopeScroller from '~/components/ScopeScroller.astro';
-import SourcingBand from '~/components/SourcingBand.astro';
-import StatBand from '~/components/StatBand.astro';
-import Ticker from '~/components/Ticker.astro';
 import Base from '~/layouts/Base.astro';
 
 /**
- * Chinese home page.
- *
- * A real route (§2), not a client-side text swap. Every string resolves through
- * the route's language, so this file stays this short as sections land.
- *
- * ⚠ §10 — the Chinese copy is the prototype's first pass and still needs a
- * native-speaker review. See src/i18n/zh.ts and the zh fields in src/data/.
- *
- * All thirteen sections of CLAUDE.md §6, in the order §6 fixes them.
+ * The homepage is a gateway (CLAUDE.md §3). Seven blocks in the §7 rhythm,
+ * each a different composition. It previews and links onward; the detail lives
+ * on the six routes.
  */
 ---
 
 <Base>
   <RollingHero />
-  <Ticker />
-  <StatBand />
-  <ProductRail />
-  <ScopeScroller />
-  <IndustryPicker />
-  <SourcingBand />
-  <BrandMarquee />
-  <ProcessTimeline />
-  <About />
-  <QuoteForm />
+  <Positioning />
+  <ProductEcosystem />
+  <IndustriesPreview />
+  <HardToFind />
+  <BrandStrip />
+  <ClosingCta />
 </Base>

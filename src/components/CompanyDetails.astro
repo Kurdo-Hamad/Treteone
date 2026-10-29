@@ -1,0 +1,133 @@
+---
+import { company, mailHref, telHref } from '~/data/company';
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+
+/**
+ * /about — registered details (§3). The facts a buyer checks before trusting a
+ * supplier they have never heard of (§1, job two).
+ *
+ * ⚠ §12 — the registered Chinese company name and the business licence number
+ * have not been supplied. They render as a marked placeholder, never as a
+ * plausible-looking value.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section class="details" aria-labelledby="details-title">
+  <div class="wrap details__grid">
+    <div class="details__intro rv">
+      <h2 id="details-title">{t('about.details.heading')}</h2>
+      <p class="details__lede">{t('about.details.lede')}</p>
+    </div>
+
+    <dl class="details__list rv">
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.registeredName')}</dt>
+        <dd>
+          {company.registeredName ?? <span class="pending">{t('footer.placeholder')}</span>}
+        </dd>
+      </div>
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.licence')}</dt>
+        <dd>
+          {company.licenceNumber ?? <span class="pending">{t('footer.placeholder')}</span>}
+        </dd>
+      </div>
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.address')}</dt>
+        <dd>
+          <address class="details__address">
+            <span>{company.address.latin}</span>
+            <span lang="zh-CN">{company.address.hanzi}</span>
+          </address>
+        </dd>
+      </div>
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.email')}</dt>
+        <dd><a class="details__link" href={mailHref}>{company.email}</a></dd>
+      </div>
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.phone')}</dt>
+        <dd><a class="details__link" href={telHref}>{company.phoneDisplay}</a></dd>
+      </div>
+      <div class="details__row">
+        <dt class="eyebrow">{t('footer.whatsapp')}</dt>
+        <dd>
+          <a class="details__link" href={company.whatsappUrl} rel="noopener noreferrer" target="_blank"
+            >{company.phoneDisplay}</a
+          >
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .details {
+    padding-block: var(--section-y);
+  }
+
+  .details__grid {
+    display: grid;
+    gap: 40px;
+  }
+
+  .details__lede {
+    margin-top: 16px;
+    max-width: 36ch;
+    color: var(--text-body);
+  }
+
+  .details__list {
+    margin: 0;
+    border-bottom: 1px solid var(--rule-light);
+  }
+  .details__row {
+    display: grid;
+    gap: 6px;
+    padding-block: 18px;
+    border-top: 1px solid var(--rule-light);
+  }
+  .details__row dt {
+    color: var(--text-secondary);
+  }
+  .details__row dd {
+    margin: 0;
+    font-size: 1.0625rem;
+    color: var(--text-primary);
+  }
+
+  .details__address {
+    display: grid;
+    gap: 4px;
+    font-style: normal;
+  }
+
+  .details__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    color: var(--text-link-light);
+    text-underline-offset: 4px;
+  }
+  .details__link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  @media (min-width: 720px) {
+    .details__row {
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      align-items: baseline;
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .details__grid {
+      grid-template-columns: 4fr 8fr;
+      gap: 64px;
+    }
+  }
+</style>

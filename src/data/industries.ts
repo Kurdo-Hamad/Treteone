@@ -14,9 +14,9 @@ import imgFacilitiesInstitutions from '~/assets/industries/facilities-institutio
 /**
  * The 9 industries (CLAUDE.md §3).
  *
- * Drives the IndustryPicker (§6.7) and the StatBand's "9 industries served" —
- * that figure is `industries.length`, not a literal typed into a component, so
- * adding or dropping an industry moves the stat on its own.
+ * Drives the homepage industries preview, the /industries index and every
+ * "9 industries" count. That figure is `industries.length`, not a literal typed
+ * into a component, so adding or dropping an industry moves it on its own.
  *
  * ⚠ §10 — the photography has not been supplied. Every `image` is a
  * "PHOTOGRAPH PENDING" plate from scripts/make-placeholders.mjs. Replace
