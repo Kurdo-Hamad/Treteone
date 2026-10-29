@@ -1,0 +1,159 @@
+---
+import { Picture } from 'astro:assets';
+import portrait from '~/assets/about/portrait.jpg';
+import { aboutPoints } from '~/data/about';
+import { company } from '~/data/company';
+import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.11 — 6 points left, sticky portrait photo right.
+ *
+ * This section and the footer are how the site answers §1's second job: are
+ * these people real? So nothing here may be a claim the page cannot back up.
+ *
+ * That is why the last point is conditional. It says the registered name and
+ * licence number are published in the footer, and right now they are marked
+ * placeholders (§10) — so while that is true, the point uses its
+ * `pendingDescription` and says what is actually the case. It switches to the
+ * confident wording on its own once src/data/company.ts has real values.
+ *
+ * ⚠ §10 — the portrait is a "PHOTOGRAPH PENDING" plate. Office and staff
+ * photography is exactly what §10 lists as outstanding, and this is its slot.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/** True only when the footer really does publish both. */
+const registrationPublished =
+  company.registeredName !== null && company.licenceNumber !== null;
+---
+
+<section class="about" id="about">
+  <div class="wrap about__grid">
+    <div class="about__body">
+      <div class="about__head rv">
+        <h2>{t('about.heading')}</h2>
+      </div>
+
+      <p class="lede about__lede rv">{t('about.lede')}</p>
+
+      <div class="about__points rv">
+        {
+          aboutPoints.map((point) => {
+            const copy =
+              !registrationPublished && point.pendingDescription
+                ? point.pendingDescription
+                : point.description;
+
+            return (
+              <div class="about-point">
+                <b class="about-point__title">{pick(point.title, lang)}</b>
+                <small class="about-point__body">{pick(copy, lang)}</small>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <div class="about__media rv">
+      <Picture
+        src={portrait}
+        formats={['avif', 'webp']}
+        fallbackFormat="jpg"
+        widths={[420, 720, 1080]}
+        sizes="(min-width: 1040px) 34vw, min(100vw, 420px)"
+        alt=""
+        class="about__portrait"
+        loading="lazy"
+        decoding="async"
+      />
+      <p class="mono about__caption">{pick(company.district, lang)}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding-block: var(--section-y);
+  }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+
+  .about__head {
+    margin-bottom: 32px;
+  }
+  .about__lede {
+    margin-bottom: 36px;
+  }
+
+  .about__points {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .about-point {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+  }
+  .about-point__title {
+    display: block;
+    font-family: var(--font-stack-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .about-point__body {
+    display: block;
+    color: var(--steel);
+    font-size: .88rem;
+    line-height: 1.55;
+  }
+
+  .about__media {
+    max-width: 420px;
+  }
+  .about__portrait {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    filter: grayscale(.4);
+  }
+  .about__caption {
+    margin-top: 12px;
+    color: var(--steel);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  /* §4 — no letter-spacing on Chinese, and uppercase does nothing to Hanzi
+     but would stretch any Latin mixed in. */
+  :global(html[lang^='zh']) .about__caption {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  @media (min-width: 720px) {
+    .about__points {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .about__grid {
+      grid-template-columns: 1.15fr .85fr;
+    }
+    .about__media {
+      /* §6.11 — the portrait stays with the reader down the six points. */
+      position: sticky;
+      top: calc(var(--header-h) + 30px);
+      max-width: none;
+    }
+  }
+</style>

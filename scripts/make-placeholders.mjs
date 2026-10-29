@@ -14,6 +14,7 @@
  *   src/assets/scope/<slug>.jpg          5 scope stages,    1600x2000
  *   src/assets/industries/<slug>.jpg     9 industry panels, 1600x1000
  *   src/assets/sourcing/plate.jpg        1 sourcing plate,   1600x1000
+ *   src/assets/about/portrait.jpg        1 about portrait,   1500x2000
  *
  * To replace one: drop the real photograph in at the same path and size or
  * larger, and delete its entry here. Nothing else changes — Astro re-derives
@@ -86,6 +87,10 @@ const industryPanels = {
 
 /** The single plate in the SourcingBand (§6.8). */
 const sourcingPlate = 'GOODS PACKED AND LABELLED FOR DESPATCH';
+
+/** The sticky portrait in the About section (§6.11). §10 lists office and staff
+    photography as outstanding, and this is the slot it goes in. */
+const aboutPortrait = 'THE TEAM AT WORK, GUANGZHOU OFFICE';
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -192,5 +197,16 @@ total += await write(
   plate({ width: 1600, height: 1000, badge: null, subject: sourcingPlate, scale: 0.7 }),
 );
 console.log('sourcing: 1 plate at 1600x1000');
+
+/* ------------------------------------------------------------------ about */
+
+const aboutDir = join(root, 'src', 'assets', 'about');
+await mkdir(aboutDir, { recursive: true });
+total += await write(
+  aboutDir,
+  'portrait.jpg',
+  plate({ width: 1500, height: 2000, badge: null, subject: aboutPortrait, scale: 0.66 }),
+);
+console.log('about:    1 portrait at 1500x2000');
 
 console.log(`total:    ${(total / 1024 / 1024).toFixed(1)} MB of source art (not shipped as-is)`);

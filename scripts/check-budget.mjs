@@ -150,6 +150,8 @@ function measure(route, htmlPath) {
   //              viewport, so lazy loading really does defer it.
   //   industries below the fold, and eight of the nine panels are `hidden`,
   //              which stops a lazy image loading until its panel is shown.
+  //   sourcing,
+  //   about      below the fold, single lazy image each.
   //
   // Everything is still counted against the budget: a visitor who reads the
   // page pays for all of it, and this check is meant to be pessimistic.
@@ -159,6 +161,7 @@ function measure(route, htmlPath) {
     ['scope__figure', 'scope', true],
     ['industry-panel', 'industries', true],
     ['sourcing__frame', 'sourcing', true],
+    ['about__media', 'about', true],
   ];
 
   // A picture that matches none of the above is counted as arriving, which is

@@ -1,0 +1,403 @@
+---
+import { company, mailHref } from '~/data/company';
+import {
+  ACCEPT_ATTRIBUTE,
+  QUOTE_ENDPOINT,
+  QUOTE_LIMITS,
+  enquiryTypes,
+  mb,
+} from '~/data/quote';
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.12 and §7 — the only conversion point on the site. It must work.
+ *
+ * Everything here follows from that one sentence:
+ *
+ *  - **No account, ever** (§7). One contact field, and nothing else required.
+ *    A buyer with only a blurry nameplate photo can still send it.
+ *  - **It is a real <form> with a real action.** With JavaScript it posts by
+ *    fetch and renders the result in place, never a redirect (§7). Without
+ *    JavaScript the browser posts it normally and the function answers with a
+ *    plain confirmation page carrying the same reference number. A form that
+ *    only works with JavaScript is a form that loses enquiries.
+ *  - **The spam defence is a honeypot plus a timing check** (§7). No CAPTCHA —
+ *    engineers on plant networks abandon them.
+ *  - **Validation is strict about attachments and permissive about everything
+ *    else.** Size and type are technical limits that would otherwise bounce.
+ *    Nothing else blocks a submission, because a rejected enquiry is worse
+ *    than an untidy one.
+ *
+ * Limits come from src/data/quote.ts and are rendered into data attributes, so
+ * src/scripts/quote-form.ts holds neither numbers nor copy.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const maxFileMb = mb(QUOTE_LIMITS.maxFileBytes);
+const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
+---
+
+<section class="quote dark-surface" id="quote">
+  <div class="wrap quote__grid">
+    <div class="quote__intro rv">
+      <h2 class="quote__heading">{t('quote.heading')}</h2>
+      <p class="lede quote__lede">{t('quote.lede')}</p>
+
+      <p class="quote__direct">
+        <span>{t('quote.directIntro')}</span>
+        <a class="quote__direct-link" href={mailHref}>{company.email}</a>
+        <a
+          class="quote__direct-link"
+          href={company.whatsappUrl}
+          rel="noopener noreferrer"
+          target="_blank">WhatsApp {company.phoneDisplay}</a
+        >
+      </p>
+    </div>
+
+    <form
+      class="quote__form rv"
+      method="post"
+      action={QUOTE_ENDPOINT}
+      enctype="multipart/form-data"
+      aria-label={t('quote.formLabel')}
+      data-quote-form
+      data-max-files={QUOTE_LIMITS.maxFiles}
+      data-max-file-bytes={QUOTE_LIMITS.maxFileBytes}
+      data-max-total-bytes={QUOTE_LIMITS.maxTotalBytes}
+      data-max-file-mb={maxFileMb}
+      data-max-total-mb={maxTotalMb}
+      data-accept={ACCEPT_ATTRIBUTE}
+      data-msg-sending={t('quote.sending')}
+      data-msg-submit={t('quote.submit')}
+      data-msg-success-title={t('quote.success.title')}
+      data-msg-success-body={t('quote.success.body')}
+      data-msg-success-reference={t('quote.success.reference')}
+      data-msg-error-title={t('quote.error.title')}
+      data-msg-error-body={t('quote.error.body')(company.email)}
+      data-msg-contact-required={t('quote.error.contactRequired')}
+      data-msg-too-many-files={t('quote.error.tooManyFiles')(QUOTE_LIMITS.maxFiles)}
+      data-msg-file-too-large={t('quote.error.fileTooLarge')('{name}', maxFileMb)}
+      data-msg-total-too-large={t('quote.error.totalTooLarge')(maxTotalMb)}
+      data-msg-bad-type={t('quote.error.badType')('{name}')}
+      data-msg-files-selected={t('quote.files.selected')(0).replace('0', '{n}')}
+    >
+      <input type="hidden" name="lang" value={lang} />
+      {/* §7 timing check. Set by the script on load; empty means no script ran,
+          which the function treats as a pass rather than as spam. */}
+      <input type="hidden" name="rendered_at" value="" data-quote-time />
+
+      <div class="field">
+        <label class="field__label" for="quote-type">{t('quote.type.label')}</label>
+        <select class="field__control" id="quote-type" name="type">
+          {
+            enquiryTypes.map((type) => (
+              <option value={type.slug}>{t(type.key)}</option>
+            ))
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="quote-part">
+          {t('quote.part.label')}
+          <span class="field__optional">{t('quote.optional')}</span>
+        </label>
+        <input
+          class="field__control"
+          id="quote-part"
+          name="part"
+          type="text"
+          autocomplete="off"
+          placeholder="6ES7 214-1AG40-0XB0"
+        />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="quote-manufacturer">
+            {t('quote.manufacturer.label')}
+            <span class="field__optional">{t('quote.optional')}</span>
+          </label>
+          <input
+            class="field__control"
+            id="quote-manufacturer"
+            name="manufacturer"
+            type="text"
+            autocomplete="organization"
+          />
+        </div>
+        <div class="field">
+          <label class="field__label" for="quote-quantity">
+            {t('quote.quantity.label')}
+            <span class="field__optional">{t('quote.optional')}</span>
+          </label>
+          <input class="field__control" id="quote-quantity" name="quantity" type="text" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="quote-files">
+          {t('quote.files.label')}
+          <span class="field__optional">{t('quote.optional')}</span>
+        </label>
+        <input
+          class="field__control field__control--file"
+          id="quote-files"
+          name="files"
+          type="file"
+          multiple
+          accept={ACCEPT_ATTRIBUTE}
+          aria-describedby="quote-files-hint"
+          data-quote-files
+        />
+        <p class="field__hint" id="quote-files-hint">
+          {t('quote.files.hint')(QUOTE_LIMITS.maxFiles, maxFileMb, maxTotalMb)}
+        </p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="quote-notes">
+          {t('quote.notes.label')}
+          <span class="field__optional">{t('quote.optional')}</span>
+        </label>
+        <textarea class="field__control field__control--area" id="quote-notes" name="notes"
+        ></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="quote-name">
+            {t('quote.name.label')}
+            <span class="field__optional">{t('quote.optional')}</span>
+          </label>
+          <input class="field__control" id="quote-name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="quote-contact">{t('quote.contact.label')}</label>
+          <input
+            class="field__control"
+            id="quote-contact"
+            name="contact"
+            type="text"
+            required
+            autocomplete="email"
+            aria-describedby="quote-contact-hint"
+            data-quote-contact
+          />
+          <p class="field__hint" id="quote-contact-hint">{t('quote.contact.hint')}</p>
+        </div>
+      </div>
+
+      {/*
+        §7 honeypot. Hidden from sight, from the tab order and from assistive
+        technology, so no person will ever fill it in. Anything that does is
+        discarded server side — and told it succeeded, so it does not retry.
+      */}
+      <div class="honeypot" aria-hidden="true">
+        <label for="quote-company-url">{t('quote.honeypot.label')}</label>
+        <input
+          id="quote-company-url"
+          name="company_url"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="quote__actions">
+        <button class="btn quote__submit" type="submit" data-quote-submit>
+          {t('quote.submit')}
+        </button>
+      </div>
+
+      {/*
+        Success and failure are rendered here, in place (§7). role="status" so a
+        screen reader is told without the focus being yanked away.
+      */}
+      <div class="quote__result" role="status" data-quote-result></div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import '~/scripts/quote-form';
+</script>
+
+<style>
+  .quote {
+    padding-block: var(--section-y);
+  }
+
+  .quote__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .quote__heading {
+    font-size: var(--meso-fs-h1);
+    line-height: var(--meso-lh-display);
+    letter-spacing: var(--meso-ls-display);
+  }
+  .quote__lede {
+    margin-top: 18px;
+    color: var(--on-dark-2);
+  }
+
+  .quote__direct {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: .85rem;
+    color: var(--on-dark-3);
+  }
+  .quote__direct-link {
+    color: var(--signal);
+    text-decoration: none;
+    width: fit-content;
+  }
+  .quote__direct-link:hover {
+    text-decoration: underline;
+  }
+
+  /* -- fields ------------------------------------------------------------ */
+
+  .quote__form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .field__label {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: .82rem;
+    color: var(--on-dark-3);
+    margin-bottom: 6px;
+  }
+  .field__optional {
+    color: var(--on-dark-4);
+    font-size: .74rem;
+  }
+
+  .field__control {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--rule-dark);
+    border-radius: var(--radius);
+    font-family: var(--font-stack-body);
+    font-size: .95rem;
+    background: color-mix(in srgb, var(--white) 4%, transparent);
+    color: var(--white);
+  }
+  .field__control::placeholder {
+    color: var(--on-dark-4);
+  }
+  .field__control--area {
+    min-height: 110px;
+    resize: vertical;
+  }
+  .field__control--file {
+    padding: 10px 14px;
+  }
+  /* select options are painted by the OS, which does not inherit our ground */
+  .field__control option {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .field__hint {
+    margin-top: 6px;
+    font-size: .78rem;
+    color: var(--on-dark-4);
+  }
+
+  .field__control[aria-invalid='true'] {
+    border-color: var(--signal);
+  }
+
+  /* §7 honeypot — off-screen rather than display:none, which some bots skip. */
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .quote__actions {
+    margin-top: 4px;
+  }
+  .quote__submit[aria-disabled='true'] {
+    opacity: .6;
+    cursor: progress;
+  }
+
+  /* -- result ------------------------------------------------------------ */
+
+  .quote__result:empty {
+    display: none;
+  }
+  .quote__result {
+    border: 1px solid var(--rule-dark);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .quote__result[data-state='success'] {
+    border-color: var(--signal);
+  }
+
+  @media (min-width: 720px) {
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .quote__grid {
+      grid-template-columns: .85fr 1.15fr;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Written by src/scripts/quote-form.ts into [data-quote-result]. Global
+     because the script builds these nodes, so they carry no scope hash. */
+  .quote-result__title {
+    display: block;
+    font-family: var(--font-stack-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .quote-result__body {
+    display: block;
+    font-size: .9rem;
+    color: var(--on-dark-2);
+  }
+  .quote-result__reference {
+    display: block;
+    margin-top: 14px;
+    font-family: var(--font-stack-mono);
+    font-size: .78rem;
+    letter-spacing: var(--meso-ls-mono);
+    color: var(--signal);
+  }
+  .quote-result__reference b {
+    font-family: var(--font-stack-mono);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+</style>

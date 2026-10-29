@@ -33,6 +33,27 @@ export default defineConfig({
     inlineStylesheets: 'never',
   },
 
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        // §8 — measured, not guessed. Astro passes no quality, so sharp's AVIF
+        // default of 50 applied. Against five real industrial photographs the
+        // busiest of them put the 31-image page at 1771 KB, 115% of the 1.5 MB
+        // budget. At 40 the same worst case lands at 1329 KB (87%), leaving
+        // room for the last two sections.
+        //
+        // Checked visually at 1:1 on the busiest photograph, behind the
+        // grayscale(.35) the design applies: slight softening in fine overhead
+        // detail, no blocking, no banding. See the README for the full table.
+        //
+        // WebP and JPEG are deliberately left at sharp's defaults: they are
+        // fallbacks for browsers without AVIF and never counted in the budget.
+        avif: { quality: 40 },
+      },
+    },
+  },
+
   integrations: [
     sitemap({
       i18n: {

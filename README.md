@@ -19,7 +19,8 @@ static output · Cloudflare Pages.
 | `npm run check` | `astro check` — TypeScript + template diagnostics |
 | `npm run budget` | §8 first-load payload check against the 1.5 MB budget (run after a build) |
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
-| `npm run placeholders` | Regenerate all 32 §10 placeholder plates |
+| `npm run placeholders` | Regenerate all 33 §10 placeholder plates |
+| `npm run test:quote` | Exercise the §7 quote endpoint offline (22 assertions) |
 
 `npm run build` is three steps, wired through npm's `prebuild`/`postbuild`, so
 they also run on Cloudflare:
@@ -42,7 +43,7 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 
 ## Build status
 
-**Passes 1–4 are complete.** Sections of CLAUDE.md §6 built so far:
+**All thirteen sections of CLAUDE.md §6 are built.**
 
 | § | Section | Notes |
 |---|---|---|
@@ -56,39 +57,42 @@ either silently breaks it — **`build.inlineStylesheets: 'never'`** and
 | 8 | `SourcingBand` | photo plate + "what to send" checklist — **no JavaScript** |
 | 9 | `BrandMarquee` | two rows, opposite directions, all 32 tiles on fallback |
 | 10 | `ProcessTimeline` | 5 steps, amber line fills on scroll |
+| 11 | `About` | 6 points, sticky portrait; last point self-corrects (see below) |
+| 12 | `QuoteForm` | §7 in full — no account, honeypot + timing, in-page states |
 | 13 | `Footer` | both address forms, copy button, §10 placeholders |
 
-Not built yet — sections 11 (About) and 12 (`QuoteForm`).
-
-Because of that, **`#about` and `#quote` still jump nowhere.** Everything else
-resolves. Every "Request a quote" CTA — the two hero buttons, all 12 rail cards
-and the sourcing band — points at `#quote`, which does not exist until §12
-lands. That is currently **the only broken thing a visitor can hit**, and it is
-also the site's only conversion point (§7), so §12 is the one that matters.
+**Every nav anchor now resolves** — `#products`, `#scope`, `#industries`,
+`#sourcing`, `#brands`, `#about`, `#quote`. There are no dead links left on
+either route.
 
 ### Verified, not assumed
 
-- `npm run check` — 42 files, 0 errors, 0 warnings, 0 hints.
+- `npm run check` — 48 files, 0 errors, 0 warnings, 0 hints. `tsc --noEmit`
+  over the whole project, including `functions/`, is also clean.
+- `npm run test:quote` — **22/22**. Covers the happy path, the honeypot, the
+  timing flag, every attachment rule, the unconfigured case, and both no-JS
+  paths. Runs offline; the provider call is stubbed and nothing is sent.
 - No external host is referenced anywhere in `dist/` — no `googleapis`, no
   `gstatic`, no CDN. `grep -r googleapis src public` must stay empty.
 - No inline `<style>`, no `style="..."` attribute and no inline event handler in
   the output, so the `default-src 'self'` CSP in `public/_headers` needs no
   `'unsafe-inline'`. This required `vite.build.assetsInlineLimit: 0`; Astro
   otherwise writes small hoisted scripts straight into the document.
-- All 365 local paths referenced by the two HTML documents and their CSS exist
-  in `dist/`. No duplicate `id` on either page (33 each).
+- All 376 local paths referenced by the two HTML documents and their CSS exist
+  in `dist/`. No duplicate `id` on either page (46 each).
 - Every colour in the emitted CSS resolves through a token — each brand hex
   appears exactly once, in the token block. No component hardcodes a colour.
-- Payload, 412px viewport at 2× DPR: **`/` = 976.5 KB, `/zh/` = 975.7 KB**
-  against the 1.5 MB budget — **64%**. Of that, **521 KB arrives on load** and
-  **456 KB is deferred** until the visitor scrolls to it or opens a panel.
+- Payload, 412px viewport at 2× DPR: **`/` = 840.5 KB, `/zh/` = 839.6 KB**
+  against the 1.5 MB budget — **55%**. Of that, **509 KB arrives on load** and
+  **332 KB is deferred**. The drop despite two new sections is the AVIF quality
+  change below.
 - §11 wording holds: no "authorised distributor", "agent" or "partner" claim
   appears in either rendered page, and the trademark disclaimer is on both.
 - The §8 raster-in-SVG guard **actually fails the build**. Tested: a logo that
   wraps a base64 PNG stops `npm run build` naming the file and the rule.
 - The tablist is a real one: 9 tabs, 9 panels, one `tabindex="0"` and eight
   `tabindex="-1"`, eight panels `hidden`. Checked in the built HTML.
-- `global.css` compiles to 44 KB. MesoAxis reached ~135 KB.
+- `global.css` compiles to 48 KB. MesoAxis reached ~135 KB.
 - The font verification **actually fails**. Tested end to end: Chinese copy
   routed into a page from a file type the source scan does not read exits
   `npm run build` with code 1 and names the glyph and the page.
@@ -200,6 +204,116 @@ look at a real photograph, so **it has not been changed.** One line in
 Two things that do *not* help: pre-desaturating sources to match the CSS filter
 saves ~4%, and desktop (2.1 MB at 1440 @2×) is a separate problem — §8's budget
 is explicitly "first mobile load", so mobile is the gate.
+
+---
+
+## ⚠ Before this can go live: the quote form needs an email account
+
+**`functions/api/quote.ts` is written, tested and inert until three environment
+variables exist.** §7 required a serverless function that emails
+info@treteone.com; no provider account was available, so I picked one and built
+against it rather than leave the site's only conversion point unbuilt.
+
+**I chose [Resend](https://resend.com).** SMTP does not exist in the Cloudflare
+Workers runtime, so it had to be an HTTP API; Resend needs no SDK and accepts
+base64 attachments up to 40 MB. Swapping providers means rewriting one function,
+`sendEmail()`, and nothing else.
+
+Set in **Cloudflare Pages → Settings → Environment variables**:
+
+| Variable | | |
+|---|---|---|
+| `RESEND_API_KEY` | secret | from resend.com |
+| `QUOTE_FROM` | e.g. `Trete One <quotes@treteone.com>` | must be on a domain verified in Resend, with SPF and DKIM, or the mail is filed as spam |
+| `QUOTE_TO` | optional | defaults to info@treteone.com |
+
+Until they are set the endpoint returns 502 and the form tells the buyer to
+email directly. That is deliberate: **it never pretends an enquiry was sent.**
+
+Two more things to confirm:
+
+- **A 20 MB total attachment cap, which §7 does not mention.** §7 allows 5 files
+  at 10 MB, which is 50 MB — more than any email provider accepts, and base64
+  inflates it by a third. Without a total cap a submission would pass validation
+  and then bounce, which is the worst outcome available. 20 MB encodes to ~27 MB
+  and gets through. Both caps are enforced on both sides.
+- **Only the contact field is required.** Not the part number, not the name. A
+  buyer with a blurry nameplate photo and nothing else can still send it, and we
+  can still reply. §1 over tidiness.
+
+---
+
+## AVIF quality is now 40
+
+Set from the measurement below, after checking it: a 1:1 crop of the busiest
+photograph at q40 behind the design's `grayscale(.35)` shows slight softening in
+fine overhead detail, no blocking, no banding. Placeholders went 976 KB → 840 KB
+even with two sections added, and the real-photo worst case now projects to
+**1329 KB — 87% of budget** rather than 115%.
+
+WebP and JPEG are left at sharp's defaults on purpose: they are fallbacks for
+browsers without AVIF and never counted in the budget.
+
+---
+
+## Pass 5 notes
+
+### The About section's last point corrects itself
+
+Point six says the registered name and licence number are published in the
+footer. The footer currently shows two amber **TO BE SUPPLIED** chips, so as
+written that point is a claim the page visibly cannot back up — precisely the
+thing §1's second job ("are these people real?") is lost on.
+
+It therefore carries a `pendingDescription` and, while `src/data/company.ts`
+holds placeholders, reads: *"A registered Guangzhou company. Our address is in
+the footer, and the registered name and licence number go there before launch."*
+True today, and it switches to the confident wording by itself the moment real
+values land. Nothing to remember.
+
+### The form is a real form
+
+`method="post" action="/api/quote"` with a real endpoint. With JavaScript it
+posts by fetch and renders success or failure in place — never a redirect (§7).
+Without JavaScript the browser posts it normally and the function answers with a
+plain confirmation page carrying the same reference number, styled by
+`public/form-response.css` so `style-src 'self'` still needs no exception.
+
+A form that only works with JavaScript is a form that loses enquiries.
+
+### A fast submission is flagged, not dropped
+
+§7 asks for "a honeypot field plus a timing check". They are treated very
+differently, on purpose:
+
+- **Honeypot filled** → discarded silently, and told it succeeded so it does not
+  retry. No person can see, tab to or hear that field, so the false-positive
+  risk is effectively zero.
+- **Submitted under 3 seconds** → **still emailed**, with `[CHECK]` prefixed to
+  the subject and a note in the body. A returning buyer with autofill can submit
+  in two seconds, and silently binning that enquiry is a far worse failure than
+  reading one spam email.
+
+### Reference numbers
+
+`TO-20260911-K7Q3M` — UTC date plus five characters from an alphabet with no
+O/0 or I/1, so it survives being read down a phone. Shown in-page on success and
+in the no-JS page, and it is the email subject line.
+
+### The endpoint is tested, not assumed
+
+`npm run test:quote` calls the function directly with real `Request`/`FormData`
+objects and a stubbed provider — 22 assertions, offline, sends nothing. It
+proves the logic; it cannot prove Cloudflare routes `/api/quote` or that Resend
+accepts the mail, so **still smoke-test one real submission after the first
+deploy.**
+
+### One thing outside the brief
+
+`tsconfig.json` had `baseUrl`, which TypeScript 6 deprecates and 7 removes —
+`tsc --noEmit` failed on it. Removed, and the `~/*` path mapping made relative
+(`./src/*`) so it still resolves without it. Mentioned because it is outside
+§6.11, §6.12 and §7.
 
 ---
 
@@ -488,9 +602,9 @@ simply absent.
 
 | Item | Status |
 |---|---|
-| Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip. |
+| Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip, and softens the About section's last point until supplied. |
 | Business licence number | Same. |
-| Real photography — office, staff, goods packed, equipment handled | **32 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px). All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
+| Real photography — office, staff, goods packed, equipment handled | **33 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
 | Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty, so all 32 tiles render as the dashed name fallback — the expected state. Drop `<slug>.svg` in (slug from `brandSlug()` in `src/data/brands.ts`) and that tile becomes a logo. The build rejects an SVG that is really a raster (§8). **The open question is still which manufacturers may be shown as a logo at all.** |
 | Real reply-time commitment | `StatBand` is built. The figure renders as a marked **UNCONFIRMED** placeholder, never as a fact — see "Pass 2 notes". Set `confirmed: true` in `src/data/stats.ts` once the business has committed to a number. |
 | Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts` are the prototype's first pass, carried over unchanged and marked as such in the file headers. Needs a native-speaker review. |
@@ -525,6 +639,10 @@ platform binary, and the build cannot run without it. Older npm ignores the
 field. Re-approve with `npm approve-scripts esbuild` if esbuild's version moves.
 
 ### Still to verify before launch
+
+- **One real quote submission**, after the environment variables are set. The
+  offline test cannot prove Cloudflare routes `/api/quote` or that the provider
+  accepts the mail with attachments.
 
 - Load times measured from inside mainland China (§8). Not yet done.
 - ICP filing, if hosting moves inside mainland China.

@@ -110,6 +110,60 @@ export const en = {
   'process.heading': 'From requirement to delivery.',
   'process.stepCount': (n: number, total: number) => `Step ${n} of ${total}`,
 
+  // ---- about (§6.11) ------------------------------------------------------
+  'about.heading': 'Why buyers work with us',
+  'about.lede':
+    'Trete One is an industrial supply and sourcing company based in Guangzhou, China, working with maintenance and procurement teams in demanding plants.',
+
+  // ---- quote form (§6.12, §7) ---------------------------------------------
+  // The only conversion point on the site. Every string here is load-bearing.
+  'quote.heading': 'Tell us what you need.',
+  'quote.lede':
+    'No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.',
+  'quote.directIntro': 'Or message us directly:',
+  'quote.formLabel': 'Request a quote',
+
+  'quote.type.label': 'What do you need?',
+  'quote.type.sparePart': 'Spare part',
+  'quote.type.equipment': 'Equipment',
+  'quote.type.machinery': 'Machinery',
+  'quote.type.automation': 'Automation',
+  'quote.type.instrumentation': 'Instrumentation',
+  'quote.type.other': 'Other',
+
+  'quote.part.label': 'Part number or description',
+  'quote.manufacturer.label': 'Manufacturer',
+  'quote.quantity.label': 'Quantity',
+  'quote.files.label': 'Attach a datasheet, photo or BOQ',
+  'quote.files.hint': (maxFiles: number, maxMb: number, totalMb: number) =>
+    `PDF, images, Excel or CSV. Up to ${maxFiles} files, ${maxMb} MB each, ${totalMb} MB in total.`,
+  'quote.files.selected': (n: number) => (n === 1 ? '1 file attached' : `${n} files attached`),
+  'quote.notes.label': 'Anything else we should know',
+  'quote.name.label': 'Name and company',
+  'quote.contact.label': 'Email or WhatsApp',
+  'quote.contact.hint': 'So we can send you the quote. Nothing else is required.',
+  'quote.optional': 'optional',
+  'quote.submit': 'Send request',
+  'quote.sending': 'Sending…',
+
+  // Honeypot (§7). Never seen by a person; a bot that fills it is discarded.
+  'quote.honeypot.label': 'Company website',
+
+  'quote.success.title': 'Request received.',
+  'quote.success.body': 'We have your enquiry and will reply to the contact you gave.',
+  'quote.success.reference': 'Your reference',
+  'quote.error.title': 'That did not send.',
+  'quote.error.body': (email: string) =>
+    `Something went wrong at our end. Please email ${email} directly — your enquiry matters more than this form.`,
+  'quote.error.contactRequired': 'Please add an email address or WhatsApp number so we can reply.',
+  'quote.error.tooManyFiles': (max: number) => `Please attach no more than ${max} files.`,
+  'quote.error.fileTooLarge': (name: string, max: number) =>
+    `${name} is larger than ${max} MB. Please send it separately by email.`,
+  'quote.error.totalTooLarge': (max: number) =>
+    `The attachments come to more than ${max} MB in total. Please send the rest by email.`,
+  'quote.error.badType': (name: string) =>
+    `${name} is not a file type we can accept. PDF, images, Excel and CSV only.`,
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb':
     'Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop.',

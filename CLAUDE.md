@@ -95,6 +95,7 @@ src/
     scope/             <stage slug>.jpg — portrait, the sticky media column
     industries/        <industry slug>.jpg
     sourcing/          plate.jpg
+    about/             portrait.jpg — the sticky About photo
   pages/
     index.astro
     zh/index.astro
@@ -109,6 +110,7 @@ scripts/               build tooling, run by npm — not shipped to the browser
   verify-noto-sans-sc.mjs   postbuild: fails the build on an uncovered glyph
   cjk-ranges.mjs            the CJK ranges both of the above share
   check-budget.mjs          the §8 first-load payload check
+  test-quote-function.mjs   exercises the §7 endpoint offline
   make-placeholders.mjs     §10 placeholder plates, hero and product cards
 ```
 
