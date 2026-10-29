@@ -1,0 +1,155 @@
+---
+import { categories } from '~/data/categories';
+import { company } from '~/data/company';
+import { industries } from '~/data/industries';
+import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * §7.5 "Treteone at a glance" — four figures on the pale band.
+ *
+ * Real values only (§13). The two numbers are counted from src/data at build
+ * time, so they cannot disagree with /products and /industries; the other two
+ * are the registered city and the no-account rule (§8). No reply time, no
+ * client count, nothing that has not been supplied.
+ *
+ * The real number is in the HTML. Once, when the band scrolls into view, the
+ * two numbers count up to it; assistive tech reads a static copy and never
+ * hears the count. Nothing counts under reduced motion or with JS off.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+interface Figure {
+  readonly value: string;
+  readonly count?: number;
+  readonly label: string;
+}
+
+const figures: readonly Figure[] = [
+  { value: String(categories.length), count: categories.length, label: t('home.glance.categories') },
+  { value: String(industries.length), count: industries.length, label: t('home.glance.industries') },
+  { value: pick(company.city, lang), label: t('home.glance.base') },
+  { value: t('home.glance.account.value'), label: t('home.glance.account') },
+];
+---
+
+<section class="pale" aria-labelledby="glance-title">
+  <div class="wrap sec">
+    <h2 id="glance-title">{t('home.glance.heading')}</h2>
+    <dl class="glance">
+      {
+        figures.map((figure) => (
+          <div class="glance__item rv">
+            <dt class="glance__label">{figure.label}</dt>
+            <dd class="glance__value">
+              {figure.count === undefined ? (
+                figure.value
+              ) : (
+                <>
+                  <span aria-hidden="true" data-count={figure.count}>{figure.value}</span>
+                  <span class="sr-only">{figure.value}</span>
+                </>
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<script>
+  /* Count-up for the at-a-glance figures (§7.5). Only for a figure that is
+     below the fold when the page loads: anything already on screen keeps its
+     real value and never moves. */
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (items.length > 0 && !reduce && 'IntersectionObserver' in window) {
+    const fold = window.innerHeight || document.documentElement.clientHeight;
+    const run = (el: HTMLElement): void => {
+      const target = Number(el.dataset['count']);
+      const start = performance.now();
+      const duration = 700;
+      const frame = (now: number): void => {
+        const p = Math.min(1, (now - start) / duration);
+        // ease-out, so the last steps settle rather than snap
+        el.textContent = String(Math.round(target * (1 - (1 - p) ** 3)));
+        if (p < 1) requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          run(entry.target as HTMLElement);
+        }
+      },
+      { threshold: 0.6 },
+    );
+
+    for (const el of items) {
+      if (el.getBoundingClientRect().top < fold) continue;
+      if (!Number.isFinite(Number(el.dataset['count']))) continue;
+      // Off-screen (and, via .rv, not yet shown): start from zero so the
+      // count is seen from its beginning. The static copy beside it carries
+      // the real value for assistive tech throughout.
+      el.textContent = '0';
+      observer.observe(el);
+    }
+  }
+</script>
+
+<style>
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(22px, 3vw, 40px);
+    margin: 32px 0 0;
+  }
+  /* Value above label visually; label first in the DOM so each pair reads
+     as term then figure. */
+  .glance__item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+  .glance__value {
+    margin: 0;
+    font-family: var(--font-stack-display);
+    font-weight: 700;
+    font-size: 1.65rem;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    color: var(--color-navy);
+    font-variant-numeric: tabular-nums;
+  }
+  :global(html[lang^='zh']) .glance__value {
+    letter-spacing: 0;
+  }
+  .glance__label {
+    margin-top: 6px;
+    font-size: .8125rem;
+    line-height: 1.5;
+    color: var(--text-quiet);
+  }
+
+  .glance__item.rv:nth-child(2) { transition-delay: 70ms; }
+  .glance__item.rv:nth-child(3) { transition-delay: 140ms; }
+  .glance__item.rv:nth-child(4) { transition-delay: 210ms; }
+
+  @media (max-width: 960px) {
+    .glance {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .glance {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

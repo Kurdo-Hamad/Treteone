@@ -1,0 +1,90 @@
+---
+import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { aboutHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+
+/**
+ * §7.3 Positioning split — the mockup's .split: a photograph slot with a cyan
+ * offset block behind it, the argument alongside. Stacks below 960px.
+ *
+ * The cyan block is a flat colour field, not a gradient, and it is the only
+ * place on the page cyan is used as a surface (§4: an accent, never the
+ * dominant colour).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section aria-labelledby="position-title">
+  <div class="wrap sec">
+    <div class="split">
+      <div class="split__media">
+        <span class="split__back" aria-hidden="true"></span>
+        <div class="split__front">
+          <ImagePlaceholder subject={t('home.position.subject')} variant="wide" />
+        </div>
+      </div>
+      <div>
+        <p class="kicker">{t('home.position.kicker')}</p>
+        <h2 id="position-title">{t('home.position.heading')}</h2>
+        <p class="lead split__p1">{t('home.position.lead1')}</p>
+        <p class="lead split__p2">{t('home.position.lead2')}</p>
+        <p class="split__more">
+          <a class="rm" href={localisePath(aboutHref, lang)}>
+            {t('home.position.more')} <span aria-hidden="true">→</span>
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: clamp(26px, 4vw, 60px);
+    align-items: center;
+  }
+
+  .split__media {
+    position: relative;
+    padding-left: 34px;
+    padding-top: 30px;
+  }
+  .split__back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 58%;
+    height: 70%;
+    background: var(--color-cyan);
+  }
+  .split__front {
+    position: relative;
+  }
+  .split__front :global(.ph) {
+    aspect-ratio: 4 / 3;
+  }
+
+  .split__p1 {
+    margin-top: 16px;
+  }
+  .split__p2 {
+    margin-top: 14px;
+  }
+  .split__more {
+    margin-top: 22px;
+  }
+
+  @media (max-width: 960px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .split__media {
+      padding-left: 22px;
+      padding-top: 20px;
+    }
+  }
+</style>

@@ -1,26 +1,81 @@
 ---
-import BrandStrip from '~/components/BrandStrip.astro';
-import ClosingCta from '~/components/ClosingCta.astro';
+import BrandMarquee from '~/components/BrandMarquee.astro';
+import CapabilityGrid from '~/components/CapabilityGrid.astro';
+import EnquiryCards from '~/components/EnquiryCards.astro';
 import HardToFind from '~/components/HardToFind.astro';
-import IndustriesPreview from '~/components/IndustriesPreview.astro';
-import Positioning from '~/components/Positioning.astro';
-import ProductEcosystem from '~/components/ProductEcosystem.astro';
+import PositionSplit from '~/components/PositionSplit.astro';
 import RollingHero from '~/components/RollingHero.astro';
+import StatGlance from '~/components/StatGlance.astro';
+import { productsHref, quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
 /**
- * The homepage is a gateway (CLAUDE.md §3). Seven blocks in the §7 rhythm,
- * each a different composition. It previews and links onward; the detail lives
- * on the six routes.
+ * The homepage is a gateway (CLAUDE.md §3, §7). Blocks in the order of the
+ * approved mockup's #v-home, each a different composition; detail lives on
+ * the six routes. src/pages/zh/index.astro is this file, unchanged — the
+ * language comes from the route.
  */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <Base>
   <RollingHero />
-  <Positioning />
-  <ProductEcosystem />
-  <IndustriesPreview />
+
+  <section class="wrap sec-tight" aria-labelledby="intro-title">
+    <div class="intro">
+      <h1 class="display intro__h1" id="intro-title">{t('home.intro.h1')}</h1>
+      <div>
+        <p class="lead">{t('home.intro.lead1')}</p>
+        <p class="lead intro__p">{t('home.intro.lead2')}</p>
+        <div class="intro__actions">
+          <a class="btn btn-solid" href={localisePath(quoteHref, lang)}>{t('home.intro.ctaQuote')}</a>
+          <a class="btn btn-out" href={localisePath(productsHref, lang)}>{t('home.intro.ctaProducts')}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <EnquiryCards set="enquiries" />
+  <StatGlance />
+  <PositionSplit />
+  <CapabilityGrid />
   <HardToFind />
-  <BrandStrip />
-  <ClosingCta />
+  <BrandMarquee />
+  <EnquiryCards set="work" />
 </Base>
+
+<style>
+  /* Intro — the mockup's .hero-copy: display h1 left, lead and actions right;
+     one column below 960px. */
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+    padding-top: clamp(28px, 3.5vw, 44px);
+  }
+  .intro__h1 {
+    max-width: 16ch;
+  }
+  :global(html[lang^='zh']) .intro__h1 {
+    line-height: 1.25;
+  }
+  .intro__p {
+    margin-top: 16px;
+  }
+  .intro__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  @media (max-width: 960px) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
