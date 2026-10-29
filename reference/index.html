@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trete One — Industrial supply and sourcing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ---- General Sans, self-hosted ---- */
+@font-face{font-family:"General Sans";src:url("/fonts/GeneralSans-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"General Sans";src:url("/fonts/GeneralSans-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"General Sans";src:url("/fonts/GeneralSans-Semibold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"General Sans";src:url("/fonts/GeneralSans-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+
+:root{
+  --ink:#16191C;
+  --ink-2:#1E2327;
+  --steel:#6B7178;
+  --paper:#F7F7F5;
+  --signal:#F2A900;
+  --rule:rgba(22,25,28,.14);
+  --rule-dark:rgba(255,255,255,.15);
+
+  --font-stack-display:"General Sans","Noto Sans SC",Arial,sans-serif;
+  --font-stack-body:"Roboto","Noto Sans SC",sans-serif;
+  --font-stack-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --display:var(--font-stack-display);
+  --body:var(--font-stack-body);
+
+  --meso-fs-h1:clamp(2.75rem, 2.13rem + 2.63vw, 4.5rem);
+  --meso-fs-h2:clamp(1.75rem, 1.49rem + 1.13vw, 2.5rem);
+  --meso-fs-h3:1.125rem;
+  --meso-fs-body:clamp(1.125rem, 1.05rem + 0.34vw, 1.35rem);
+  --meso-fs-hero-lead:clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+
+  --meso-ls-display:-0.035em;
+  --meso-ls-h1:-0.025em;
+  --meso-ls-h2:-0.015em;
+  --meso-ls-h3:-0.015em;
+  --meso-ls-body:0;
+  --meso-ls-mono:0.02em;
+
+  --meso-lh-display:1.08;
+  --meso-lh-h1:1.12;
+  --meso-lh-h2:1.2;
+  --meso-lh-h3:1.2;
+  --meso-lh-body:1.62;
+  --meso-lh-mono:1.42;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:var(--meso-fs-body);
+  line-height:var(--meso-lh-body);letter-spacing:var(--meso-ls-body);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body.zh{font-family:"Noto Sans SC",sans-serif;line-height:1.85;letter-spacing:.01em}
+body.zh h1,body.zh h2,body.zh h3,body.zh .btn{font-family:"Noto Sans SC",sans-serif;letter-spacing:0}
+body.zh h1{line-height:1.28}
+img{display:block;max-width:100%}
+a{color:inherit}
+.mono{font-family:var(--font-stack-mono);letter-spacing:var(--meso-ls-mono);line-height:var(--meso-lh-mono);font-size:.78rem}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:var(--display);font-weight:500;margin:0}
+h1{font-size:var(--meso-fs-h1);line-height:var(--meso-lh-h1);letter-spacing:var(--meso-ls-h1)}
+h2{font-size:var(--meso-fs-h2);line-height:var(--meso-lh-h2);letter-spacing:var(--meso-ls-h2)}
+h3{font-size:var(--meso-fs-h3);line-height:var(--meso-lh-h3);letter-spacing:var(--meso-ls-h3);font-weight:600}
+p{margin:0}
+.lede{font-size:1rem;color:var(--steel);max-width:60ch}
+section{padding:clamp(64px,8vw,112px) 0}
+.sec-head{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;margin-bottom:44px}
+.sec-head p{max-width:44ch}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+/* header */
+header{position:sticky;top:0;z-index:80;background:rgba(247,247,245,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);transition:background .3s,border-color .3s,color .3s}
+header.on-dark{background:rgba(18,21,24,.6);border-color:var(--rule-dark);color:#fff}
+header.on-dark .nav a{color:rgba(255,255,255,.75)}
+header.on-dark .nav a:hover{color:#fff}
+header.on-dark .lang{border-color:var(--rule-dark)}
+header.on-dark .lang button{color:rgba(255,255,255,.7)}
+header.on-dark .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+header.on-dark .btn{background:var(--signal);color:var(--ink)}
+header.on-dark .burger{border-color:var(--rule-dark);color:#fff}
+.bar{display:flex;align-items:center;gap:28px;height:70px}
+.mark{font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+.mark i{color:var(--signal);font-style:normal}
+.nav{display:flex;gap:24px;margin-left:auto;font-size:.92rem}
+.nav a{text-decoration:none;color:var(--steel);padding:6px 0;border-bottom:2px solid transparent;transition:color .2s}
+.nav a:hover,.nav a:focus-visible{color:inherit;border-bottom-color:var(--signal)}
+.tools{display:flex;align-items:center;gap:14px}
+.lang{display:flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;font-size:.78rem}
+.lang button{border:0;background:transparent;padding:6px 10px;cursor:pointer;font-family:var(--body);color:var(--steel)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:12px 22px;border:0;border-radius:2px;font-family:var(--body);font-size:.95rem;font-weight:500;cursor:pointer;transition:background .2s,color .2s}
+.btn:hover{background:var(--signal);color:var(--ink)}
+.btn-ghost{background:transparent;color:inherit;border:1px solid currentColor}
+.btn-ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.burger{display:none;border:1px solid var(--rule);background:none;border-radius:2px;padding:8px 11px;cursor:pointer;color:inherit}
+
+/* hero */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;background:#0F1215;overflow:hidden;padding:0;margin-top:-70px}
+.roll{position:absolute;inset:0}
+.roll figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity 1.5s ease}
+.roll figure.on{opacity:1}
+.roll figure.on img{transform:scale(1.09)}
+.roll img{width:100%;height:100%;object-fit:cover;filter:grayscale(.3) contrast(1.06);transform:scale(1);transition:transform 8s linear}
+.hero::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(to top,rgba(10,12,14,.96) 0%,rgba(10,12,14,.5) 42%,rgba(10,12,14,.28) 100%),
+  linear-gradient(100deg,rgba(10,12,14,.8),rgba(10,12,14,0) 62%)}
+.hero .wrap{position:relative;z-index:2;color:#fff;padding-top:150px;width:100%}
+.hero h1{max-width:15ch}
+.hero .lede{color:rgba(255,255,255,.8);margin-top:24px;font-size:var(--meso-fs-hero-lead);line-height:1.5;max-width:46ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.hero .btn-ghost{color:#fff;border-color:rgba(255,255,255,.5)}
+.hero .btn-ghost:hover{background:#fff;color:var(--ink);border-color:#fff}
+.hero-foot{position:relative;z-index:2;margin-top:clamp(48px,9vh,96px);border-top:1px solid var(--rule-dark)}
+.hero-foot .wrap{display:flex;align-items:center;gap:24px;padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+.counter{color:rgba(255,255,255,.5)}
+.dots{display:flex;gap:8px;margin-left:auto}
+.dots button{width:40px;height:3px;border:0;padding:0;background:rgba(255,255,255,.25);cursor:pointer;position:relative;overflow:hidden}
+.dots button[aria-current="true"]::after{content:"";position:absolute;inset:0;background:var(--signal);transform-origin:left;animation:fill 6s linear forwards}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.cap{color:rgba(255,255,255,.45);max-width:34ch}
+
+/* ticker */
+.ticker{background:var(--signal);color:var(--ink);overflow:hidden;padding:11px 0;white-space:nowrap}
+.ticker-track{display:inline-flex;animation:slide 42s linear infinite;will-change:transform}
+.ticker span{font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:.02em;padding:0 26px;position:relative}
+.ticker span::after{content:"";position:absolute;right:0;top:50%;width:4px;height:4px;background:var(--ink);border-radius:50%;transform:translateY(-50%)}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker:hover .ticker-track{animation-play-state:paused}
+
+/* stats */
+.stats{background:var(--ink);color:#fff;padding:0}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule-dark)}
+.stats div{background:var(--ink);padding:32px 24px}
+.stats b{display:block;font-family:var(--display);font-size:clamp(2rem,3.6vw,2.9rem);font-weight:500;letter-spacing:var(--meso-ls-h2);line-height:1.1}
+.stats small{font-size:.85rem;color:rgba(255,255,255,.55);display:block;margin-top:6px}
+
+/* product rail */
+.rail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+.rail{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none;cursor:grab}
+.rail::-webkit-scrollbar{display:none}
+.rail.drag{cursor:grabbing}
+.card{flex:0 0 clamp(260px,26vw,330px);scroll-snap-align:start;text-decoration:none;display:block;background:#fff;border:1px solid var(--rule)}
+.card .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--ink-2)}
+.card .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35);transition:transform .6s ease,filter .4s ease}
+.card:hover .ph img{transform:scale(1.06);filter:grayscale(0)}
+.card .no{position:absolute;left:0;top:0;background:var(--signal);color:var(--ink);font-family:var(--font-stack-mono);font-size:.72rem;letter-spacing:.06em;padding:5px 9px}
+.card .txt{padding:20px 20px 24px}
+.card h3{margin-bottom:8px}
+.card p{font-size:.86rem;color:var(--steel);line-height:1.5}
+.card .go{display:inline-block;margin-top:14px;font-size:.86rem;font-weight:500;border-bottom:2px solid var(--signal);padding-bottom:2px}
+.rail-nav{display:flex;gap:8px}
+.rail-nav button{width:42px;height:42px;border:1px solid var(--rule);background:#fff;cursor:pointer;font-size:1rem;line-height:1;border-radius:2px}
+.rail-nav button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bar-track{height:2px;background:var(--rule);margin-top:26px;position:relative}
+.bar-fill{position:absolute;top:0;height:100%;background:var(--signal);width:12%}
+
+/* sticky ladder */
+.ladder{background:var(--ink);color:#fff;padding:0}
+.ladder-grid{display:grid;grid-template-columns:1fr 1fr}
+.ladder-media{position:sticky;top:0;height:100svh;overflow:hidden;background:#0F1215}
+.ladder-media figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .8s ease}
+.ladder-media figure.on{opacity:1}
+.ladder-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(.4) contrast(1.05)}
+.ladder-media .frame{position:absolute;inset:28px;border:1px solid var(--rule-dark);pointer-events:none;z-index:2}
+.ladder-media .tag{position:absolute;left:48px;bottom:48px;z-index:3;font-family:var(--font-stack-mono);font-size:.75rem;letter-spacing:.08em;color:var(--signal)}
+.ladder-steps{padding:0 clamp(28px,5vw,72px)}
+.ladder-intro{min-height:60svh;display:flex;flex-direction:column;justify-content:center;padding:80px 0}
+.ladder-intro .lede{color:rgba(255,255,255,.7)}
+.lstep{min-height:82svh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--rule-dark);padding:60px 0}
+.lstep .n{font-family:var(--font-stack-mono);font-size:.75rem;letter-spacing:.1em;color:var(--steel);margin-bottom:14px}
+.lstep.on .n{color:var(--signal)}
+.lstep h3{font-size:clamp(1.6rem,2.6vw,2.2rem);font-weight:500;letter-spacing:var(--meso-ls-h2);opacity:.42;transition:opacity .4s}
+.lstep.on h3{opacity:1}
+.lstep p{color:rgba(255,255,255,.6);margin-top:12px;font-size:.98rem;max-width:36ch}
+
+/* industries */
+.ind-grid{display:grid;grid-template-columns:.9fr 1.1fr;border:1px solid var(--rule);background:#fff}
+.ind-list{border-right:1px solid var(--rule)}
+.ind-item{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule);padding:20px 26px;cursor:pointer;font-family:var(--display);font-size:clamp(1.1rem,1.7vw,1.5rem);font-weight:500;letter-spacing:var(--meso-ls-h2);color:var(--steel);display:flex;align-items:center;gap:16px;transition:color .2s,background .2s}
+.ind-item:last-child{border-bottom:0}
+.ind-item .dash{width:0;height:2px;background:var(--signal);transition:width .3s;flex:0 0 auto}
+.ind-item[aria-selected="true"]{color:var(--ink);background:var(--paper)}
+.ind-item[aria-selected="true"] .dash{width:28px}
+.ind-item:hover{color:var(--ink)}
+.ind-panel{position:relative;min-height:460px;overflow:hidden;background:var(--ink)}
+.ind-panel figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .6s ease}
+.ind-panel figure.on{opacity:1}
+.ind-panel img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) brightness(.72)}
+.ind-copy{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:36px;color:#fff;background:linear-gradient(to top,rgba(10,12,14,.9),transparent)}
+.ind-copy b{font-family:var(--display);font-size:1.5rem;font-weight:500;display:block}
+.ind-copy small{display:block;color:rgba(255,255,255,.7);font-size:.9rem;margin-top:8px}
+
+/* dark band */
+.band{background:var(--ink);color:#fff}
+.band h2{font-size:var(--meso-fs-h1);line-height:var(--meso-lh-display);letter-spacing:var(--meso-ls-display)}
+.band .lede{color:rgba(255,255,255,.72)}
+.band .btn{background:var(--signal);color:var(--ink)}
+.band .btn:hover{background:#fff}
+.band-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,6vw,80px);align-items:center}
+.plate{border:1px solid var(--rule-dark);background:rgba(255,255,255,.03)}
+.plate .pimg{aspect-ratio:16/10;overflow:hidden}
+.plate .pimg img{width:100%;height:100%;object-fit:cover;filter:grayscale(.5) contrast(1.1)}
+.checklist{list-style:none;padding:0;margin:0}
+.checklist li{padding:14px 22px;border-top:1px solid var(--rule-dark);color:rgba(255,255,255,.78);font-size:.94rem;display:flex;gap:12px}
+.checklist li::before{content:"";flex:0 0 8px;height:8px;background:var(--signal);margin-top:9px}
+
+/* brands */
+.marquee{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#fff}
+.marquee + .marquee{border-top:0}
+.mtrack{display:flex;width:max-content;animation:slide 46s linear infinite}
+.marquee.rev .mtrack{animation-direction:reverse;animation-duration:56s}
+.marquee:hover .mtrack{animation-play-state:paused}
+.logo{flex:0 0 190px;height:104px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--rule);padding:16px;position:relative}
+.logo img{max-width:100%;max-height:100%;width:auto;object-fit:contain;filter:grayscale(1);opacity:.7;transition:filter .2s,opacity .2s}
+.logo:hover img{filter:none;opacity:1}
+.logo .lph{position:absolute;inset:12px;border:1px dashed var(--rule);display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:.85rem;font-weight:500;color:var(--steel);line-height:1.15;padding:6px}
+.logo.has-img .lph{display:none}
+.disclaimer{margin-top:22px;font-size:.82rem;color:var(--steel);max-width:78ch}
+
+/* process */
+.proc-track{position:relative;margin-top:44px}
+.proc-line{position:absolute;left:0;right:0;top:11px;height:2px;background:var(--rule)}
+.proc-fill{position:absolute;left:0;top:0;height:100%;width:0;background:var(--signal);transition:width .9s ease}
+.proc-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;position:relative}
+.pstep .knot{width:24px;height:24px;border-radius:50%;border:2px solid var(--rule);background:var(--paper);position:relative;z-index:2;display:flex;align-items:center;justify-content:center;font-family:var(--font-stack-mono);font-size:.62rem;color:var(--steel);transition:border-color .3s,color .3s,background .3s}
+.pstep.on .knot{border-color:var(--signal);background:var(--signal);color:var(--ink)}
+.pstep b{display:block;font-family:var(--display);font-size:1.15rem;font-weight:500;margin:18px 0 6px}
+.pstep small{color:var(--steel);font-size:.88rem;line-height:1.5;display:block;max-width:26ch}
+
+/* why */
+.why-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,5vw,64px);align-items:start}
+.why{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.why div{border-top:2px solid var(--ink);padding-top:16px}
+.why b{font-family:var(--display);font-size:1.05rem;font-weight:600;display:block;margin-bottom:6px}
+.why small{color:var(--steel);font-size:.88rem;line-height:1.55}
+.why-media{position:sticky;top:100px}
+.why-media img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(.4)}
+.why-media .mono{margin-top:12px;color:var(--steel)}
+
+/* rfq */
+.rfq-sec{background:var(--ink);color:#fff}
+.rfq{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(32px,5vw,72px);align-items:start}
+.rfq h2{font-size:var(--meso-fs-h1);line-height:var(--meso-lh-display);letter-spacing:var(--meso-ls-display)}
+.rfq .lede{color:rgba(255,255,255,.7)}
+form{display:grid;gap:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:.82rem;color:rgba(255,255,255,.55);display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--rule-dark);border-radius:2px;font-family:var(--body);font-size:.95rem;background:rgba(255,255,255,.04);color:#fff}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.35)}
+select option{background:var(--ink);color:#fff}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--signal);outline-offset:1px}
+.rfq .btn{background:var(--signal);color:var(--ink)}
+.rfq .btn:hover{background:#fff}
+.note{font-size:.85rem;color:rgba(255,255,255,.55)}
+.contact-lines a{color:var(--signal);text-decoration:none}
+
+/* footer */
+footer{background:#0F1215;color:rgba(255,255,255,.65);padding:72px 0 32px;font-size:.9rem}
+.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:40px}
+footer h4{font-family:var(--display);font-size:.98rem;color:#fff;margin:0 0 16px;font-weight:600}
+footer ul{list-style:none;margin:0;padding:0}
+footer li{margin-bottom:9px}
+footer a{text-decoration:none}
+footer a:hover{color:var(--signal)}
+.legal{margin-top:52px;padding-top:22px;border-top:1px solid var(--rule-dark);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;font-size:.8rem;color:rgba(255,255,255,.42)}
+.cn{font-family:"Noto Sans SC",sans-serif}
+.sticky-quote{position:fixed;right:20px;bottom:20px;z-index:70;box-shadow:0 8px 28px rgba(0,0,0,.3);opacity:0;pointer-events:none;transform:translateY(12px);transition:.3s}
+.sticky-quote.show{opacity:1;pointer-events:auto;transform:none}
+
+@media (max-width:1040px){
+  .stats .wrap{grid-template-columns:repeat(2,1fr)}
+  .ladder-grid{grid-template-columns:1fr}
+  .ladder-media{height:56svh;top:70px}
+  .lstep{min-height:auto;padding:38px 0}
+  .ladder-intro{min-height:auto;padding:56px 0}
+  .ind-grid{grid-template-columns:1fr}
+  .ind-list{border-right:0;border-bottom:1px solid var(--rule)}
+  .band-grid,.why-grid,.rfq{grid-template-columns:1fr}
+  .why-media{position:static;max-width:420px}
+  .proc-steps{grid-template-columns:repeat(2,1fr);gap:32px}
+  .proc-line{display:none}
+  .fgrid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:720px){
+  .wrap{padding:0 20px}
+  .nav{display:none;position:absolute;top:70px;left:0;right:0;background:var(--paper);color:var(--ink);border-bottom:1px solid var(--rule);flex-direction:column;gap:0;padding:8px 20px 18px}
+  .nav.open{display:flex}
+  header.on-dark .nav{background:var(--ink)}
+  .nav a{padding:13px 0;border-bottom:1px solid var(--rule)}
+  .burger{display:block;margin-left:auto}
+  .tools .btn{display:none}
+  .why,.row,.proc-steps{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+  .hero .wrap{padding-top:120px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::after{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+  .roll figure.on img{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap bar">
+    <a class="mark" href="#top">TRETE<i>·</i>ONE</a>
+    <nav class="nav" id="nav">
+      <a href="#products" data-en="Products" data-zh="产品">Products</a>
+      <a href="#scope" data-en="Scope" data-zh="供应范围">Scope</a>
+      <a href="#industries" data-en="Industries" data-zh="行业">Industries</a>
+      <a href="#sourcing" data-en="Hard-to-find" data-zh="难寻备件">Hard-to-find</a>
+      <a href="#brands" data-en="Brands" data-zh="品牌">Brands</a>
+      <a href="#about" data-en="About" data-zh="关于我们">About</a>
+    </nav>
+    <div class="tools">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="btn" href="#quote" data-en="Request a quote" data-zh="索取报价">Request a quote</a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="roll" id="roll" aria-hidden="true"></div>
+  <div class="wrap">
+    <h1 data-en="Everything your operation needs." data-zh="工厂运转所需，我们都能供应。">Everything your operation needs.</h1>
+    <p class="lede" data-en="From a single replacement bearing to complete industrial machinery — we identify the part, find the supplier and quote it." data-zh="从一只轴承到整套工业设备，我们负责确认型号、寻找供应商并给出报价。">From a single replacement bearing to complete industrial machinery — we identify the part, find the supplier and quote it.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#quote" data-en="Send your requirement" data-zh="提交需求">Send your requirement</a>
+      <a class="btn btn-ghost" href="#products" data-en="Browse products" data-zh="浏览产品">Browse products</a>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="wrap">
+      <span class="mono counter" id="counter"></span>
+      <span class="mono cap" id="cap"></span>
+      <div class="dots" id="dots"></div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<section class="stats">
+  <div class="wrap">
+    <div><b data-count="12">0</b><small data-en="product categories" data-zh="产品大类">product categories</small></div>
+    <div><b data-count="9">0</b><small data-en="industries served" data-zh="服务行业">industries served</small></div>
+    <div><b data-en="Guangzhou" data-zh="广州">Guangzhou</b><small data-en="China · supplying worldwide" data-zh="中国 · 全球供应">China · supplying worldwide</small></div>
+    <div><b data-en="1 day" data-zh="1天">1 day</b><small data-en="target reply to an enquiry" data-zh="询价回复目标时间">target reply to an enquiry</small></div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="wrap">
+    <div class="rail-head rv">
+      <div>
+        <h2 data-en="Everything behind the plant." data-zh="工厂背后的一切。">Everything behind the plant.</h2>
+        <p class="lede" style="margin-top:14px" data-en="Twelve categories covering mechanical, electrical, automation, instrumentation and rotating equipment." data-zh="十二个大类，覆盖机械、电气、自动化、仪器仪表与旋转设备。">Twelve categories covering mechanical, electrical, automation, instrumentation and rotating equipment.</p>
+      </div>
+      <div class="rail-nav">
+        <button type="button" id="prev" aria-label="Previous">‹</button>
+        <button type="button" id="next" aria-label="Next">›</button>
+      </div>
+    </div>
+    <div class="rail" id="rail"></div>
+    <div class="bar-track"><div class="bar-fill" id="railBar"></div></div>
+  </div>
+</section>
+
+<section class="ladder" id="scope">
+  <div class="ladder-grid">
+    <div class="ladder-media" id="lmedia">
+      <span class="frame"></span>
+      <span class="mono tag" id="ltag"></span>
+    </div>
+    <div class="ladder-steps" id="lsteps">
+      <div class="ladder-intro">
+        <h2 data-en="From the smallest component to a complete system." data-zh="从最小的零件到整套系统。">From the smallest component to a complete system.</h2>
+        <p class="lede" style="margin-top:16px" data-en="Scroll through the scope. The same team handles all five." data-zh="向下滚动查看供应范围。五个层级由同一团队负责。">Scroll through the scope. The same team handles all five.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="industries">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2 data-en="Built for the industries that keep moving." data-zh="服务于不停运转的行业。">Built for the industries that keep moving.</h2>
+      <p class="lede" data-en="Pick a plant. We will match the specification to the duty." data-zh="选择您的行业，我们按工况匹配规格。">Pick a plant. We will match the specification to the duty.</p>
+    </div>
+    <div class="ind-grid">
+      <div class="ind-list" id="indList" role="tablist"></div>
+      <div class="ind-panel" id="indPanel"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="sourcing">
+  <div class="wrap band-grid">
+    <div class="rv">
+      <h2 data-en="Can’t find the part? Give us the number." data-zh="找不到备件？把型号给我们。">Can’t find the part? Give us the number.</h2>
+      <p class="lede" style="margin-top:20px" data-en="Obsolete, discontinued, legacy automation, unmarked castings, or just a photo of a nameplate — send whatever you have and we will investigate it." data-zh="停产件、老旧自动化系统、无标识铸件，甚至只有一张铭牌照片——把您手上的资料发给我们，我们来查。">Obsolete, discontinued, legacy automation, unmarked castings, or just a photo of a nameplate — send whatever you have and we will investigate it.</p>
+      <p style="margin-top:30px"><a class="btn" href="#quote" data-en="Upload your requirement" data-zh="上传需求">Upload your requirement</a></p>
+    </div>
+    <div class="plate rv">
+      <div class="pimg"><img id="plateImg" alt="" loading="lazy"></div>
+      <ul class="checklist">
+        <li data-en="Part number or manufacturer reference" data-zh="部件号或制造商编号">Part number or manufacturer reference</li>
+        <li data-en="Equipment model and nameplate photo" data-zh="设备型号与铭牌照片">Equipment model and nameplate photo</li>
+        <li data-en="Datasheet, drawing or PDF" data-zh="技术数据表、图纸或PDF">Datasheet, drawing or PDF</li>
+        <li data-en="Excel BOQ or multi-line request" data-zh="Excel清单或多项询价">Excel BOQ or multi-line request</li>
+        <li data-en="A description, if that is all you have" data-zh="只有文字描述也可以">A description, if that is all you have</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="brands">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2 data-en="Brands we source" data-zh="我们可采购的品牌">Brands we source</h2>
+      <p class="lede" data-en="A selection of the manufacturers most often requested. If yours is not listed, ask." data-zh="以下为常见需求品牌的部分列表。未列出的品牌请直接询问。">A selection of the manufacturers most often requested. If yours is not listed, ask.</p>
+    </div>
+  </div>
+  <div class="marquee"><div class="mtrack" id="m1"></div></div>
+  <div class="marquee rev"><div class="mtrack" id="m2"></div></div>
+  <div class="wrap">
+    <p class="disclaimer" data-en="Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation." data-zh="所有品牌名称及商标归各自所有者所有。除另有说明外，提及制造商并不表示我们获得其授权、代理或与其存在任何关联。">Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.</p>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2 data-en="From requirement to delivery." data-zh="从需求到交付。">From requirement to delivery.</h2>
+    </div>
+    <div class="proc-track">
+      <div class="proc-line"><div class="proc-fill" id="procFill"></div></div>
+      <div class="proc-steps" id="procSteps"></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap why-grid">
+    <div>
+      <div class="sec-head rv" style="margin-bottom:32px">
+        <h2 data-en="Why buyers work with us" data-zh="客户选择我们的原因">Why buyers work with us</h2>
+      </div>
+      <p class="lede rv" style="margin-bottom:36px" data-en="Trete One is an industrial supply and sourcing company based in Guangzhou, China, working with maintenance and procurement teams in demanding plants." data-zh="Trete One 是一家位于中国广州的工业供应与采购公司，服务于各类工厂的维修与采购团队。">Trete One is an industrial supply and sourcing company based in Guangzhou, China, working with maintenance and procurement teams in demanding plants.</p>
+      <div class="why rv" id="whyGrid"></div>
+    </div>
+    <div class="why-media rv">
+      <img id="whyImg" alt="" loading="lazy">
+      <p class="mono" data-en="GUANGZHOU · LIWAN DISTRICT" data-zh="广州 · 荔湾区">GUANGZHOU · LIWAN DISTRICT</p>
+    </div>
+  </div>
+</section>
+
+<section class="rfq-sec" id="quote">
+  <div class="wrap rfq">
+    <div class="rv">
+      <h2 data-en="Tell us what you need." data-zh="告诉我们您的需求。">Tell us what you need.</h2>
+      <p class="lede" style="margin-top:18px" data-en="No account needed. Send a part number, a photo or a whole list — we reply with price and lead time." data-zh="无需注册。发送部件号、照片或整份清单，我们会回复价格与交期。">No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.</p>
+      <p class="note contact-lines" style="margin-top:30px">
+        <span data-en="Or message us directly:" data-zh="也可直接联系我们：">Or message us directly:</span><br>
+        <a href="mailto:info@treteone.com">info@treteone.com</a><br>
+        <a href="https://wa.me/8619540094137">WhatsApp +86 195 4009 4137</a>
+      </p>
+    </div>
+    <form id="rfqForm" class="rv">
+      <div>
+        <label for="need" data-en="What do you need?" data-zh="您需要什么？">What do you need?</label>
+        <select id="need">
+          <option data-en="Spare part" data-zh="备件">Spare part</option>
+          <option data-en="Equipment" data-zh="设备">Equipment</option>
+          <option data-en="Machinery" data-zh="机械">Machinery</option>
+          <option data-en="Automation" data-zh="自动化">Automation</option>
+          <option data-en="Instrumentation" data-zh="仪器仪表">Instrumentation</option>
+          <option data-en="Other" data-zh="其他">Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="part" data-en="Part number or description" data-zh="部件号或描述">Part number or description</label>
+        <input id="part" type="text" placeholder="6ES7 214-1AG40-0XB0">
+      </div>
+      <div class="row">
+        <div>
+          <label for="brand" data-en="Manufacturer" data-zh="制造商">Manufacturer</label>
+          <input id="brand" type="text">
+        </div>
+        <div>
+          <label for="qty" data-en="Quantity" data-zh="数量">Quantity</label>
+          <input id="qty" type="text">
+        </div>
+      </div>
+      <div>
+        <label for="file" data-en="Attach a datasheet, photo or BOQ" data-zh="上传数据表、照片或清单">Attach a datasheet, photo or BOQ</label>
+        <input id="file" type="file" multiple>
+      </div>
+      <div>
+        <label for="more" data-en="Anything else we should know" data-zh="其他需要说明的信息">Anything else we should know</label>
+        <textarea id="more"></textarea>
+      </div>
+      <div class="row">
+        <div>
+          <label for="name" data-en="Name and company" data-zh="姓名与公司">Name and company</label>
+          <input id="name" type="text">
+        </div>
+        <div>
+          <label for="contact" data-en="Email or WhatsApp" data-zh="邮箱或WhatsApp">Email or WhatsApp</label>
+          <input id="contact" type="text">
+        </div>
+      </div>
+      <div><button class="btn" type="submit" data-en="Send request" data-zh="提交需求">Send request</button></div>
+      <p class="note" id="formNote" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4 class="mark" style="font-size:1.15rem">TRETE<i>·</i>ONE</h4>
+        <p data-en="Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop." data-zh="工业供应与采购。为不能停机的工厂提供备件、设备与机械。">Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop.</p>
+      </div>
+      <div>
+        <h4 data-en="Products" data-zh="产品">Products</h4>
+        <ul id="footProducts"></ul>
+      </div>
+      <div>
+        <h4 data-en="Company" data-zh="公司">Company</h4>
+        <ul>
+          <li><a href="#about" data-en="About" data-zh="关于我们">About</a></li>
+          <li><a href="#industries" data-en="Industries" data-zh="行业">Industries</a></li>
+          <li><a href="#sourcing" data-en="Hard-to-find parts" data-zh="难寻备件">Hard-to-find parts</a></li>
+          <li><a href="#brands" data-en="Brands" data-zh="品牌">Brands</a></li>
+          <li><a href="#quote" data-en="Request a quote" data-zh="索取报价">Request a quote</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-zh="联系方式">Contact</h4>
+        <ul>
+          <li><a href="mailto:info@treteone.com">info@treteone.com</a></li>
+          <li><a href="tel:+8619540094137">+86 195 4009 4137</a></li>
+          <li><a href="https://wa.me/8619540094137">WhatsApp</a></li>
+          <li style="margin-top:12px">Room G063, 5th Floor, No. 80-86 Xizeng Road, Liwan District, Guangzhou, China</li>
+          <li class="cn">广州市荔湾区西增路80-86号5、6楼（自编五楼）G063</li>
+          <li><button class="btn btn-ghost" style="color:#fff;font-size:.82rem;padding:7px 12px;margin-top:6px" id="copyAddr" type="button" data-en="Copy address" data-zh="复制地址">Copy address</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span data-en="Registered name: [COMPANY NAME] · Business licence: [LICENCE NUMBER]" data-zh="注册名称：[公司名称] · 统一社会信用代码：[执照号码]">Registered name: [COMPANY NAME] · Business licence: [LICENCE NUMBER]</span>
+      <span>© <span id="yr"></span> Trete One</span>
+    </div>
+  </div>
+</footer>
+
+<a class="btn sticky-quote" id="stickyQuote" href="#quote" data-en="Request a quote" data-zh="索取报价">Request a quote</a>
+
+<script>
+/* ===== image pool (Unsplash, free licence) — swap these IDs for real photos ===== */
+const U = id => 'https://unsplash.com/photos/' + id + '/download?force=true&w=1600';
+const IMG = {
+  valves:'P9igDaOnlJ0', controlRoom:'C3DfIgig1j8', panel:'r6fBLCriUgg',
+  pipes:'5OvIgxlLlxs', lathe:'_VBsh_IKsD8', plant:'qZTv5-paTss',
+  warehouse:'-aCrA9FmT8Y', fastener:'k76Iqu0S120', mining:'QmW6MD2SeFM',
+  cement:'BauPLtw8VfM', refinery:'Z8rvuexdWJU', rig:'MVA-zlTQdSE',
+  steel:'SLIFI67jv5k', truck:'O2XbR4lXhDM'
+};
+
+const HERO=[
+  [IMG.valves,'Substation pipework and valves','变电站管道与阀门'],
+  [IMG.controlRoom,'Plant control room','工厂控制室'],
+  [IMG.panel,'Machine control panel','机器控制面板'],
+  [IMG.pipes,'Process pipe run','工艺管道'],
+  [IMG.lathe,'Workshop lathe','车间车床']
+];
+
+const CATS=[
+  ['Automation & Control','自动化与控制','PLC · DCS · SCADA · HMI · Remote I/O · VFDs · servo','PLC · DCS · SCADA · 人机界面 · 远程I/O · 变频器 · 伺服',IMG.panel],
+  ['Instrumentation & Measurement','仪器仪表与测量','Pressure · flow · level · temperature · transmitters','压力 · 流量 · 液位 · 温度 · 变送器',IMG.controlRoom],
+  ['Electrical & Power','电气与配电','Switchgear · breakers · transformers · panels · UPS','开关柜 · 断路器 · 变压器 · 控制柜 · UPS',IMG.valves],
+  ['Motors, Drives & Transmission','电机、驱动与传动','Motors · gearboxes · couplings · bearings · belts','电动机 · 减速机 · 联轴器 · 轴承 · 皮带',IMG.lathe],
+  ['Pumps & Pump Equipment','泵与泵用设备','Centrifugal · dosing · submersible · seals · impellers','离心泵 · 计量泵 · 潜水泵 · 机械密封 · 叶轮',IMG.pipes],
+  ['Compressors & Compressed Air','压缩机与压缩空气','Screw · reciprocating · dryers · receivers · spares','螺杆机 · 活塞机 · 干燥机 · 储气罐 · 备件',IMG.plant],
+  ['Valves & Flow Control','阀门与流量控制','Ball · gate · butterfly · control · safety · actuators','球阀 · 闸阀 · 蝶阀 · 调节阀 · 安全阀 · 执行器',IMG.valves],
+  ['Mechanical & MRO Spares','机械与MRO备件','Bearings · seals · gaskets · fasteners · hoses · filters','轴承 · 密封件 · 垫片 · 紧固件 · 软管 · 滤芯',IMG.fastener],
+  ['Hydraulic & Pneumatic','液压与气动','Pumps · cylinders · valves · power units · fittings','液压泵 · 油缸 · 阀 · 液压站 · 接头',IMG.lathe],
+  ['Process & Industrial Equipment','流程与工业设备','Heat exchangers · filtration · vessels · fans · conveyors','换热器 · 过滤设备 · 容器 · 风机 · 输送设备',IMG.steel],
+  ['Industrial Machinery','工业机械','Generators · production lines · packaging · welding','发电机组 · 生产线 · 包装机械 · 焊接设备',IMG.plant],
+  ['Industrial Consumables','工业耗材','Filters · lubricants · abrasives · cutting tools · PPE','滤芯 · 润滑油 · 磨料 · 刀具 · 劳保用品',IMG.warehouse]
+];
+
+const LADDER=[
+  ['Component','零件','A bearing, a seal, a sensor. Identified from a photo or a worn original.','一只轴承、一套密封、一个传感器。可凭照片或旧件确认。',IMG.fastener],
+  ['Spare part','备件','OEM references and tested equivalents, quoted side by side.','原厂件与经验证的替代件并列报价。',IMG.lathe],
+  ['Assembly','组件','Valve and actuator sets, pump ends, drive packages.','阀门执行机构、泵头、传动总成。',IMG.valves],
+  ['Machine','设备','Pumps, motors, compressors, sized to the duty you give us.','按您提供的工况选型的泵、电机、压缩机。',IMG.plant],
+  ['Complete system','成套系统','Skids, production lines and full equipment packages.','橇装设备、生产线与整套设备包。',IMG.steel]
+];
+
+const INDS=[
+  ['Oil & Gas','石油天然气','Pumps · valves · instrumentation · rotating equipment spares','泵 · 阀门 · 仪表 · 旋转设备备件',IMG.rig],
+  ['Refining & Petrochemical','炼化与石化','Control valves · heat exchangers · seals · analysers','调节阀 · 换热器 · 密封件 · 分析仪',IMG.refinery],
+  ['Power Generation','电力','Switchgear · transformers · turbine auxiliaries · protection','开关柜 · 变压器 · 汽机辅机 · 保护装置',IMG.valves],
+  ['Cement','水泥','Gearboxes · bearings · fans · wear parts · drives','减速机 · 轴承 · 风机 · 易损件 · 传动',IMG.cement],
+  ['Manufacturing','制造业','PLC and drives · sensors · pneumatics · conveyors','PLC与驱动 · 传感器 · 气动元件 · 输送设备',IMG.panel],
+  ['Steel & Metals','钢铁与金属','Hydraulics · heavy bearings · motors · cooling systems','液压 · 重载轴承 · 电机 · 冷却系统',IMG.steel],
+  ['Mining','矿业','Slurry pumps · crusher spares · couplings · lubrication','渣浆泵 · 破碎机备件 · 联轴器 · 润滑',IMG.mining],
+  ['Water & Wastewater','给排水','Pumps · dosing systems · level instruments · blowers','水泵 · 加药系统 · 液位仪表 · 鼓风机',IMG.pipes],
+  ['Facilities & Institutions','公共与商业设施','Generators · UPS · HVAC components · distribution','发电机 · UPS · 暖通部件 · 配电',IMG.warehouse]
+];
+
+const PROC=[
+  ['Identify','确认','We confirm the exact part or specification from whatever you send.','根据您提供的资料确认准确型号或规格。'],
+  ['Source','寻源','We approach manufacturers and specialist suppliers in our network.','向网络内的制造商与专业供应商询价。'],
+  ['Verify','核验','Specification, documentation and supplier are checked before quoting.','报价前核对规格、文件与供应商资质。'],
+  ['Quote','报价','You get price, lead time and the alternatives worth considering.','提供价格、交期与可考虑的替代方案。'],
+  ['Deliver','交付','One contact stays with the order from purchase to arrival.','由同一联系人跟进订单直至到货。']
+];
+
+const WHY=[
+  ['We read specifications','读得懂规格','Part numbers, equipment models and datasheets — not just product names.','不只是产品名称，我们看得懂部件号、设备型号和数据表。'],
+  ['Not tied to one brand','不限于单一品牌','We quote the manufacturer that fits the duty, not the one we carry.','按工况选择合适的制造商，而非只推手上有的。'],
+  ['Hard-to-find is routine','难寻件是日常','Obsolete and discontinued components are normal work here.','停产与淘汰件的寻源是我们的常规业务。'],
+  ['One channel, whole scope','一个渠道，全部范围','A single item or a full BOQ goes through the same team.','单件采购与整份清单由同一团队处理。'],
+  ['Documentation where available','尽可能提供文件','Datasheets and certificates supplied when the supplier provides them.','在供应商可提供时随货附上数据表与证书。'],
+  ['A registered company','正规注册企业','Registered name, address and licence number published in the footer.','公司注册名称、地址与营业执照号公示于页脚。']
+];
+
+const BRANDS=['Siemens','ABB','Schneider Electric','Rockwell / Allen-Bradley','Omron','Mitsubishi Electric','Emerson','Honeywell','Yokogawa','Endress+Hauser','WIKA','SICK','Pepperl+Fuchs','Festo','SMC','Parker','Bosch Rexroth','Danfoss','Eaton','WEG','SEW-Eurodrive','SKF','Schaeffler / FAG','NSK','Timken','John Crane','Grundfos','KSB','Flowserve','Atlas Copco','Ingersoll Rand','Alfa Laval'];
+
+/* ===== helpers ===== */
+const el=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e};
+const bi=(e,en,zh)=>{e.dataset.en=en;e.dataset.zh=zh;e.textContent=en;return e};
+const pad=n=>String(n).padStart(2,'0');
+const isZh=()=>document.body.classList.contains('zh');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ===== hero ===== */
+const roll=document.getElementById('roll');
+HERO.forEach(([id],i)=>{
+  const f=el('figure'); if(i===0) f.className='on';
+  const im=el('img'); im.src=U(id); im.alt=''; if(i>0) im.loading='lazy';
+  f.appendChild(im); roll.appendChild(f);
+});
+const slides=[...roll.children];
+const dots=document.getElementById('dots');
+const counter=document.getElementById('counter');
+const cap=document.getElementById('cap');
+slides.forEach((_,i)=>{
+  const b=el('button'); b.type='button'; b.setAttribute('aria-label','Image '+(i+1));
+  b.addEventListener('click',()=>{show(i);restart()});
+  dots.appendChild(b);
+});
+let hi=0,htimer;
+function show(i){
+  hi=(i+slides.length)%slides.length;
+  slides.forEach((s,n)=>s.classList.toggle('on',n===hi));
+  [...dots.children].forEach((d,n)=>{
+    d.setAttribute('aria-current',String(n===hi));
+    if(n===hi){d.style.animation='none';void d.offsetWidth;d.style.animation=''}
+  });
+  counter.textContent=pad(hi+1)+' / '+pad(slides.length);
+  cap.textContent=HERO[hi][isZh()?2:1];
+}
+function restart(){clearInterval(htimer); if(reduce) return; htimer=setInterval(()=>show(hi+1),6000)}
+show(0); restart();
+
+const hdr=document.getElementById('hdr');
+const heroEl=document.getElementById('top');
+new IntersectionObserver(es=>es.forEach(e=>hdr.classList.toggle('on-dark',e.isIntersecting)),
+  {rootMargin:'-70px 0px 0px 0px',threshold:0}).observe(heroEl);
+
+/* ===== ticker ===== */
+const tk=document.getElementById('ticker');
+const tickItems=[...CATS.map(c=>c[0]),'Hard-to-find parts','Obsolete components','Global sourcing'];
+for(let r=0;r<2;r++) tickItems.forEach(t=>{const s=el('span');s.textContent=t;tk.appendChild(s)});
+
+/* ===== product rail ===== */
+const rail=document.getElementById('rail');
+CATS.forEach(([en,zh,sen,szh,img],i)=>{
+  const a=el('a','card'); a.href='#quote';
+  const ph=el('div','ph');
+  const no=el('span','no'); no.textContent=pad(i+1);
+  const im=el('img'); im.src=U(img); im.alt=''; im.loading='lazy'; im.draggable=false;
+  ph.append(im,no);
+  const tx=el('div','txt');
+  const h=el('h3'); bi(h,en,zh);
+  const p=el('p'); bi(p,sen,szh);
+  const g=el('span','go'); bi(g,'Enquire','询价');
+  tx.append(h,p,g); a.append(ph,tx); rail.appendChild(a);
+});
+const railBar=document.getElementById('railBar');
+function railProgress(){
+  const max=rail.scrollWidth-rail.clientWidth;
+  const pct=max>0?rail.scrollLeft/max:0;
+  const w=rail.clientWidth/rail.scrollWidth*100;
+  railBar.style.width=w+'%';
+  railBar.style.left=(pct*(100-w))+'%';
+}
+rail.addEventListener('scroll',railProgress);
+window.addEventListener('resize',railProgress); railProgress();
+const step=()=>rail.querySelector('.card').offsetWidth+20;
+document.getElementById('next').addEventListener('click',()=>rail.scrollBy({left:step()*2,behavior:'smooth'}));
+document.getElementById('prev').addEventListener('click',()=>rail.scrollBy({left:-step()*2,behavior:'smooth'}));
+let down=false,sx=0,sl=0;
+rail.addEventListener('pointerdown',e=>{down=true;sx=e.clientX;sl=rail.scrollLeft;rail.classList.add('drag')});
+window.addEventListener('pointerup',()=>{down=false;rail.classList.remove('drag')});
+rail.addEventListener('pointermove',e=>{if(!down)return;e.preventDefault();rail.scrollLeft=sl-(e.clientX-sx)});
+
+/* ===== sticky ladder ===== */
+const lm=document.getElementById('lmedia');
+const ls=document.getElementById('lsteps');
+const ltag=document.getElementById('ltag');
+LADDER.forEach(([en,zh,den,dzh,img],i)=>{
+  const f=el('figure'); if(i===0) f.className='on';
+  const im=el('img'); im.src=U(img); im.alt=''; im.loading='lazy';
+  f.appendChild(im); lm.insertBefore(f,lm.firstChild);
+  const d=el('div','lstep'); d.dataset.i=i; if(i===0) d.classList.add('on');
+  const n=el('div','n'); n.textContent=pad(i+1)+' / '+pad(LADDER.length);
+  const h=el('h3'); bi(h,en,zh);
+  const p=el('p'); bi(p,den,dzh);
+  d.append(n,h,p); ls.appendChild(d);
+});
+const lfigs=[...lm.querySelectorAll('figure')];
+const lsteps=[...ls.querySelectorAll('.lstep')];
+let lcur=0;
+function ltagText(){ltag.textContent=(isZh()?LADDER[lcur][1]:LADDER[lcur][0]).toUpperCase()}
+ltagText();
+const lobs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    lcur=+e.target.dataset.i;
+    lfigs.forEach((f,n)=>f.classList.toggle('on',n===lcur));
+    lsteps.forEach((s,n)=>s.classList.toggle('on',n===lcur));
+    ltagText();
+  });
+},{threshold:.5});
+lsteps.forEach(s=>lobs.observe(s));
+
+/* ===== industries ===== */
+const indList=document.getElementById('indList');
+const indPanel=document.getElementById('indPanel');
+const indCopy=el('div','ind-copy');
+const icB=el('b'), icS=el('small');
+indCopy.append(icB,icS);
+INDS.forEach(([en,zh,sen,szh,img],i)=>{
+  const b=el('button','ind-item'); b.type='button'; b.setAttribute('role','tab');
+  const dash=el('span','dash'); const lbl=el('span'); bi(lbl,en,zh);
+  b.append(dash,lbl);
+  b.addEventListener('click',()=>pick(i));
+  b.addEventListener('mouseenter',()=>pick(i));
+  b.addEventListener('focus',()=>pick(i));
+  indList.appendChild(b);
+  const f=el('figure'); if(i===0) f.className='on';
+  const im=el('img'); im.src=U(img); im.alt=''; im.loading='lazy';
+  f.appendChild(im); indPanel.appendChild(f);
+});
+indPanel.appendChild(indCopy);
+const indFigs=[...indPanel.querySelectorAll('figure')];
+function pick(i){
+  [...indList.children].forEach((b,n)=>b.setAttribute('aria-selected',String(n===i)));
+  indFigs.forEach((f,n)=>f.classList.toggle('on',n===i));
+  icB.dataset.en=INDS[i][0]; icB.dataset.zh=INDS[i][1];
+  icS.dataset.en=INDS[i][2]; icS.dataset.zh=INDS[i][3];
+  icB.textContent=isZh()?INDS[i][1]:INDS[i][0];
+  icS.textContent=isZh()?INDS[i][3]:INDS[i][2];
+}
+pick(0);
+
+document.getElementById('plateImg').src=U(IMG.truck);
+document.getElementById('whyImg').src=U(IMG.warehouse);
+
+/* ===== brands ===== */
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function logoTile(n){
+  const d=el('div','logo');
+  const ph=el('span','lph'); ph.textContent=n;
+  const img=el('img'); img.alt=n; img.loading='lazy';
+  img.addEventListener('load',()=>d.classList.add('has-img'));
+  img.addEventListener('error',()=>img.remove());
+  img.src='logos/'+slug(n)+'.svg';
+  d.append(ph,img); return d;
+}
+const half=Math.ceil(BRANDS.length/2);
+[[document.getElementById('m1'),BRANDS.slice(0,half)],
+ [document.getElementById('m2'),BRANDS.slice(half)]]
+.forEach(([track,list])=>{for(let r=0;r<2;r++) list.forEach(n=>track.appendChild(logoTile(n)))});
+
+/* ===== process ===== */
+const ps=document.getElementById('procSteps');
+const pf=document.getElementById('procFill');
+PROC.forEach(([en,zh,den,dzh],i)=>{
+  const d=el('div','pstep'); d.dataset.i=i;
+  const k=el('div','knot'); k.textContent=i+1;
+  const b=el('b'); bi(b,en,zh);
+  const s=el('small'); bi(s,den,dzh);
+  d.append(k,b,s); ps.appendChild(d);
+});
+const psteps=[...ps.children];
+const pobs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const i=+e.target.dataset.i;
+    psteps.forEach((s,n)=>{if(n<=i) s.classList.add('on')});
+    pf.style.width=((i+1)/PROC.length*100)+'%';
+  });
+},{threshold:.5});
+psteps.forEach(s=>pobs.observe(s));
+
+/* ===== why ===== */
+const wg=document.getElementById('whyGrid');
+WHY.forEach(([en,zh,den,dzh])=>{
+  const d=el('div'); const b=el('b'); bi(b,en,zh); const s=el('small'); bi(s,den,dzh);
+  d.append(b,s); wg.appendChild(d);
+});
+
+const fp=document.getElementById('footProducts');
+CATS.slice(0,8).forEach(([en,zh])=>{const li=el('li');const a=el('a');a.href='#products';bi(a,en,zh);li.appendChild(a);fp.appendChild(li)});
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* ===== reveals & counters ===== */
+const robs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');robs.unobserve(e.target)}});
+},{threshold:.15});
+document.querySelectorAll('.rv').forEach(n=>robs.observe(n));
+
+const cobs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const t=+e.target.dataset.count;
+    if(reduce){e.target.textContent=t}
+    else{
+      let v=0;
+      const tick=()=>{v+=Math.max(1,Math.round(t/18));
+        if(v>=t){e.target.textContent=t;return}
+        e.target.textContent=v; requestAnimationFrame(tick)};
+      tick();
+    }
+    cobs.unobserve(e.target);
+  });
+},{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(n=>cobs.observe(n));
+
+const sq=document.getElementById('stickyQuote');
+new IntersectionObserver(es=>es.forEach(e=>sq.classList.toggle('show',!e.isIntersecting)),
+  {threshold:0}).observe(heroEl);
+
+/* ===== language ===== */
+function setLang(lang){
+  document.documentElement.lang=lang==='zh'?'zh-CN':'en';
+  document.body.classList.toggle('zh',lang==='zh');
+  document.querySelectorAll('[data-en]').forEach(n=>{const v=n.dataset[lang]; if(v) n.textContent=v});
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));
+  cap.textContent=HERO[hi][lang==='zh'?2:1];
+  ltagText();
+  try{localStorage.setItem('lang',lang)}catch(e){}
+}
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+let saved='en'; try{saved=localStorage.getItem('lang')||(navigator.language.startsWith('zh')?'zh':'en')}catch(e){}
+setLang(saved);
+
+/* ===== misc ===== */
+document.getElementById('rfqForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  document.getElementById('formNote').textContent=isZh()
+    ?'需求已记录。（演示版本 — 请接入后端邮件服务。）'
+    :'Request captured. (Demo build — connect this to your mail backend.)';
+});
+document.getElementById('copyAddr').addEventListener('click',async()=>{
+  const btn=document.getElementById('copyAddr');
+  try{
+    await navigator.clipboard.writeText('Room G063, 5th Floor, No. 80-86 Xizeng Road, Liwan District, Guangzhou, China\n广州市荔湾区西增路80-86号5、6楼（自编五楼）G063');
+    btn.textContent=isZh()?'已复制':'Copied';
+  }catch(e){btn.textContent=isZh()?'复制失败':'Copy failed'}
+  setTimeout(()=>setLang(isZh()?'zh':'en'),1800);
+});
+const burger=document.getElementById('burger');
+burger.addEventListener('click',()=>{
+  const open=document.getElementById('nav').classList.toggle('open');
+  burger.setAttribute('aria-expanded',String(open));
+});
+document.getElementById('nav').addEventListener('click',e=>{
+  if(e.target.tagName==='A') document.getElementById('nav').classList.remove('open');
+});
+</script>
+</body>
+</html>
