@@ -1,0 +1,63 @@
+---
+/**
+ * Definition blocks — a heading and a paragraph, two across (one across below
+ * 960px). The four sourcing terms on /sourcing and the six working principles
+ * on /about. Mockup source: .defs / .def in reference/mockup.html.
+ *
+ * Props
+ *   items         title and body, already localised by the page
+ *   headingLevel  2 when the grid sits directly under the page h1 (both
+ *                 current uses), 3 under a section h2. Looks the same.
+ */
+
+interface Item {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  items: readonly Item[];
+  headingLevel?: 2 | 3;
+}
+
+const { items, headingLevel = 2 } = Astro.props;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
+---
+
+<div class="defs">
+  {
+    items.map((item) => (
+      <div class="def">
+        <Heading class="def__title">{item.title}</Heading>
+        <p>{item.body}</p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .defs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(24px, 3.4vw, 46px);
+    margin-top: 32px;
+  }
+
+  .def__title {
+    margin-bottom: 8px;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
+
+  .def p {
+    font-size: .9375rem;
+    line-height: 1.62;
+    color: var(--fg-body);
+  }
+
+  @media (max-width: 960px) {
+    .defs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

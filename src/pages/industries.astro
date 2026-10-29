@@ -1,23 +1,43 @@
 ---
-import ClosingCta from '~/components/ClosingCta.astro';
-import IndustryIndex from '~/components/IndustryIndex.astro';
-import PageHero from '~/components/PageHero.astro';
+import IndexRows from '~/components/IndexRows.astro';
+import PageHead from '~/components/PageHead.astro';
 import { industries } from '~/data/industries';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+import { quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
-/** /industries — all 9 industries in full (CLAUDE.md §3). */
+/**
+ * /industries — page head and the 9 sectors as index rows, each spec line
+ * naming the duty data that decides the answer (CLAUDE.md §3; mockup
+ * #v-industries).
+ *
+ * Rendered for both languages: src/pages/zh/industries.astro renders this
+ * file, and every string resolves from the route's language.
+ */
 
-const t = useTranslations(getLangFromUrl(Astro.url));
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const rows = industries.map((industry) => ({
+  id: industry.slug,
+  name: pick(industry.name, lang),
+  spec: pick(industry.spec, lang),
+}));
 ---
 
 <Base title={t('meta.industries.title')} description={t('meta.industries.description')}>
-  <PageHero
-    eyebrow={t('industries.eyebrow')}
-    title={t('industries.heading')}
-    lede={t('industries.lede')}
-    facts={[t('industries.count')(industries.length)]}
-  />
-  <IndustryIndex />
-  <ClosingCta />
+  <div class="wrap sec">
+    <PageHead
+      kicker={t('industries.page.kicker')(industries.length)}
+      title={t('industries.page.title')}
+      lead={t('industries.page.lead')}
+    >
+      <IndexRows
+        rows={rows}
+        href={localisePath(quoteHref, lang)}
+        action={t('industries.rows.enquire')}
+        label={t('industries.listLabel')}
+      />
+    </PageHead>
+  </div>
 </Base>

@@ -8,8 +8,9 @@ import imgMachine from '~/assets/scope/machine.jpg';
 import imgCompleteSystem from '~/assets/scope/complete-system.jpg';
 
 /**
- * The 5 component-to-system stages (CLAUDE.md §3), driving the ScopeScroller
- * (§6.6). The order is the argument the section makes — a single bearing at one
+ * The 5 component-to-system stages (CLAUDE.md §3), shown on /products by the
+ * navy ScopeSteps band (wording from the approved mockup, verbatim). The older
+ * ScopeScroller component reads the same array and the `image` field. The order is the argument the section makes — a single bearing at one
  * end, a complete system at the other, one team across all five — so it is the
  * array order and nothing else.
  *
@@ -30,8 +31,8 @@ export const scopeStages: readonly ScopeStage[] = [
     slug: 'component',
     name: { en: 'Component', zh: '零件' },
     description: {
-      en: 'A bearing, a seal, a sensor. Identified from a photo or a worn original.',
-      zh: '一只轴承、一套密封、一个传感器。可凭照片或旧件确认。',
+      en: 'A bearing, a seal, a sensor — identified from a photograph or a worn original.',
+      zh: '一只轴承、一套密封、一个传感器——凭照片或磨损的旧件即可确认。',
     },
     image: imgComponent,
   },
@@ -39,8 +40,8 @@ export const scopeStages: readonly ScopeStage[] = [
     slug: 'spare-part',
     name: { en: 'Spare part', zh: '备件' },
     description: {
-      en: 'OEM references and tested equivalents, quoted side by side.',
-      zh: '原厂件与经验证的替代件并列报价。',
+      en: 'OEM reference and tested equivalents, quoted side by side.',
+      zh: '原厂型号与经验证的替代件，并列报价。',
     },
     image: imgSparePart,
   },
@@ -49,7 +50,7 @@ export const scopeStages: readonly ScopeStage[] = [
     name: { en: 'Assembly', zh: '组件' },
     description: {
       en: 'Valve and actuator sets, pump ends, drive packages.',
-      zh: '阀门执行机构、泵头、传动总成。',
+      zh: '阀门与执行机构组合、泵头、传动总成。',
     },
     image: imgAssembly,
   },
@@ -57,8 +58,8 @@ export const scopeStages: readonly ScopeStage[] = [
     slug: 'machine',
     name: { en: 'Machine', zh: '设备' },
     description: {
-      en: 'Pumps, motors, compressors, sized to the duty you give us.',
-      zh: '按您提供的工况选型的泵、电机、压缩机。',
+      en: 'Pumps, motors and compressors sized to the duty you give us.',
+      zh: '按您提供的工况选型的泵、电机和压缩机。',
     },
     image: imgMachine,
   },

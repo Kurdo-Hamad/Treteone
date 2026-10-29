@@ -1,0 +1,89 @@
+---
+/**
+ * A row of numbered steps — the shared grid behind the five-step process on
+ * /sourcing and the navy component-to-system band on /products (ScopeSteps).
+ * Mockup source: .steps / .step in reference/mockup.html.
+ *
+ *   5 across · 2 across below 960px · 1 across below 560px
+ *
+ * Works on white and on navy without a variant: every colour is a role token
+ * that .navy redefines (tokens.css), so the band sets the ground and this
+ * component follows it.
+ *
+ * Props
+ *   steps  label ("Step 01" / "01"), title and body, already localised
+ */
+
+interface Step {
+  label: string;
+  title: string;
+  body: string;
+}
+
+interface Props {
+  steps: readonly Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<ol class="steps">
+  {
+    steps.map((step) => (
+      <li class="step">
+        <span class="step__k mono">{step.label}</span>
+        <h3>{step.title}</h3>
+        <p>{step.body}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(18px, 2.4vw, 30px);
+  }
+
+  /* The mockup sets this label in plain cyan on white, which is about 2.4:1
+     and fails AA (§11). --fg-accent is link-blue on light grounds and
+     cyan-light on navy — the mockup's navy colour, and a passing light one. */
+  .step__k {
+    display: block;
+    margin-bottom: 10px;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--fg-accent);
+  }
+
+  .step h3 {
+    font-size: 1rem;
+  }
+
+  .step p {
+    margin-top: 7px;
+    font-size: .8125rem;
+    line-height: 1.6;
+    color: var(--fg-body);
+  }
+  /* Mockup: .66 white on navy. --on-dark-3 is .64, above the §11 floor of .50. */
+  :global(:is(.navy, .dark-surface)) .step p {
+    color: var(--on-dark-3);
+  }
+
+  @media (max-width: 960px) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

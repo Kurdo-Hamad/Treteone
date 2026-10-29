@@ -1,0 +1,42 @@
+---
+import ProcessSteps from '~/components/ProcessSteps.astro';
+import { quoteHref } from '~/data/navigation';
+import { scopeStages } from '~/data/scope';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * The navy scope band on /products: component → spare part → assembly →
+ * machine → complete system, then the quote button. Mockup source: the
+ * .navy band inside #v-products in reference/mockup.html.
+ *
+ * The stages and their order come from src/data/scope.ts; the grid is the
+ * shared ProcessSteps, so this band and the /sourcing process read as one.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const pad = (n: number): string => String(n).padStart(2, '0');
+
+const steps = scopeStages.map((stage, i) => ({
+  label: pad(i + 1),
+  title: pick(stage.name, lang),
+  body: pick(stage.description, lang),
+}));
+---
+
+<section class="navy" aria-labelledby="scope-band-title">
+  <div class="wrap sec">
+    <p class="kicker">{t('scope.band.kicker')}</p>
+    <h2 id="scope-band-title">{t('scope.band.title')}</h2>
+    <ProcessSteps steps={steps} />
+    <p class="scope-band__cta">
+      <a class="btn" href={localisePath(quoteHref, lang)}>{t('cta.quote')}</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .scope-band__cta {
+    margin-top: 32px;
+  }
+</style>
