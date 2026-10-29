@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects — CLAUDE.md §3, "any legacy URLs".
+#
+# Empty on purpose. There is no previous site to carry over yet. If one is
+# found, map each old path here BEFORE launch — a 404 on a URL a buyer already
+# has is a lost enquiry (§1).
+#
+# Format: /old-path  /new-path  301

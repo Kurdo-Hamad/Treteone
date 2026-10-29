@@ -1,0 +1,18 @@
+---
+import RollingHero from '~/components/RollingHero.astro';
+import Base from '~/layouts/Base.astro';
+
+/**
+ * English home page.
+ *
+ * Pass 1 wires the header, the hero and the footer only. The remaining ten
+ * sections in CLAUDE.md §6 — ticker, stat band, product rail, scope scroller,
+ * industry picker, sourcing band, brand marquee, process timeline, about and
+ * the quote form — are not built yet, which is why the nav anchors below the
+ * hero currently have nothing to jump to.
+ */
+---
+
+<Base>
+  <RollingHero />
+</Base>

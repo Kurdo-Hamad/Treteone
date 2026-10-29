@@ -1,0 +1,325 @@
+---
+import { Picture } from 'astro:assets';
+import { heroSlides } from '~/data/hero';
+import { productsHref, quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.2 — full-viewport, five photographs, a 6s crossfade with a slow
+ * zoom, frame counter, localised caption, progress bars. Frozen under
+ * prefers-reduced-motion (§9).
+ *
+ * The counter and caption for every frame are rendered here, at build time, and
+ * the script only toggles which one is visible. That keeps translation out of
+ * the browser and means the first frame's caption is in the HTML for a crawler.
+ *
+ * §8 — AVIF with a WebP fallback, sized to the breakpoint. Astro derives every
+ * rendition from the one source file.
+ *
+ * On priority: loading="lazy" does NOT defer frames 2-5 here. Every figure sits
+ * at inset:0, so the browser counts all five as being in the viewport and
+ * fetches them whatever their opacity. fetchpriority is the lever that works —
+ * frame 1 is the LCP and gets "high", the rest get "low" and queue behind it.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const total = heroSlides.length;
+const pad = (n: number): string => String(n).padStart(2, '0');
+---
+
+<section class="hero" id="top" data-hero data-header-dark-zone>
+  <div class="hero__roll" aria-hidden="true">
+    {
+      heroSlides.map((slide, i) => (
+        <figure class:list={['hero__slide', { 'is-on': i === 0 }]} data-hero-slide>
+          <Picture
+            src={slide.image}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            widths={[640, 1080, 1600, 2400]}
+            sizes="100vw"
+            alt=""
+            class="hero__img"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            decoding={i === 0 ? 'sync' : 'async'}
+            fetchpriority={i === 0 ? 'high' : 'low'}
+          />
+        </figure>
+      ))
+    }
+  </div>
+
+  <div class="wrap hero__body">
+    <h1 class="hero__title">{t('hero.h1')}</h1>
+    <p class="hero__lede">{t('hero.lede')}</p>
+    <div class="hero__cta">
+      <a class="btn" href={localisePath(quoteHref, lang)}>{t('cta.sendRequirement')}</a>
+      <a class="btn btn-ghost" href={localisePath(productsHref, lang)}>
+        {t('cta.browseProducts')}
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__foot">
+    <div class="wrap hero__foot-inner">
+      <p class="hero__metas">
+        {
+          heroSlides.map((slide, i) => (
+            <span
+              class:list={['hero__meta', { 'is-on': i === 0 }]}
+              data-hero-meta
+              aria-hidden={i === 0 ? 'false' : 'true'}
+            >
+              <span class="mono hero__no">{pad(i + 1)} / {pad(total)}</span>
+              <span class="mono hero__cap">{pick(slide.caption, lang)}</span>
+            </span>
+          ))
+        }
+      </p>
+
+      <div class="hero__dots" role="group" aria-label={t('hero.region')}>
+        {
+          heroSlides.map((_slide, i) => (
+            <button
+              class="hero__dot"
+              type="button"
+              data-hero-dot
+              aria-current={i === 0 ? 'true' : 'false'}
+              aria-label={t('hero.slideLabel')(i + 1, total)}
+            >
+              <span class="hero__dot-fill" data-hero-fill />
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '~/scripts/rolling-hero';
+</script>
+
+<style>
+  .hero {
+    /* Dark ground: set the roles once, everything below inherits them. */
+    --fg-strong: var(--white);
+    --fg-body: var(--on-dark-2);
+    --fg-muted: var(--on-dark-3);
+    --focus: var(--signal);
+
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--ink-3);
+    color: var(--white);
+    overflow: hidden;
+    /* slide up under the transparent sticky header */
+    margin-top: calc(-1 * var(--header-h));
+  }
+
+  /* -- the roll ---------------------------------------------------------- */
+  .hero__roll {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity var(--dur-cross) var(--ease);
+  }
+  .hero__slide.is-on {
+    opacity: 1;
+  }
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(.3) contrast(1.06);
+    transform: scale(1);
+    transition: transform var(--hero-zoom-dur) linear;
+  }
+  .hero__slide.is-on .hero__img {
+    transform: scale(1.09);
+  }
+
+  /* With JS off no crossfade ever runs, so show the first frame outright
+     rather than leaving a black hero. */
+  .hero:not(.is-live) .hero__slide:first-child {
+    opacity: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--ink-3) 96%, transparent) 0%,
+        color-mix(in srgb, var(--ink-3) 50%, transparent) 42%,
+        color-mix(in srgb, var(--ink-3) 28%, transparent) 100%
+      ),
+      linear-gradient(
+        100deg,
+        color-mix(in srgb, var(--ink-3) 80%, transparent),
+        transparent 62%
+      );
+    pointer-events: none;
+  }
+
+  /* -- copy -------------------------------------------------------------- */
+  .hero__body {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: calc(var(--header-h) + 50px);
+  }
+  .hero__title {
+    max-width: 15ch;
+  }
+  .hero__lede {
+    color: var(--on-dark-2);
+    margin-top: 24px;
+    font-size: var(--meso-fs-hero-lead);
+    line-height: 1.5;
+    max-width: 46ch;
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+  .hero__cta .btn-ghost {
+    color: var(--white);
+    border-color: var(--on-dark-4);
+  }
+  .hero__cta .btn-ghost:hover {
+    background: var(--white);
+    color: var(--ink);
+    border-color: var(--white);
+  }
+
+  /* -- counter, caption, progress ---------------------------------------- */
+  .hero__foot {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(48px, 9vh, 96px);
+    border-top: 1px solid var(--rule-dark);
+  }
+  .hero__foot-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-block: 16px;
+  }
+
+  /* All five captions are stacked in the same cell and crossfaded, so the
+     footer bar never changes height as the frames advance. */
+  .hero__metas {
+    position: relative;
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .hero__meta {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+  .hero__meta.is-on {
+    opacity: 1;
+  }
+  .hero__no {
+    color: var(--on-dark-4);
+    white-space: nowrap;
+  }
+  .hero__cap {
+    color: var(--on-dark-3);
+    max-width: 40ch;
+  }
+
+  .hero__dots {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+  .hero__dot {
+    /* The bar is 3px but the target is not: §11 makes the phone primary. */
+    position: relative;
+    width: 44px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+  }
+  /* the unfilled track */
+  .hero__dot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 40px;
+    height: 3px;
+    margin-top: -1.5px;
+    background: color-mix(in srgb, var(--white) 25%, transparent);
+  }
+  .hero__dot-fill {
+    position: relative;
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: var(--signal);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .hero__dot[aria-current='true'] .hero__dot-fill {
+    animation: hero-fill var(--hero-interval) linear forwards;
+  }
+
+  @keyframes hero-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  /* §9 — nothing advances or fills on its own; the current frame is simply
+     marked. The dots still work, so all five stay reachable. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__dot[aria-current='true'] .hero__dot-fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+    .hero__slide.is-on .hero__img {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 719px) {
+    .hero__body {
+      padding-top: calc(var(--header-h) + 40px);
+    }
+    .hero__foot-inner {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .hero__dots {
+      margin-left: 0;
+    }
+  }
+</style>

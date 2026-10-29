@@ -34,6 +34,11 @@ no backend systems beyond the single form function in §7, without written appro
 | Package manager | npm | — |
 | Hosting | Cloudflare Pages | — |
 
+**Approved additions to the locked stack.** One so far: `subset-font`, a
+devDependency that builds the Noto Sans SC subset at build time. Approved and
+recorded in the README under "Approved addition to §2" — it is not a finding.
+Anything else still needs written approval.
+
 - **Output mode: static.** `astro build` produces plain HTML into `dist/`.
 - **No UI framework.** No React, Vue, Svelte, Solid or Preact. Every component is a
   `.astro` file that compiles to HTML. No hydration, no framework runtime in the browser.
@@ -66,8 +71,13 @@ src/
     scope.ts           the 5 component-to-system stages
     process.ts         the 5 sourcing steps
     navigation.ts      nav structure
+    company.ts         contact, both address forms, the §10 placeholders
+    hero.ts            the 5 hero frames
   i18n/
     en.ts  zh.ts       all UI copy, typed against a shared key union
+    ui.ts              Lang type, useTranslations, localisePath, hreflang alternates
+  layouts/
+    Base.astro         the document shell — head, header, main, footer
   styles/
     tokens.css         single source of truth — colour, type, spacing
     global.css         imports tokens, then Tailwind; @font-face; @theme bridge
@@ -88,7 +98,16 @@ public/
   img/                 real photography
   _headers             security headers
   _redirects           any legacy URLs
+scripts/               build tooling, run by npm — not shipped to the browser
+  subset-noto-sans-sc.mjs   prebuild: builds the CJK subset from src/ copy
+  verify-noto-sans-sc.mjs   postbuild: fails the build on an uncovered glyph
+  cjk-ranges.mjs            the CJK ranges both of the above share
+  check-budget.mjs          the §8 first-load payload check
+  make-hero-placeholders.mjs
 ```
+
+Do not confuse `scripts/` at the repo root with `src/scripts/`. The root one is
+build tooling that runs in Node; `src/scripts/` is the vanilla JS that ships.
 
 **Styling rules, in order:**
 1. `tokens.css` defines everything as CSS custom properties on `:root`.
@@ -139,11 +158,21 @@ Chinese overrides: line-height `1.85`, letter-spacing `0` on headings, no italic
 
 ```
 --ink      #16191C     --ink-2  #1E2327
+--ink-3    #0F1215     --white  #FFFFFF
 --steel    #6B7178     --paper  #F7F7F5
 --signal   #F2A900
 --rule     rgba(22,25,28,.14)
 --rule-dark rgba(255,255,255,.15)
 ```
+
+`--ink-3` is the deepest ground — the hero bed and the footer, one step below
+`--ink`. `--white` is the card and marquee ground, and text on dark. Both were
+already in the approved prototype and are now named so they stop reading as
+undeclared values.
+
+Text on a dark ground bottoms out at `rgba(255,255,255,.50)`, which measures
+5.05:1 on `--ink`. Nothing quieter. The prototype's `.42` legal line measures
+4.34:1 and fails AA — the prototype is wrong at that point, not §9.
 
 Amber is the only accent. No second accent colour, no gradients as decoration,
 no drop shadows except the floating quote button.
@@ -229,7 +258,11 @@ payload and a 6.0 s LCP on an otherwise perfect architecture. So:
 
 - Visible keyboard focus everywhere. The product rail and industry picker are fully keyboard-operable.
 - `prefers-reduced-motion` freezes the hero, ticker, marquees, count-ups and reveals.
-- Colour contrast AA minimum. Amber on ink passes; amber on white does not — never use amber for text on light.
+- Colour contrast AA minimum. Amber on ink passes; amber on white does not — never use amber
+  for text on light. The rule is about text a person needs to read. A decorative,
+  `aria-hidden` separator inside the logotype — the amber interpunct in TRETE·ONE — is exempt
+  and is not a finding. Nothing that carries meaning gets that exemption.
+- Text on dark stops at `rgba(255,255,255,.50)`. See §5.
 - Every image has a real `alt`, or `alt=""` if decorative.
 - `lang` attribute correct per route.
 

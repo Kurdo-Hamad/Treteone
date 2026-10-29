@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Trete One">
+  <rect width="64" height="64" rx="6" fill="#16191C"/>
+  <path d="M12 20h40v7H36v25h-8V27H12z" fill="#F7F7F5"/>
+  <circle cx="50" cy="47" r="5" fill="#F2A900"/>
+</svg>

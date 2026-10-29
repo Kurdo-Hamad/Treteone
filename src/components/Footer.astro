@@ -1,0 +1,276 @@
+---
+import { footerCategories } from '~/data/categories';
+import { company, mailHref, telHref } from '~/data/company';
+import { companyNav, homeHref, productsHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.13 — registered name, licence number, both address forms, copy
+ * button. This block is half of how the site survives the "are these people
+ * real?" check (§1), so nothing in it may be invented.
+ *
+ * ⚠ §10 — the registered Chinese company name and the business licence number
+ * have not been supplied. They render as a marked placeholder and are listed in
+ * the README. Do not fill them in with a plausible-looking value.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const buildYear = new Date().getFullYear();
+const [markLead = '', markTail = ''] = company.tradingName.split(' ');
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="mark" href={localisePath(homeHref, lang)}>
+          <span>{markLead}</span><span class="mark__dot" aria-hidden="true">·</span><span
+            >{markTail}</span
+          >
+        </a>
+        <p class="site-footer__blurb">{t('footer.blurb')}</p>
+      </div>
+
+      <nav class="site-footer__col" aria-labelledby="footer-products">
+        <h2 class="site-footer__head" id="footer-products">{t('footer.products')}</h2>
+        <ul class="site-footer__list">
+          {
+            footerCategories.map((category) => (
+              <li>
+                <a class="site-footer__link" href={localisePath(productsHref, lang)}>
+                  {pick(category.name, lang)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="site-footer__col" aria-labelledby="footer-company">
+        <h2 class="site-footer__head" id="footer-company">{t('footer.company')}</h2>
+        <ul class="site-footer__list">
+          {
+            companyNav.map((item) => (
+              <li>
+                <a class="site-footer__link" href={localisePath(item.href, lang)}>
+                  {t(item.key)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="site-footer__col">
+        <h2 class="site-footer__head">{t('footer.contact')}</h2>
+        <ul class="site-footer__list">
+          <li>
+            <a class="site-footer__link" href={mailHref}>{company.email}</a>
+          </li>
+          <li>
+            <a class="site-footer__link" href={telHref}>{company.phoneDisplay}</a>
+          </li>
+          <li>
+            <a
+              class="site-footer__link"
+              href={company.whatsappUrl}
+              rel="noopener noreferrer"
+              target="_blank">{t('footer.whatsapp')}</a
+            >
+          </li>
+        </ul>
+
+        <address class="site-footer__address">
+          <span class="site-footer__address-line">{company.address.latin}</span>
+          <span class="site-footer__address-line" lang="zh-CN">{company.address.hanzi}</span>
+        </address>
+
+        <button
+          class="btn btn-ghost site-footer__copy"
+          type="button"
+          data-copy-address={company.address.combined}
+          data-label-copied={t('footer.copied')}
+          data-label-failed={t('footer.copyFailed')}
+        >
+          {t('footer.copyAddress')}
+        </button>
+        <span class="site-footer__copy-status" role="status" data-copy-status></span>
+      </div>
+    </div>
+
+    <div class="site-footer__legal">
+      <p class="site-footer__registration">
+        <span>
+          {t('footer.registeredName')}:{' '}
+          {
+            company.registeredName ?? (
+              <span class="pending">{t('footer.placeholder')}</span>
+            )
+          }
+        </span>
+        <span aria-hidden="true" class="site-footer__sep">·</span>
+        <span>
+          {t('footer.licence')}:{' '}
+          {
+            company.licenceNumber ?? (
+              <span class="pending">{t('footer.placeholder')}</span>
+            )
+          }
+        </span>
+      </p>
+      <p data-year={buildYear}>{t('footer.rights')(buildYear)}</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import '~/scripts/footer';
+</script>
+
+<style>
+  .site-footer {
+    --fg-strong: var(--white);
+    --fg-body: var(--on-dark-2);
+    --fg-muted: var(--on-dark-3);
+    --focus: var(--signal);
+
+    background: var(--ink-3);
+    color: var(--on-dark-3);
+    padding-block: 72px 32px;
+    font-size: .9rem;
+    line-height: 1.6;
+  }
+
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .mark {
+    font-family: var(--font-stack-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--white);
+    display: inline-block;
+  }
+  .mark__dot {
+    color: var(--signal);
+  }
+
+  .site-footer__blurb {
+    margin-top: 16px;
+    max-width: 40ch;
+  }
+
+  .site-footer__head {
+    font-family: var(--font-stack-display);
+    font-size: .98rem;
+    font-weight: 600;
+    letter-spacing: var(--meso-ls-h3);
+    color: var(--white);
+    margin: 0 0 16px;
+  }
+
+  .site-footer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-footer__list li {
+    margin-bottom: 9px;
+  }
+  .site-footer__link {
+    text-decoration: none;
+    color: var(--on-dark-3);
+    transition: color var(--dur-fast);
+  }
+  .site-footer__link:hover {
+    color: var(--signal);
+  }
+
+  .site-footer__address {
+    display: grid;
+    gap: 6px;
+    margin-top: 18px;
+    font-style: normal;
+    color: var(--on-dark-3);
+    max-width: 34ch;
+  }
+
+  .site-footer__copy {
+    margin-top: 14px;
+    font-size: .82rem;
+    padding: 8px 14px;
+    color: var(--white);
+    border-color: var(--on-dark-4);
+  }
+  .site-footer__copy:hover {
+    background: var(--white);
+    color: var(--ink);
+    border-color: var(--white);
+  }
+  .site-footer__copy.is-done {
+    border-color: var(--signal);
+    color: var(--signal);
+  }
+  .site-footer__copy-status {
+    display: block;
+    margin-top: 8px;
+    min-height: 1.4em;
+    font-size: .8rem;
+    color: var(--signal);
+  }
+
+  .site-footer__legal {
+    margin-top: 52px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule-dark);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: space-between;
+    font-size: .8rem;
+    /* §9 floor: .50 white on this ground measures 5:1. Do not dim further. */
+    color: var(--on-dark-4);
+  }
+  .site-footer__registration {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .site-footer__sep {
+    color: var(--on-dark-4);
+  }
+
+  /* §10 — an unmissable marker for content that has not been supplied. This
+     must never be styled down into looking like a real value. */
+  .pending {
+    color: var(--signal);
+    border: 1px dashed currentColor;
+    border-radius: var(--radius);
+    padding: 1px 7px;
+    font-family: var(--font-stack-mono);
+    font-size: .75rem;
+    letter-spacing: var(--meso-ls-mono);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 720px) {
+    .site-footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .site-footer__grid {
+      grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+    }
+  }
+</style>

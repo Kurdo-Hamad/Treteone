@@ -1,0 +1,35 @@
+{
+  "name": "treteone",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/subset-noto-sans-sc.mjs",
+    "build": "astro build",
+    "postbuild": "node scripts/verify-noto-sans-sc.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "budget": "node scripts/check-budget.mjs",
+    "fonts:sc": "node scripts/subset-noto-sans-sc.mjs",
+    "hero:placeholders": "node scripts/make-hero-placeholders.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.0.6",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "subset-font": "^2.7.0",
+    "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

@@ -1,0 +1,342 @@
+---
+import { company } from '~/data/company';
+import { homeHref, primaryNav, quoteHref } from '~/data/navigation';
+import {
+  alternateLinks,
+  getLangFromUrl,
+  languages,
+  localisePath,
+  useTranslations,
+} from '~/i18n/ui';
+
+/**
+ * CLAUDE.md §6.1 — sticky, transparent over the hero, solid after. Mobile drawer.
+ *
+ * The language control is two real links to two real routes (§2), not a button
+ * that swaps text in place. That is what makes each language separately
+ * indexable, and it is why the header needs no i18n code in the browser.
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const alternates = alternateLinks(Astro.url);
+
+// The wordmark is the trading name, uppercased in CSS, with the amber
+// interpunct from the approved prototype.
+const [markLead = '', markTail = ''] = company.tradingName.split(' ');
+---
+
+<header class="site-header" data-header>
+  <div class="wrap site-header__bar">
+    <a class="mark" href={localisePath(homeHref, lang)} aria-label={t('nav.home')}>
+      <span>{markLead}</span><span class="mark__dot" aria-hidden="true">·</span><span>{markTail}</span>
+    </a>
+
+    <nav
+      class="site-nav"
+      id="site-nav"
+      aria-label={t('nav.label')}
+      data-header-nav
+    >
+      <ul class="site-nav__list">
+        {
+          primaryNav.map((item) => (
+            <li>
+              <a class="site-nav__link" href={localisePath(item.href, lang)}>
+                {t(item.key)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- On a phone the toolbar CTA is hidden, so the drawer carries its own.
+           The quote form is the only conversion point on the site (§7); it is
+           never more than one tap away. -->
+      <a class="btn site-nav__cta" href={localisePath(quoteHref, lang)}>
+        {t('cta.quote')}
+      </a>
+    </nav>
+
+    <div class="site-header__tools">
+      <div class="lang-switch" role="group" aria-label={t('lang.label')}>
+        {
+          alternates.map(({ lang: code, hreflang, href }) => (
+            <a
+              class="lang-switch__option"
+              href={href}
+              hreflang={hreflang}
+              lang={hreflang}
+              aria-current={code === lang ? 'true' : undefined}
+              aria-label={code === lang ? undefined : t('lang.switchTo')(languages[code].label)}
+            >
+              {languages[code].short}
+            </a>
+          ))
+        }
+      </div>
+
+      <a class="btn site-header__cta" href={localisePath(quoteHref, lang)}>
+        {t('cta.quote')}
+      </a>
+
+      <button
+        class="burger"
+        type="button"
+        aria-controls="site-nav"
+        aria-expanded="false"
+        aria-label={t('nav.openMenu')}
+        data-header-burger
+        data-label-open={t('nav.openMenu')}
+        data-label-close={t('nav.closeMenu')}
+      >
+        <svg class="burger__icon" viewBox="0 0 22 16" aria-hidden="true" focusable="false">
+          <rect class="burger__bar burger__bar--top" x="0" y="1" width="22" height="2" rx="1" />
+          <rect class="burger__bar burger__bar--mid" x="0" y="7" width="22" height="2" rx="1" />
+          <rect class="burger__bar burger__bar--bot" x="0" y="13" width="22" height="2" rx="1" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  import '~/scripts/header';
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    transition:
+      background var(--dur),
+      border-color var(--dur),
+      color var(--dur);
+  }
+
+  /* Over the hero. Set once here; every child reads the role tokens. */
+  .site-header.is-on-dark {
+    background: color-mix(in srgb, var(--ink-3) 60%, transparent);
+    border-color: var(--rule-dark);
+    color: var(--white);
+    --focus: var(--signal);
+  }
+
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: var(--header-h);
+  }
+
+  /* -- wordmark ---------------------------------------------------------- */
+  .mark {
+    font-family: var(--font-stack-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    color: inherit;
+  }
+  .mark__dot {
+    color: var(--signal);
+  }
+
+  /* -- navigation -------------------------------------------------------- */
+  .site-nav {
+    display: none;
+    margin-left: auto;
+  }
+  .site-nav__list {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: .92rem;
+  }
+  .site-nav__link {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--steel);
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    transition: color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .site-nav__link:hover {
+    color: inherit;
+    border-bottom-color: var(--signal);
+  }
+  .is-on-dark .site-nav__link {
+    color: var(--on-dark-2);
+  }
+  .is-on-dark .site-nav__link:hover {
+    color: var(--white);
+  }
+  .site-nav__cta {
+    display: none;
+  }
+
+  /* -- tools ------------------------------------------------------------- */
+  .site-header__tools {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+  }
+
+  .lang-switch {
+    display: flex;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-size: .78rem;
+  }
+  .is-on-dark .lang-switch {
+    border-color: var(--rule-dark);
+  }
+  .lang-switch__option {
+    padding: 6px 10px;
+    text-decoration: none;
+    color: var(--steel);
+    line-height: 1.4;
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .lang-switch__option:hover {
+    color: var(--ink);
+  }
+  .is-on-dark .lang-switch__option {
+    color: var(--on-dark-3);
+  }
+  .is-on-dark .lang-switch__option:hover {
+    color: var(--white);
+  }
+  .lang-switch__option[aria-current='true'] {
+    background: var(--ink);
+    color: var(--white);
+  }
+  .is-on-dark .lang-switch__option[aria-current='true'] {
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  .site-header__cta {
+    display: none;
+  }
+  .is-on-dark .site-header__cta {
+    background: var(--signal);
+    color: var(--ink);
+  }
+
+  /* -- burger ------------------------------------------------------------ */
+  .burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--rule);
+    background: none;
+    border-radius: var(--radius);
+    /* 44px target: §11 treats the phone as the primary visitor. */
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+  .is-on-dark .burger {
+    border-color: var(--rule-dark);
+  }
+  .burger__icon {
+    width: 22px;
+    height: 16px;
+    display: block;
+  }
+  .burger__bar {
+    fill: currentColor;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform var(--dur-fast), opacity var(--dur-fast);
+  }
+  .is-open .burger__bar--top {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .is-open .burger__bar--mid {
+    opacity: 0;
+  }
+  .is-open .burger__bar--bot {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* -- mobile drawer ----------------------------------------------------- */
+  @media (max-width: 719px) {
+    .site-nav {
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: var(--paper);
+      color: var(--ink);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px var(--wrap-pad-sm) 20px;
+      margin-left: 0;
+    }
+    .is-on-dark .site-nav {
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--rule-dark);
+    }
+    .is-open .site-nav {
+      display: block;
+    }
+    .site-nav__list {
+      flex-direction: column;
+      gap: 0;
+      font-size: 1rem;
+    }
+    .site-nav__link {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+      border-bottom-color: var(--rule);
+      color: inherit;
+    }
+    .is-on-dark .site-nav__link {
+      border-bottom-color: var(--rule-dark);
+      color: var(--white);
+    }
+    .site-nav__cta {
+      display: block;
+      margin-top: 18px;
+      text-align: center;
+    }
+    .is-on-dark .site-nav__cta {
+      background: var(--signal);
+      color: var(--ink);
+    }
+  }
+
+  @media (min-width: 720px) {
+    .site-nav {
+      display: flex;
+      align-items: center;
+    }
+    .site-header__tools {
+      margin-left: 0;
+    }
+    .site-header__cta {
+      display: inline-block;
+    }
+    .burger {
+      display: none;
+    }
+  }
+</style>

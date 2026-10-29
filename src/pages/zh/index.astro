@@ -1,0 +1,17 @@
+---
+import RollingHero from '~/components/RollingHero.astro';
+import Base from '~/layouts/Base.astro';
+
+/**
+ * Chinese home page — a real route (§2), not a client-side text swap. It is the
+ * same component tree; every string resolves through the route's language, so
+ * this file stays this short as the remaining sections land.
+ *
+ * ⚠ §10 — the Chinese copy is the prototype's first pass and still needs a
+ * native-speaker review. See src/i18n/zh.ts.
+ */
+---
+
+<Base>
+  <RollingHero />
+</Base>
