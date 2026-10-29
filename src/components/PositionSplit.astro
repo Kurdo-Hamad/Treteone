@@ -1,5 +1,6 @@
 ---
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { standIn } from '~/data/standIns';
 import { aboutHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 
@@ -22,7 +23,11 @@ const t = useTranslations(lang);
       <div class="split__media">
         <span class="split__back" aria-hidden="true"></span>
         <div class="split__front">
-          <ImagePlaceholder subject={t('home.position.subject')} variant="wide" />
+          <ImagePlaceholder
+            subject={t('home.position.subject')}
+            variant="wide"
+            image={standIn('home.position.subject')}
+          />
         </div>
       </div>
       <div>

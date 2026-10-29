@@ -1,5 +1,6 @@
 ---
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { standIn } from '~/data/standIns';
 import { categories } from '~/data/categories';
 import type { TextKey } from '~/data/heroSlides';
 import { productsHref } from '~/data/navigation';
@@ -38,7 +39,11 @@ const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): 
       {
         caps.map((cap) => (
           <li class="cap rv">
-            <ImagePlaceholder subject={t(key(cap, 'subject'))} variant="small" />
+            <ImagePlaceholder
+              subject={t(key(cap, 'subject'))}
+              variant="small"
+              image={standIn(key(cap, 'subject'))}
+            />
             <h3>{t(key(cap, 'heading'))}</h3>
             <p>{t(key(cap, 'body'))}</p>
           </li>

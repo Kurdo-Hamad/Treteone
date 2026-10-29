@@ -1,4 +1,6 @@
 ---
+import type { ImageMetadata } from 'astro';
+import { Picture } from 'astro:assets';
 import { getLangFromUrl, useTranslations } from '~/i18n/ui';
 
 /**
@@ -16,6 +18,10 @@ import { getLangFromUrl, useTranslations } from '~/i18n/ui';
  *            'hero'  — fills its positioned parent; navy ground, caption
  *                      top-right so the overlay copy has the lower left.
  *   class    passed through, so a parent can size the frame.
+ *   image    optional photograph. When given, it fills the frame instead of
+ *            the placeholder label (object-fit: cover). Today these are the
+ *            Unsplash stand-ins from src/data/standIns.ts, preview only.
+ *   priority the one image that should load first (the first hero slide).
  *
  * Mockup source: .ph, .ph-sm and .slide .ph in reference/mockup.html.
  */
@@ -24,11 +30,39 @@ interface Props {
   subject: string;
   variant?: 'wide' | 'small' | 'hero';
   class?: string;
+  image?: ImageMetadata | undefined;
+  priority?: boolean;
 }
 
-const { subject, variant = 'wide', class: className } = Astro.props;
+const { subject, variant = 'wide', class: className, image, priority = false } = Astro.props;
 const t = useTranslations(getLangFromUrl(Astro.url));
+
+// Rendered widths per variant, so a phone never downloads a desktop file.
+const sizing = {
+  hero: { widths: [640, 960, 1280, 1920], sizes: '100vw' },
+  wide: { widths: [480, 720, 960, 1200], sizes: '(max-width: 960px) 100vw, 40vw' },
+  small: { widths: [320, 480, 640], sizes: '(max-width: 560px) 100vw, (max-width: 960px) 50vw, 25vw' },
+}[variant];
 ---
+
+{
+  image ? (
+    <span class:list={['ph', `ph--${variant}`, 'ph--photo', className]}>
+      {/* Stand-in photographs do not show what `subject` describes, so they
+          are decorative (alt=""); the text around them carries the meaning. */}
+      <Picture
+        src={image}
+        alt=""
+        formats={['avif', 'webp']}
+        widths={sizing.widths.filter((w) => w <= image.width)}
+        sizes={sizing.sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        decoding="async"
+        class="ph__img"
+      />
+    </span>
+  ) : (
 
 <span
   class:list={['ph', `ph--${variant}`, className]}
@@ -45,6 +79,8 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     <em>{subject}</em>
   </span>
 </span>
+  )
+}
 
 <style>
   .ph {
@@ -149,6 +185,25 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     margin-left: auto;
     text-align: right;
     color: rgba(255, 255, 255, .5);
+  }
+
+  /* -- with a photograph ---------------------------------------------------- */
+  .ph--photo::after {
+    display: none;
+  }
+  .ph--photo :global(picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .ph--photo :global(.ph__img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .6s var(--ease);
+  }
+  :global(.card:hover) .ph--photo :global(.ph__img) {
+    transform: scale(1.03);
   }
 
   /* A card that wraps a placeholder highlights its frame on hover. */

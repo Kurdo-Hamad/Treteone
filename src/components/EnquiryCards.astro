@@ -1,5 +1,6 @@
 ---
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { standIn } from '~/data/standIns';
 import type { TextKey } from '~/data/heroSlides';
 import { aboutHref, productsHref, quoteHref, sourcingHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
@@ -96,7 +97,7 @@ const titleId = `${set}-title`;
       {
         cards.map((card) => (
           <a class:list={['card', { rv: reveal }]} href={localisePath(card.href, lang)}>
-            <ImagePlaceholder subject={t(card.subject)} variant="wide" />
+            <ImagePlaceholder subject={t(card.subject)} variant="wide" image={standIn(card.subject)} />
             <h3>{t(card.heading)}</h3>
             <p>{t(card.body)}</p>
             <span class="rm">

@@ -283,9 +283,11 @@ margins, no gap above.
 - Height `clamp(400px, 52vh, 540px)`; below 560px, `aspect-ratio: 3/4`, min 430px.
 - Four slides, each a tab panel: spare parts & MRO · equipment & machinery ·
   automation & instrumentation · hard-to-find & obsolete.
-- Until photography exists, each slide is an `ImagePlaceholder` with
-  `variant="hero"` carrying its real subject. When photographs arrive they are
-  Unsplash-style stand-ins only until Treteone's own are supplied (§12).
+- Each slide is an `ImagePlaceholder` with `variant="hero"` carrying its real
+  subject. **For preview, `src/data/standIns.ts` fills the homepage slots with the
+  Unsplash stand-ins in `src/assets/`** (self-hosted, `alt=""`). Before launch,
+  replace the files with Treteone's own photographs or set `SHOW_STAND_INS = false`
+  (§12). "Treteone office" deliberately keeps its placeholder.
 - A left-to-right navy scrim (`rgb(var(--scrim-rgb) / a)`) keeps the overlay
   legible. Do not tint the whole photograph blue.
 - Overlay bottom-left, aligned to the page gutter: eyebrow, rotating title, one
@@ -396,8 +398,18 @@ Mainland China is in the audience:
 - **Self-host every font.** Google Fonts is unreachable there.
 - No Google Maps, Analytics, YouTube, or any `gstatic` asset.
 - AVIF at q40 with fallback, sized to breakpoint, lazy below the fold.
-- ICP filing if hosting inside mainland China; otherwise verify load times from China
-  before launch.
+- **Never hotlink** images, fonts or scripts from another host (unsplash.com,
+  Google, CDNs). Everything is a file in this repo served from the site's domain.
+- **Use the custom domain, never `*.pages.dev`.** Cloudflare's own China Network FAQ
+  says Pages is "not available in Mainland China due to pages.dev certificate not
+  residing within Mainland China".
+- On a global (non-China-Network) Cloudflare zone, mainland visitors are served from
+  the nearest edge outside China — usually reachable, speed varies by region and
+  time of day. Measure from inside China before launch.
+- For in-country speed: Cloudflare China Network needs an ICP filing (and an
+  Enterprise arrangement); alternatively an ICP-filed mirror on a mainland host.
+  Treteone is a Guangzhou-registered company, so it can apply for ICP itself.
+  This is a business decision, not a code change.
 
 **Cloudflare Pages:** branch `main`, build `npm run build`, output `dist`,
 `NODE_VERSION` 22. Cloudflare runs `npm clean-install` — commit the lockfile with

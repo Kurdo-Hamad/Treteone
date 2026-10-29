@@ -1,5 +1,6 @@
 ---
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { standIn } from '~/data/standIns';
 import { heroSlides } from '~/data/heroSlides';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 
@@ -39,7 +40,12 @@ const t = useTranslations(lang);
           aria-labelledby={`hero-tab-${slide.id}`}
           data-hero-panel
         >
-          <ImagePlaceholder subject={t(slide.subject)} variant="hero" />
+          <ImagePlaceholder
+            subject={t(slide.subject)}
+            variant="hero"
+            image={standIn(slide.subject)}
+            priority={i === 0}
+          />
           <div class="hero__overlay">
             <div class="wrap">
               <p class="kicker hero__eyebrow">{t('home.hero.eyebrow')}</p>
