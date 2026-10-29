@@ -16,13 +16,13 @@ export const quote = {
   'quote.eyebrow': 'Request a quote',
   'quote.heading': 'Tell us what you need.',
   'quote.lede':
-    'No account needed. Send a part number, a photo or a whole list — we reply with price and lead time.',
+    'No account, ever. Send a part number, a photograph or a whole list and we reply with price and lead time.',
   'quote.directIntro': 'Prefer to write directly?',
   'quote.required': 'Only the contact field is required.',
   'quote.processLink': 'What happens after you send',
   'quote.formLabel': 'Request a quote',
 
-  'quote.type.label': 'What do you need?',
+  'quote.type.label': 'What do you need',
   'quote.type.sparePart': 'Spare part',
   'quote.type.equipment': 'Equipment',
   'quote.type.machinery': 'Machinery',
@@ -33,16 +33,35 @@ export const quote = {
   'quote.part.label': 'Part number or description',
   'quote.manufacturer.label': 'Manufacturer',
   'quote.quantity.label': 'Quantity',
-  'quote.files.label': 'Attach a datasheet, photo or BOQ',
+  'quote.files.label': 'Attachments',
+  // The aside's FILES line, and the file input's accessible description.
   'quote.files.hint': (maxFiles: number, maxMb: number, totalMb: number) =>
-    `PDF, images, Excel or CSV. Up to ${maxFiles} files, ${maxMb} MB each, ${totalMb} MB in total.`,
+    `PDF, images and Excel. Up to ${maxFiles} files, ${maxMb} MB each, ${totalMb} MB in total.`,
   'quote.files.selected': (n: number) => (n === 1 ? '1 file attached' : `${n} files attached`),
   'quote.notes.label': 'Anything else we should know',
   'quote.name.label': 'Name and company',
-  'quote.contact.label': 'Email or WhatsApp',
+  'quote.contact.label': 'Email or WhatsApp — required',
   'quote.contact.hint': 'So we can send you the quote. Nothing else is required.',
   'quote.optional': 'optional',
   'quote.submit': 'Send request',
+  'quote.hint':
+    'Only the contact field is required. A blurred nameplate photograph and a way to reach you is enough to start.',
+
+  // Placeholders (approved mockup). Examples, never defaults.
+  'quote.part.placeholder': '6ES7 214-1AG40-0XB0',
+  'quote.manufacturer.placeholder': 'Siemens',
+  'quote.quantity.placeholder': '4',
+  'quote.notes.placeholder': 'Duty, service conditions, required date, destination',
+
+  // The aside's three lines beside the form (approved mockup #v-quote). The
+  // keys are upper-cased by CSS, so a screen reader says the word.
+  'quote.aside.files': 'Files',
+  'quote.aside.reply': 'Reply',
+  'quote.aside.replyBefore': 'You receive a reference in the form',
+  // Same shape as reference() in functions/api/quote.ts: TO-YYYYMMDD-XXXXX.
+  'quote.aside.replyExample': 'TO-20261026-K7Q3M',
+  'quote.aside.replyAfter': 'to quote back to us.',
+  'quote.aside.direct': 'Direct',
   'quote.sending': 'Sending…',
 
   // Honeypot (§8). Never seen by a person; a bot that fills it is discarded.

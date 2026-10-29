@@ -1,26 +1,22 @@
 ---
-import BrandGrid from '~/components/BrandGrid.astro';
-import ClosingCta from '~/components/ClosingCta.astro';
-import PageHero from '~/components/PageHero.astro';
-import { brands } from '~/data/brands';
+import BrandDirectory from '~/components/BrandDirectory.astro';
+import PageHead from '~/components/PageHead.astro';
 import { getLangFromUrl, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
 /**
- * /brands — the brand list with logo placeholders and the trademark
- * disclaimer (CLAUDE.md §3, §9). Wording stays "Brands we source" (§13).
+ * /zh/brands — page head, then one filterable brand directory with the
+ * trademark disclaimer beneath it (CLAUDE.md §3, §9; approved mockup #v-brands).
+ * §13 — the wording stays "Brands we source"; nothing implies authorisation.
  */
 
 const t = useTranslations(getLangFromUrl(Astro.url));
 ---
 
 <Base title={t('meta.brands.title')} description={t('meta.brands.description')}>
-  <PageHero
-    eyebrow={t('brands.eyebrow')}
-    title={t('brands.heading')}
-    lede={t('brands.lede')}
-    facts={[t('brands.count')(brands.length)]}
-  />
-  <BrandGrid />
-  <ClosingCta />
+  <section class="wrap sec">
+    <PageHead kicker={t('brands.eyebrow')} title={t('brands.title')} lead={t('brands.lede')}>
+      <BrandDirectory />
+    </PageHead>
+  </section>
 </Base>

@@ -1,6 +1,5 @@
 ---
-import { company, mailHref, telHref } from '~/data/company';
-import { sourcingHref } from '~/data/navigation';
+import { company, mailHref } from '~/data/company';
 import {
   ACCEPT_ATTRIBUTE,
   QUOTE_ENDPOINT,
@@ -8,11 +7,13 @@ import {
   enquiryTypes,
   mb,
 } from '~/data/quote';
-import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, useTranslations } from '~/i18n/ui';
 
 /**
  * /quote — CLAUDE.md §8, the only conversion point on the site. It must work.
- * The logic is unchanged from pass 5; the redesign restyles it only.
+ * The logic is unchanged from pass 5; this pass restyles it to the approved
+ * mockup (#v-quote): one navy band, the page head and three facts on the left,
+ * the form on the right.
  *
  *  - **No account, ever.** One contact field, and nothing else required.
  *    A buyer with only a blurry nameplate photo can still send it.
@@ -26,8 +27,9 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
  *  - **Validation is strict about attachments and permissive about everything
  *    else.** A rejected enquiry is worse than an untidy one.
  *
- * The page heading and lede are in PageHero above this section. Limits come
- * from src/data/quote.ts through data attributes, so src/scripts/quote-form.ts
+ * The page passes its PageHead (kicker, h1, lead) into the `head` slot, so the
+ * route still opens with the shared page head. Limits come from
+ * src/data/quote.ts through data attributes, so src/scripts/quote-form.ts
  * holds neither numbers nor copy.
  */
 
@@ -38,34 +40,38 @@ const maxFileMb = mb(QUOTE_LIMITS.maxFileBytes);
 const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 ---
 
-<section class="quote" id="quote" aria-label={t('quote.formLabel')}>
-  <div class="wrap quote__grid">
-    <aside class="quote__aside">
-      <p class="quote__required">{t('quote.required')}</p>
+<section class="navy quote" id="quote">
+  <div class="wrap sec quote__split">
+    <div class="quote__intro">
+      <slot name="head" />
 
-      <div class="quote__direct">
-        <h2 class="eyebrow quote__direct-title">{t('quote.directIntro')}</h2>
-        <ul class="quote__direct-list">
-          <li><a class="quote__direct-link" href={mailHref}>{company.email}</a></li>
-          <li>
-            <a
-              class="quote__direct-link"
-              href={company.whatsappUrl}
-              rel="noopener noreferrer"
-              target="_blank">{t('cta.whatsapp')} {company.phoneDisplay}</a
+      <ul class="quote__facts">
+        <li>
+          <span class="quote__key">{t('quote.aside.files')}</span>
+          <span id="quote-files-hint">
+            {t('quote.files.hint')(QUOTE_LIMITS.maxFiles, maxFileMb, maxTotalMb)}
+          </span>
+        </li>
+        <li>
+          <span class="quote__key">{t('quote.aside.reply')}</span>
+          <span>
+            {/* Explicit spaces: Astro trims the whitespace around expressions.
+                Chinese also takes a space either side of a Latin run. */}
+            {t('quote.aside.replyBefore')}{' '}<span class="mono">{t('quote.aside.replyExample')}</span>{' '}{t('quote.aside.replyAfter')}
+          </span>
+        </li>
+        <li>
+          <span class="quote__key">{t('quote.aside.direct')}</span>
+          <span>
+            <a class="quote__direct" href={mailHref}>{company.email}</a>
+            <span aria-hidden="true"> · </span>
+            <a class="quote__direct" href={company.whatsappUrl} rel="noopener noreferrer" target="_blank"
+              >{t('cta.whatsapp')} {company.phoneDisplay}</a
             >
-          </li>
-          <li><a class="quote__direct-link" href={telHref}>{company.phoneDisplay}</a></li>
-        </ul>
-      </div>
-
-      <a class="link-arrow" href={localisePath(`${sourcingHref}#process`, lang)}>
-        {t('quote.processLink')}
-        <svg class="link-arrow__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-          <path d="M1 7.25h11.19L7.47 2.53l1.06-1.06L15.06 8l-6.53 6.53-1.06-1.06 4.72-4.72H1z" fill="currentColor" />
-        </svg>
-      </a>
-    </aside>
+          </span>
+        </li>
+      </ul>
+    </div>
 
     <form
       class="quote__form"
@@ -100,8 +106,8 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       <input type="hidden" name="rendered_at" value="" data-quote-time />
 
       <div class="field">
-        <label class="field__label" for="quote-type">{t('quote.type.label')}</label>
-        <select class="field__control" id="quote-type" name="type">
+        <label for="quote-type">{t('quote.type.label')}</label>
+        <select id="quote-type" name="type">
           {
             enquiryTypes.map((type) => (
               <option value={type.slug}>{t(type.key)}</option>
@@ -111,50 +117,41 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       </div>
 
       <div class="field">
-        <label class="field__label" for="quote-part">
-          {t('quote.part.label')}
-          <span class="field__optional">{t('quote.optional')}</span>
-        </label>
+        <label for="quote-part">{t('quote.part.label')}</label>
         <input
-          class="field__control"
           id="quote-part"
           name="part"
           type="text"
           autocomplete="off"
-          placeholder="6ES7 214-1AG40-0XB0"
+          placeholder={t('quote.part.placeholder')}
         />
       </div>
 
-      <div class="field-row">
+      <div class="pair">
         <div class="field">
-          <label class="field__label" for="quote-manufacturer">
-            {t('quote.manufacturer.label')}
-            <span class="field__optional">{t('quote.optional')}</span>
-          </label>
+          <label for="quote-manufacturer">{t('quote.manufacturer.label')}</label>
           <input
-            class="field__control"
             id="quote-manufacturer"
             name="manufacturer"
             type="text"
             autocomplete="organization"
+            placeholder={t('quote.manufacturer.placeholder')}
           />
         </div>
         <div class="field">
-          <label class="field__label" for="quote-quantity">
-            {t('quote.quantity.label')}
-            <span class="field__optional">{t('quote.optional')}</span>
-          </label>
-          <input class="field__control" id="quote-quantity" name="quantity" type="text" />
+          <label for="quote-quantity">{t('quote.quantity.label')}</label>
+          <input
+            id="quote-quantity"
+            name="quantity"
+            type="text"
+            placeholder={t('quote.quantity.placeholder')}
+          />
         </div>
       </div>
 
       <div class="field">
-        <label class="field__label" for="quote-files">
-          {t('quote.files.label')}
-          <span class="field__optional">{t('quote.optional')}</span>
-        </label>
+        <label for="quote-files">{t('quote.files.label')}</label>
         <input
-          class="field__control field__control--file"
           id="quote-files"
           name="files"
           type="file"
@@ -163,41 +160,29 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
           aria-describedby="quote-files-hint"
           data-quote-files
         />
-        <p class="field__hint" id="quote-files-hint">
-          {t('quote.files.hint')(QUOTE_LIMITS.maxFiles, maxFileMb, maxTotalMb)}
-        </p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="quote-notes">
-          {t('quote.notes.label')}
-          <span class="field__optional">{t('quote.optional')}</span>
-        </label>
-        <textarea class="field__control field__control--area" id="quote-notes" name="notes"
-        ></textarea>
+        <label for="quote-notes">{t('quote.notes.label')}</label>
+        <textarea id="quote-notes" name="notes" placeholder={t('quote.notes.placeholder')}></textarea>
       </div>
 
-      <div class="field-row">
+      <div class="pair">
         <div class="field">
-          <label class="field__label" for="quote-name">
-            {t('quote.name.label')}
-            <span class="field__optional">{t('quote.optional')}</span>
-          </label>
-          <input class="field__control" id="quote-name" name="name" type="text" autocomplete="name" />
+          <label for="quote-name">{t('quote.name.label')}</label>
+          <input id="quote-name" name="name" type="text" autocomplete="name" />
         </div>
         <div class="field">
-          <label class="field__label" for="quote-contact">{t('quote.contact.label')}</label>
+          <label for="quote-contact">{t('quote.contact.label')}</label>
           <input
-            class="field__control"
             id="quote-contact"
             name="contact"
             type="text"
             required
             autocomplete="email"
-            aria-describedby="quote-contact-hint"
+            aria-describedby="quote-hint"
             data-quote-contact
           />
-          <p class="field__hint" id="quote-contact-hint">{t('quote.contact.hint')}</p>
         </div>
       </div>
 
@@ -218,9 +203,10 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       </div>
 
       <div class="quote__actions">
-        <button class="btn quote__submit" type="submit" data-quote-submit>
+        <button class="btn btn-solid quote__submit" type="submit" data-quote-submit>
           {t('quote.submit')}
         </button>
+        <p class="quote__hint" id="quote-hint">{t('quote.hint')}</p>
       </div>
 
       {/*
@@ -237,118 +223,143 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 </script>
 
 <style>
-  .quote {
-    padding-block: clamp(48px, 7vw, 96px) var(--section-y);
-    background: var(--surface-page);
-  }
-
-  .quote__grid {
+  /* Mockup .split: copy left, form right; one column below 960px. */
+  .quote__split {
     display: grid;
-    gap: 40px;
-    align-items: start;
-  }
-
-  /* -- aside ------------------------------------------------------------- */
-  .quote__aside {
-    display: grid;
-    gap: 28px;
-    justify-items: start;
-  }
-  .quote__required {
-    padding-left: 14px;
-    border-left: 2px solid var(--color-navy);
-    font-size: 1rem;
-    color: var(--text-primary);
-  }
-  .quote__direct-title {
-    color: var(--text-secondary);
-  }
-  .quote__direct-list {
-    list-style: none;
-    margin: 8px 0 0;
-    padding: 0;
-  }
-  .quote__direct-link {
-    display: inline-flex;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: clamp(26px, 4vw, 60px);
     align-items: center;
-    min-height: 40px;
-    color: var(--text-link-light);
-    text-underline-offset: 4px;
-  }
-  .quote__direct-link:hover {
-    text-decoration-thickness: 2px;
   }
 
-  /* -- form card --------------------------------------------------------- */
+  /* -- the three facts (mockup .checklist) ------------------------------- */
+  .quote__facts {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line-dark);
+  }
+  .quote__facts li {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--line-dark);
+    font-size: .9375rem;
+    color: var(--on-dark-2);
+  }
+  .quote__key {
+    padding-top: 3px;
+    font-family: var(--font-stack-mono);
+    font-size: .72rem;
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    color: var(--color-cyan-light);
+  }
+  .quote__direct {
+    color: var(--on-dark-1);
+    text-decoration: underline;
+    text-decoration-color: var(--on-dark-4);
+    text-underline-offset: 4px;
+    /* A phone number or address broken across lines is easy to misread. */
+    white-space: nowrap;
+    transition: color var(--dur-fast), text-decoration-color var(--dur-fast);
+  }
+  .quote__facts .mono {
+    white-space: nowrap;
+  }
+  .quote__direct:hover {
+    color: var(--color-cyan-light);
+    text-decoration-color: currentColor;
+  }
+
+  /* -- form (mockup .form / .field / .pair) ------------------------------ */
   .quote__form {
     display: grid;
-    gap: 20px;
-    padding: clamp(20px, 4vw, 40px);
-    background: var(--surface-card);
-    border: 1px solid var(--rule-light);
-    box-shadow: var(--shadow-raised);
+    gap: 16px;
   }
-
-  .field-row {
+  .pair {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
-  .field__label {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: baseline;
-    margin-bottom: 8px;
+  .field label {
+    display: block;
+    margin-bottom: 7px;
     font-family: var(--font-stack-display);
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--on-dark-3);
   }
-  .field__optional {
-    font-family: var(--font-stack-body);
-    font-size: .875rem;
-    font-weight: 400;
-    color: var(--text-secondary);
+  html[lang^='zh'] .field label {
+    letter-spacing: .02em;
   }
 
-  .field__control {
+  .field :is(input, select, textarea) {
     width: 100%;
-    min-height: 48px;
+    min-height: 46px;
     padding: 12px 14px;
+    /* A control's boundary needs 3:1 (WCAG 1.4.11). The mockup's .22 white
+       is about 1.9:1 on navy; --rule-control on navy is the .50 tier. */
     border: 1px solid var(--rule-control);
-    border-radius: var(--radius);
-    background: var(--surface-page);
-    color: var(--text-primary);
+    border-radius: 0;
+    background: color-mix(in srgb, var(--color-white) 6%, transparent);
+    color: var(--on-dark-1);
     font-family: var(--font-stack-body);
     /* 16px or more stops iOS zooming the page on focus. */
     font-size: 1rem;
+    /* Native parts — the select arrow, its option list, the file button —
+       render for a dark ground. */
+    color-scheme: dark;
     transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
   }
-  .field__control:hover {
-    border-color: var(--color-navy);
+  .field :is(input, select, textarea):hover {
+    border-color: var(--on-dark-2);
   }
-  .field__control::placeholder {
-    color: var(--text-secondary);
+  .field :is(input, select, textarea):focus {
+    border-color: var(--color-cyan-light);
   }
-  .field__control--area {
-    min-height: 120px;
+  .field option {
+    background: var(--color-navy);
+    color: var(--on-dark-1);
+  }
+  .field textarea {
+    min-height: 100px;
     resize: vertical;
   }
-  .field__control--file {
-    padding: 10px 14px;
+  .field :is(input, textarea)::placeholder {
+    color: var(--on-dark-4);
+    font-family: var(--font-stack-mono);
+    font-size: .84rem;
+    opacity: 1;
   }
-
-  .field__hint {
-    margin-top: 6px;
+  .field input[type='file'] {
+    padding: 8px 10px;
     font-size: .875rem;
-    color: var(--text-secondary);
+    color: var(--on-dark-2);
+  }
+  .field input[type='file']::file-selector-button {
+    margin-right: 12px;
+    padding: 6px 14px;
+    border: 1px solid var(--on-dark-4);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--on-dark-1);
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: .8125rem;
+    cursor: pointer;
+    transition: border-color var(--dur-fast);
+  }
+  .field input[type='file']:hover::file-selector-button {
+    border-color: var(--on-dark-1);
   }
 
   /* Invalid is marked by a doubled red border, not the colour alone, and the
      script writes the reason into the result box beneath. */
-  .field__control[aria-invalid='true'] {
+  .field :is(input, select, textarea)[aria-invalid='true'] {
     border-color: var(--feedback-error);
     box-shadow: inset 0 0 0 1px var(--feedback-error);
   }
@@ -362,15 +373,15 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     overflow: hidden;
   }
 
-  .quote__actions {
-    margin-top: 4px;
-  }
-  .quote__submit {
-    width: 100%;
-  }
   .quote__submit[aria-disabled='true'] {
     opacity: .6;
     cursor: progress;
+  }
+  .quote__hint {
+    margin-top: 14px;
+    font-size: .8125rem;
+    line-height: 1.6;
+    color: var(--on-dark-3);
   }
 
   /* -- result ------------------------------------------------------------ */
@@ -378,11 +389,14 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     display: none;
   }
   .quote__result {
-    padding: 20px 22px;
-    border: 1px solid var(--rule-light);
+    padding: 18px 20px;
+    border: 1px solid var(--line-dark);
     border-left-width: 4px;
-    background: var(--surface-page);
+    background: color-mix(in srgb, var(--color-white) 6%, transparent);
   }
+  /* The success state's colour is --feedback-success; that is what the token
+     is for. The title says the outcome in words, so colour is never the only
+     signal (§11). */
   .quote__result[data-state='success'] {
     border-left-color: var(--feedback-success);
   }
@@ -390,54 +404,50 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     border-left-color: var(--feedback-error);
   }
 
-  @media (min-width: 720px) {
-    .field-row {
-      grid-template-columns: 1fr 1fr;
-    }
-    .quote__submit {
-      width: auto;
+  @media (max-width: 960px) {
+    .quote__split {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
-
-  @media (min-width: 1040px) {
-    .quote__grid {
-      grid-template-columns: 4fr 8fr;
-      gap: 64px;
+  @media (max-width: 560px) {
+    .pair {
+      grid-template-columns: minmax(0, 1fr);
     }
-    .quote__aside {
-      position: sticky;
-      top: calc(var(--header-h) + 32px);
+    .quote__submit {
+      width: 100%;
     }
   }
 </style>
 
 <style is:global>
   /* Written by src/scripts/quote-form.ts into [data-quote-result]. Global
-     because the script builds these nodes, so they carry no scope hash. */
+     because the script builds these nodes, so they carry no scope hash. They
+     sit on the navy band, so they read the inherited context roles. */
   .quote-result__title {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-family: var(--font-stack-display);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--fg-heading);
   }
   .quote-result__body {
     display: block;
-    font-size: 1rem;
-    color: var(--text-body);
+    font-size: .9375rem;
+    color: var(--fg-body);
   }
   .quote-result__reference {
     display: block;
-    margin-top: 14px;
+    margin-top: 12px;
     font-family: var(--font-stack-mono);
-    font-size: .875rem;
+    font-size: .8125rem;
     letter-spacing: var(--tracking-mono);
-    color: var(--text-link-light);
+    color: var(--fg-body);
   }
   .quote-result__reference b {
     font-family: var(--font-stack-mono);
     font-weight: 400;
     font-size: 1.0625rem;
+    color: var(--color-cyan-light);
   }
 </style>
