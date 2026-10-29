@@ -19,7 +19,7 @@ static output · Cloudflare Pages.
 | `npm run check` | `astro check` — TypeScript + template diagnostics |
 | `npm run budget` | §8 first-load payload check against the 1.5 MB budget (run after a build) |
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
-| `npm run placeholders` | Regenerate all 33 §10 placeholder plates |
+| `npm run placeholders` | Fill any image slot that has no file with a §10 plate. Add `-- --force` to replace existing images. |
 | `npm run test:quote` | Exercise the §7 quote endpoint offline (22 assertions) |
 
 `npm run build` is three steps, wired through npm's `prebuild`/`postbuild`, so
@@ -82,10 +82,13 @@ either route.
   in `dist/`. No duplicate `id` on either page (46 each).
 - Every colour in the emitted CSS resolves through a token — each brand hex
   appears exactly once, in the token block. No component hardcodes a colour.
-- Payload, 412px viewport at 2× DPR: **`/` = 840.5 KB, `/zh/` = 839.6 KB**
-  against the 1.5 MB budget — **55%**. Of that, **509 KB arrives on load** and
-  **332 KB is deferred**. The drop despite two new sections is the AVIF quality
-  change below.
+- Payload, 412px viewport at 2× DPR, **with the stand-in photography in place**:
+  **`/` = 1252.4 KB, `/zh/` = 1251.5 KB** — **82%** of the 1.5 MB budget.
+  **547 KB arrives on load**, **706 KB is deferred**. (With grey plates instead
+  it was 840 KB / 55%.)
+- Zero external hosts even with real photography: every image is committed and
+  served from our own origin, and the word "unsplash" appears nowhere in the
+  built site. The CSP is byte-for-byte unchanged.
 - §11 wording holds: no "authorised distributor", "agent" or "partner" claim
   appears in either rendered page, and the trademark disclaimer is on both.
 - The §8 raster-in-SVG guard **actually fails the build**. Tested: a logo that
@@ -204,6 +207,45 @@ look at a real photograph, so **it has not been changed.** One line in
 Two things that do *not* help: pre-desaturating sources to match the CSS filter
 saves ~4%, and desktop (2.1 MB at 1440 @2×) is a separate problem — §8's budget
 is explicitly "first mobile load", so mobile is the gate.
+
+---
+
+## ⚠ The photography is temporary stand-ins, not content
+
+**All 33 images are Unsplash photographs standing in for the real thing.** They
+are committed under `src/assets/` and go through the normal pipeline at q40, so
+the design can be reviewed with real imagery — but **§10 is unchanged: all 33
+still need replacing before launch.** Full manifest, with photo IDs and
+photographers, in [`src/assets/STAND-INS.md`](./src/assets/STAND-INS.md).
+
+Why they are not content:
+
+- They are stock photographs of somebody else's plant. §1's second job is
+  surviving the "are these people real?" check, and a buyer who
+  reverse-image-searches a stock photo has their answer.
+- **`about/portrait.jpg` deliberately contains no people.** It stands in for
+  "our office and staff", and a stock photograph of a stranger presented as our
+  team is the worst version of this problem — so it is a warehouse aisle with
+  racking and pallets and nobody in it. Still not our warehouse.
+- Unsplash now blocks its search API without a key, so the only IDs obtainable
+  were **the fourteen already in `reference/index.html`** — the approved
+  prototype's own choices. Fourteen photographs across thirty-three slots means
+  some repeat between sections; none repeats *within* a section.
+- One of the fourteen (`refinery`) is a sunset over a barge rather than a
+  refinery, so it is unused.
+
+Two related changes:
+
+- **`npm run placeholders` no longer overwrites.** It fills empty slots only;
+  `-- --force` restores plates. The guard matters more later than now: an
+  accidental run once real photography is in would have destroyed it.
+- **They live in `src/assets/`, not `public/img/` as asked.** `public/` is
+  copied verbatim and never touched by `astro:assets`, so images there get no
+  AVIF, no WebP, no responsive widths and no q40 — which contradicts the other
+  two requirements in the same instruction (run through the pipeline; overwrite
+  one file to swap a photograph). `src/assets/` satisfies all three, and the
+  no-external-hosts requirement is met either way since both are committed.
+  `public/img/` is now empty and unused; CLAUDE.md §3 is annotated to say so.
 
 ---
 
@@ -604,7 +646,7 @@ simply absent.
 |---|---|
 | Registered Chinese company name | `PENDING` in `src/data/company.ts`. Renders in the footer as an amber dashed "TO BE SUPPLIED" chip, and softens the About section's last point until supplied. |
 | Business licence number | Same. |
-| Real photography — office, staff, goods packed, equipment handled | **33 images pending.** 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
+| Real photography — office, staff, goods packed, equipment handled | **33 images pending — still all 33.** The slots are currently filled with Unsplash stand-ins (see the top of this README and `src/assets/STAND-INS.md`); none of them is a photograph of Trete One, so none of them counts. 5 hero frames (`assets/hero/hero-0N.jpg`, ≥2400px wide) · 12 product cards (`assets/products/<slug>.jpg`, ≥1200px) · 5 scope stages (`assets/scope/<slug>.jpg`, ≥1600px, **portrait** — the media column is sticky and full height) · 9 industry panels (`assets/industries/<slug>.jpg`, ≥1600px) · 1 sourcing plate (`assets/sourcing/plate.jpg`, ≥1600px) · 1 About portrait (`assets/about/portrait.jpg`, ≥1500px, **portrait**) — this is the office/staff photograph §10 asks for. All under `src/`. Every one is a generated plate reading "PHOTOGRAPH PENDING" plus the subject the real photograph should show; the subject lines live in `scripts/make-placeholders.mjs`. Drop the real file in at the same path — nothing else changes. |
 | Brand logo files, and which brands may be shown as logos at all | `public/logos/` is empty, so all 32 tiles render as the dashed name fallback — the expected state. Drop `<slug>.svg` in (slug from `brandSlug()` in `src/data/brands.ts`) and that tile becomes a logo. The build rejects an SVG that is really a raster (§8). **The open question is still which manufacturers may be shown as a logo at all.** |
 | Real reply-time commitment | `StatBand` is built. The figure renders as a marked **UNCONFIRMED** placeholder, never as a fact — see "Pass 2 notes". Set `confirmed: true` in `src/data/stats.ts` once the business has committed to a number. |
 | Professionally written Chinese copy | `src/i18n/zh.ts` and the `zh` fields in `src/data/*.ts` are the prototype's first pass, carried over unchanged and marked as such in the file headers. Needs a native-speaker review. |

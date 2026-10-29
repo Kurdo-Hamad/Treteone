@@ -6,7 +6,13 @@
  * stock imagery — which §8 forbids anyway, since the audience includes mainland
  * China — each image slot ships with a plate that says plainly what is missing.
  *
- *   npm run placeholders
+ *   npm run placeholders            fill any slot that has no image
+ *   npm run placeholders -- --force rewrite every slot as a plate
+ *
+ * It will NOT overwrite an image that already exists unless forced. That guard
+ * exists because the slots are currently filled with temporary stand-in
+ * photographs, and one day they will hold the real ones — and an accidental
+ * `npm run placeholders` that wiped real photography would be a bad afternoon.
  *
  * Writes:
  *   src/assets/hero/hero-0N.jpg          5 hero frames,     2400x1500
@@ -25,6 +31,7 @@
  * outside src/ and outside the i18n system.
  */
 import { mkdir, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import sharp from 'sharp';
@@ -123,9 +130,17 @@ function plate({ width, height, badge, subject, scale }) {
 </svg>`;
 }
 
+const force = process.argv.includes('--force');
+let skipped = 0;
+
 async function write(dir, name, svg) {
+  const target = join(dir, name);
+  if (!force && existsSync(target)) {
+    skipped += 1;
+    return 0;
+  }
   const buffer = await sharp(Buffer.from(svg)).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
-  await writeFile(join(dir, name), buffer);
+  await writeFile(target, buffer);
   return buffer.length;
 }
 
@@ -209,4 +224,11 @@ total += await write(
 );
 console.log('about:    1 portrait at 1500x2000');
 
-console.log(`total:    ${(total / 1024 / 1024).toFixed(1)} MB of source art (not shipped as-is)`);
+if (skipped > 0) {
+  console.log(
+    `
+skipped:  ${skipped} slot(s) that already have an image. ` +
+      'Use --force to replace them with plates.',
+  );
+}
+console.log(`written:  ${(total / 1024 / 1024).toFixed(1)} MB of source art (not shipped as-is)`);

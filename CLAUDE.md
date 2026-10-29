@@ -102,7 +102,7 @@ src/
 public/
   fonts/               General Sans, Roboto, Noto Sans SC — all self-hosted WOFF2
   logos/               brand logos, slug.svg
-  img/                 real photography
+  img/                 (empty — photography goes through src/assets/, above)
   _headers             security headers
   _redirects           any legacy URLs
 scripts/               build tooling, run by npm — not shipped to the browser
