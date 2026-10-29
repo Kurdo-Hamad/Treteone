@@ -1,0 +1,1097 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Treteone</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+/* Layout concept: ERIKS' flat industrial-distributor rhythm — solid brand masthead, inset media,
+   icon capability grid, at-a-glance figures, image+text cards, pale footer — rebuilt in Treteone's
+   locked navy/cyan. No shadows, no borders on cards, no radii except pill buttons. Seven routes. */
+:root{
+  --navy:#051b38;
+  --navy-2:#0a2a4e;
+  --cyan:#06b6d4;
+  --cyan-lt:#67e8f9;
+  --blue:#155e75;          /* icon + link blue, passes on white */
+  --slate:#4b6fa5;
+
+  --page:#ffffff;
+  --pale:#F2F4F6;
+  --line:#E2E6EA;
+  --line-dark:rgba(255,255,255,.2);
+  --text:#111827;
+  --body:#4B5563;
+  --quiet:#5C6572;
+
+  --d:"Figtree","General Sans",system-ui,Arial,sans-serif;
+  --b:"Roboto",system-ui,-apple-system,sans-serif;
+  --m:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --fs-display:clamp(2.1rem,1.6rem + 2.3vw,3.4rem);
+  --fs-h1:clamp(1.8rem,1.5rem + 1.4vw,2.6rem);
+  --fs-h2:clamp(1.4rem,1.25rem + .7vw,1.85rem);
+  --fs-body:1rem;
+
+  --gl:max(20px,env(safe-area-inset-left,0px));
+  --gr:max(20px,env(safe-area-inset-right,0px));
+  --maxw:1180px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--b);font-size:var(--fs-body);
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--navy)}
+h1,h2,h3,h4{margin:0;font-family:var(--d);font-weight:600;letter-spacing:-.02em;text-wrap:balance;color:var(--navy)}
+h1{font-size:var(--fs-h1);line-height:1.1}
+h2{font-size:var(--fs-h2);line-height:1.16}
+h3{font-size:1.0625rem;line-height:1.35;font-weight:600}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--gl);padding-right:var(--gr)}
+.lead{font-size:1.0625rem;line-height:1.62;color:var(--body);max-width:68ch}
+.small{font-size:.875rem;line-height:1.6;color:var(--body)}
+.mono{font-family:var(--m);font-variant-numeric:tabular-nums}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.navy :where(a,button,input,select,textarea):focus-visible,
+.masthead :where(a,button):focus-visible,
+.drawer :where(a,button):focus-visible,
+.hero-media :where(a,button):focus-visible{outline-color:var(--cyan-lt)}
+
+/* ---------- masthead ---------- */
+.masthead{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--navy);color:#fff}
+.mast-top{display:flex;align-items:center;gap:clamp(16px,2.4vw,34px);padding-block:15px}
+/* LOGO SLOT: fixed 34px tall. Drop an <img> in and it inherits the height. */
+.brand{display:flex;align-items:center;height:34px;flex:0 0 auto;text-decoration:none}
+.brand img,.brand svg{height:100%;width:auto;display:block}
+.brand-mark{font-family:var(--d);font-weight:700;font-size:1.3rem;letter-spacing:.1em;color:#fff;white-space:nowrap}
+.brand-mark i{color:var(--cyan);font-style:normal}
+.mark{font-family:var(--d);font-weight:700;font-size:1.3rem;letter-spacing:.1em;text-decoration:none;color:#fff;white-space:nowrap}
+.mark i{color:var(--cyan);font-style:normal}
+.pill{display:inline-flex;align-items:center;gap:.6em;border:1px solid rgba(255,255,255,.4);
+  border-radius:999px;padding:9px 20px;font-family:var(--d);font-weight:600;font-size:.875rem;
+  text-decoration:none;color:#fff;transition:background .15s,color .15s,border-color .15s}
+.pill:hover{background:var(--cyan);border-color:var(--cyan);color:var(--navy)}
+.pill .sm{display:none}
+.mast-nav{display:flex;align-items:center;gap:clamp(14px,1.9vw,26px);margin-left:auto;
+  font-family:var(--d);font-weight:500;font-size:.9rem}
+.mast-nav a{color:rgba(255,255,255,.78);text-decoration:none;padding-block:4px;
+  border-bottom:2px solid transparent;white-space:nowrap;transition:color .16s}
+.mast-nav a:hover{color:#fff}
+.mast-nav a[aria-current="page"]{color:#fff;border-bottom-color:var(--cyan)}
+/* hamburger */
+.burger{display:none;background:none;border:1px solid rgba(255,255,255,.32);border-radius:2px;color:#fff;
+  width:44px;height:44px;padding:0;cursor:pointer;align-items:center;justify-content:center;
+  transition:border-color .16s,background .16s}
+.burger:hover{border-color:#fff}
+.burger .bars{position:relative;display:block;width:20px;height:14px}
+.burger .bars i{position:absolute;left:0;right:0;height:2px;background:#fff;
+  transition:transform .26s ease,opacity .16s ease,top .26s ease}
+.burger .bars i:nth-child(1){top:0}
+.burger .bars i:nth-child(2){top:6px}
+.burger .bars i:nth-child(3){top:12px}
+.burger[aria-expanded="true"]{background:rgba(255,255,255,.08)}
+.burger[aria-expanded="true"] .bars i:nth-child(1){top:6px;transform:rotate(45deg)}
+.burger[aria-expanded="true"] .bars i:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] .bars i:nth-child(3){top:6px;transform:rotate(-45deg)}
+.drawer{display:none;background:var(--navy-2)}
+.drawer.open{display:block;animation:drawerIn .22s ease both}
+@keyframes drawerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.drawer a{display:flex;align-items:center;justify-content:space-between;padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,.13);color:#fff;text-decoration:none;
+  font-family:var(--d);font-weight:500;font-size:1.0625rem}
+.drawer a::after{content:"→";color:var(--cyan);font-size:.9rem}
+.drawer a:active{color:var(--cyan-lt)}
+.drawer .cta{justify-content:center;gap:.5em;border-bottom:0;background:var(--cyan);color:var(--navy);
+  border-radius:999px;margin:18px 0 22px;padding:14px;font-weight:600;font-size:1rem}
+.drawer .cta::after{content:"→";color:var(--navy)}
+
+/* ---------- view switching ---------- */
+.view{display:none}
+.view.on{display:block}
+
+/* ---------- generic blocks ---------- */
+.sec{padding-block:clamp(44px,5.5vw,76px)}
+.sec-tight{padding-block:clamp(32px,4vw,52px)}
+.pale{background:var(--pale)}
+.navy{background:var(--navy);color:#fff}
+.navy h1,.navy h2,.navy h3{color:#fff}
+.navy .lead,.navy .small{color:rgba(255,255,255,.76)}
+.kicker{font-family:var(--d);font-weight:600;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--slate);margin-bottom:14px}
+.navy .kicker{color:var(--cyan-lt)}
+.rm{display:inline-flex;align-items:center;gap:.5em;font-family:var(--d);font-weight:600;font-size:.9375rem;
+  color:var(--blue);text-decoration:none}
+.rm:hover{color:var(--cyan)}
+.navy .rm{color:var(--cyan-lt)}
+.btn{display:inline-flex;align-items:center;gap:.6em;font-family:var(--d);font-weight:600;font-size:.9375rem;
+  padding:12px 24px;border-radius:999px;border:1px solid transparent;text-decoration:none;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s}
+.btn-solid{background:var(--navy);color:#fff}
+.btn-solid:hover{background:var(--cyan);color:var(--navy)}
+.btn-out{background:transparent;color:var(--navy);border-color:var(--line)}
+.btn-out:hover{border-color:var(--navy)}
+.navy .btn-solid{background:var(--cyan);color:var(--navy)}
+.navy .btn-solid:hover{background:#fff}
+.navy .btn-out{color:#fff;border-color:rgba(255,255,255,.4)}
+.navy .btn-out:hover{border-color:#fff}
+
+/* ---------- hero: inset media, headline beneath (ERIKS pattern) ---------- */
+.hero-media{background:var(--navy);position:relative;overflow:hidden}
+.stage{position:relative;height:clamp(400px,52vh,540px)}
+.slide{position:absolute;inset:0;margin:0;opacity:0;visibility:hidden;transition:opacity .8s ease,visibility .8s}
+.slide.on{opacity:1;visibility:visible}
+.slide .ph{position:absolute;inset:0;background:var(--navy-2)}
+.slide .ph::after{display:none}
+.slide .ph .t{position:absolute;top:26px;right:clamp(20px,3vw,40px);left:auto;padding:0;text-align:right;
+  color:rgba(255,255,255,.5);font-size:.58rem}
+.slide .ph .t svg{stroke:rgba(255,255,255,.5);width:18px;height:18px;margin:0 0 7px auto}
+.slide .ph .t em{color:rgba(255,255,255,.44);text-align:right;margin-left:auto;max-width:30ch}
+.hero-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
+  linear-gradient(80deg,rgba(4,16,31,.94) 0%,rgba(4,16,31,.78) 38%,rgba(4,16,31,.26) 72%,rgba(4,16,31,.1) 100%),
+  linear-gradient(to top,rgba(4,16,31,.7) 0%,rgba(4,16,31,0) 48%)}
+.hero-overlay{position:absolute;left:0;right:0;bottom:0;z-index:3;color:#fff;
+  padding-block:clamp(26px,3.6vw,46px)}
+.hero-overlay .wrap{max-width:var(--maxw)}
+.hero-overlay .eyebrow,.hero-overlay .hero-title,.hero-overlay .hero-sub{max-width:min(640px,76%)}
+.hero-title{font-family:var(--d);font-weight:600;letter-spacing:-.03em;line-height:1.04;
+  font-size:clamp(2.2rem,1.5rem + 3.1vw,4rem);margin-top:16px;transition:opacity .3s ease}
+.hero-sub{color:rgba(255,255,255,.84);font-size:clamp(1rem,.95rem + .25vw,1.125rem);line-height:1.55;margin-top:16px;max-width:46ch;
+  transition:opacity .3s ease}
+.hero-title.fade,.hero-sub.fade,.hero-more.fade{opacity:0}
+.hero-more{display:inline-flex;align-items:center;gap:.5em;margin-top:20px;font-family:var(--d);
+  font-weight:600;font-size:.9375rem;color:var(--cyan-lt);text-decoration:none;
+  border-bottom:1px solid rgba(103,232,249,.45);padding-bottom:3px;transition:opacity .3s ease,gap .18s}
+.hero-more:hover{gap:.9em;border-bottom-color:var(--cyan-lt)}
+.hero-bar{display:flex;align-items:flex-end;gap:clamp(14px,2vw,26px);
+  padding-top:clamp(16px,2vw,22px);padding-bottom:clamp(18px,2.2vw,26px)}
+.pp{flex:0 0 auto;width:36px;height:36px;border:1px solid rgba(255,255,255,.34);background:none;color:#fff;
+  cursor:pointer;font-size:.6rem;line-height:1;display:grid;place-items:center;border-radius:999px;
+  font-family:var(--m);transition:background .16s,color .16s,border-color .16s}
+.pp:hover{background:#fff;color:var(--navy);border-color:#fff}
+.tabs{flex:1 1 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.6vw,22px)}
+.tab{position:relative;background:none;border:0;padding:0;text-align:left;cursor:pointer;font-family:var(--d);font-weight:500;
+  font-size:.8125rem;color:rgba(255,255,255,.6);line-height:1.3;transition:color .18s}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff}
+.tab i{display:block;width:40px;height:2px;background:rgba(255,255,255,.22);margin-bottom:11px;
+  position:relative;overflow:hidden}
+.tab i::after{content:"";position:absolute;inset:0;background:var(--cyan);transform:scaleX(0);transform-origin:left}
+.tab[aria-selected="true"] i{background:rgba(255,255,255,.3)}
+.tab[aria-selected="true"] i::after{animation:fill 7s linear forwards}
+.hero-media.paused .tab[aria-selected="true"] i::after{animation-play-state:paused}
+@keyframes fill{to{transform:scaleX(1)}}
+.hero-copy{padding-top:clamp(28px,3.5vw,44px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,56px);align-items:start}
+.hero-copy h1{font-size:var(--fs-display);line-height:1.04;max-width:16ch}
+.hero-copy p + p{margin-top:16px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+/* ---------- motion ---------- */
+.scrollbar{position:absolute;left:0;bottom:0;height:2px;background:var(--cyan);width:0;z-index:5;
+  transition:width .08s linear}
+.mast-top{transition:padding-block .22s ease}
+.masthead.stuck .mast-top{padding-block:9px}
+.view.enter{animation:viewIn .34s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.rv{opacity:0;transform:translateY(12px)}
+.rv.in{opacity:1;transform:none;transition:opacity .55s ease,transform .55s ease}
+.card .rm,.row .go{transition:transform .18s ease,color .16s}
+.card:hover .rm{transform:translateX(4px)}
+.row .go{display:inline-block}
+.row:hover .go{transform:translateX(4px)}
+.gi b{transition:color .2s}
+
+/* ---------- image placeholders ---------- */
+.ph{position:relative;background:var(--pale);display:grid;place-items:center;overflow:hidden}
+.ph::after{content:"";position:absolute;inset:12px;border:1px dashed #C3CBD4;pointer-events:none}
+.ph .t{position:relative;z-index:2;padding:18px;text-align:center;font-family:var(--m);font-size:.6rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--slate);line-height:1.5}
+.ph .t svg{width:26px;height:26px;stroke:var(--slate);stroke-width:1.2;fill:none;display:block;margin:0 auto 10px}
+.ph .t em{display:block;font-style:normal;margin-top:7px;font-size:.72rem;letter-spacing:.02em;
+  text-transform:none;color:var(--quiet);line-height:1.5;max-width:30ch}
+.ph-sm{aspect-ratio:4/3;margin-bottom:16px}
+.ph-sm::after{inset:8px}
+.ph-sm .t{padding:10px;font-size:.55rem;letter-spacing:.12em}
+.ph-sm .t svg{width:20px;height:20px;margin-bottom:6px}
+.ph-sm .t em{display:none}
+.card:hover .ph::after{border-color:var(--cyan)}
+
+/* ---------- cards: image block + heading + body + read more ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2.6vw,30px)}
+.cards.two{grid-template-columns:repeat(2,1fr)}
+.card{display:block;text-decoration:none}
+.card .shot{aspect-ratio:16/10}
+.card h3{margin-top:16px}
+.card p{margin-top:8px;font-size:.875rem;line-height:1.6;color:var(--body)}
+.card .rm{margin-top:12px}
+
+/* ---------- at a glance ---------- */
+.glance{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(22px,3vw,40px)}
+.gi b{display:block;font-family:var(--d);font-weight:700;font-size:1.65rem;line-height:1.05;letter-spacing:-.03em;color:var(--navy)}
+.gi small{display:block;margin-top:6px;font-size:.8125rem;color:var(--quiet);line-height:1.5}
+
+/* ---------- split: media + offset block ---------- */
+.split{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(26px,4vw,60px);align-items:center}
+.split-media{position:relative;padding-left:34px;padding-top:30px}
+.split-media .back{position:absolute;left:0;top:0;width:58%;height:70%;background:var(--cyan)}
+.split-media .front{position:relative;aspect-ratio:4/3}
+
+/* ---------- capability grid ---------- */
+.caps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(22px,3vw,40px);margin-top:34px}
+.cap h3{font-size:.9375rem;line-height:1.35}
+.cap p{margin-top:8px;font-size:.8125rem;line-height:1.6;color:var(--body)}
+
+/* ---------- brand tiles ---------- */
+.btiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.8vw,20px);margin-top:26px}
+.btile{text-align:center}
+.btile .box{position:relative;aspect-ratio:3/2;background:var(--pale);display:grid;place-items:center;padding:12px;
+  font-family:var(--m);font-weight:400;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+.btile .box::after{content:"";position:absolute;inset:8px;border:1px dashed #C3CBD4}
+.btile small{display:block;margin-top:9px;font-size:.78rem;color:var(--quiet)}
+
+
+/* ---------- brand marquee ---------- */
+.marquee{overflow:hidden;position:relative;margin-top:28px}
+.marquee + .marquee{margin-top:clamp(12px,1.6vw,18px)}
+.marquee::before,.marquee::after{content:"";position:absolute;top:0;bottom:0;width:clamp(36px,7vw,90px);
+  z-index:2;pointer-events:none}
+.marquee::before{left:0;background:linear-gradient(to right,var(--page),rgba(255,255,255,0))}
+.marquee::after{right:0;background:linear-gradient(to left,var(--page),rgba(255,255,255,0))}
+.mtrack{display:flex;width:max-content;animation:marq 52s linear infinite}
+.marquee.rev .mtrack{animation-direction:reverse;animation-duration:64s}
+.marquee:hover .mtrack,.marquee:focus-within .mtrack{animation-play-state:paused}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mtile{flex:0 0 clamp(128px,15vw,168px);margin-right:clamp(12px,1.6vw,18px);text-align:center}
+.mtile .box{position:relative;aspect-ratio:3/2;background:var(--pale);display:grid;place-items:center;
+  font-family:var(--m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);
+  transition:background .2s}
+.mtile .box::after{content:"";position:absolute;inset:8px;border:1px dashed #C3CBD4;transition:border-color .2s}
+.mtile:hover .box{background:#EAEEF2}
+.mtile:hover .box::after{border-color:var(--cyan)}
+.mtile small{display:block;margin-top:9px;font-size:.78rem;color:var(--quiet)}
+
+/* ---------- brand filter ---------- */
+.bfilter{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:center;margin-top:30px;
+  padding-bottom:22px;border-bottom:1px solid var(--line)}
+.bsearch{position:relative;flex:0 0 clamp(200px,28vw,280px)}
+.bsearch input{width:100%;background:var(--page);border:1px solid var(--line);padding:11px 14px 11px 36px;
+  -webkit-appearance:none;appearance:none;
+  font-family:var(--b);font-size:.9375rem;color:var(--text);border-radius:0}
+.bsearch input:focus{border-color:var(--navy)}
+.bsearch svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;
+  stroke:var(--slate);stroke-width:1.6;fill:none;pointer-events:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--page);border:1px solid var(--line);padding:9px 16px;border-radius:999px;cursor:pointer;
+  font-family:var(--d);font-weight:500;font-size:.84rem;color:var(--body);transition:all .16s}
+.chip:hover{border-color:var(--navy);color:var(--navy)}
+.chip b{font-family:var(--m);font-weight:400;font-size:.72rem;color:var(--quiet);margin-left:.45em}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip[aria-pressed="true"] b{color:var(--cyan-lt)}
+.bcount{margin-top:20px;font-family:var(--m);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.bgrid-all{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.8vw,20px);margin-top:16px}
+.bgrid-all .btile{transition:opacity .22s ease,transform .22s ease}
+.btile[hidden]{display:none}
+.bnone{margin-top:26px;padding:26px;background:var(--pale);max-width:62ch}
+.bnone h3{margin-bottom:8px}
+.bnone p{font-size:.9375rem;color:var(--body)}
+
+/* ---------- index rows (products / industries) ---------- */
+.rows{margin-top:30px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:52px minmax(0,1.05fr) minmax(0,1.25fr) 104px;gap:18px;align-items:baseline;
+  padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:background .15s}
+.row:hover{background:var(--pale)}
+.row .n{font-family:var(--m);font-size:.75rem;color:var(--slate)}
+.row .spec{font-family:var(--m);font-size:.78rem;line-height:1.75;color:var(--quiet)}
+.row .go{font-family:var(--d);font-weight:600;font-size:.875rem;color:var(--blue);text-align:right;white-space:nowrap}
+.row:hover .go{color:var(--cyan)}
+
+/* ---------- lists ---------- */
+.checklist{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line-dark)}
+.checklist li{display:grid;grid-template-columns:46px 1fr;gap:14px;padding:15px 0;
+  border-bottom:1px solid var(--line-dark);font-size:.9375rem;color:rgba(255,255,255,.82)}
+.checklist .k{font-family:var(--m);font-size:.72rem;color:var(--cyan-lt);padding-top:3px}
+
+/* ---------- steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(18px,2.4vw,30px);margin-top:32px}
+.step .k{font-family:var(--m);font-size:.72rem;color:var(--cyan);letter-spacing:.1em;display:block;margin-bottom:10px}
+.step h3{font-size:1rem}
+.step p{margin-top:7px;font-size:.8125rem;line-height:1.6;color:var(--body)}
+.navy .step p{color:rgba(255,255,255,.66)}
+.navy .step .k{color:var(--cyan-lt)}
+
+/* ---------- definition pairs ---------- */
+.defs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,3.4vw,46px);margin-top:32px}
+.def h3{margin-bottom:8px}
+.def p{font-size:.9375rem;line-height:1.62;color:var(--body)}
+
+/* ---------- form ---------- */
+.form{display:grid;gap:16px}
+.field label{display:block;font-family:var(--d);font-weight:600;font-size:.78rem;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(255,255,255,.62);margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.22);color:#fff;font-family:var(--b);font-size:.9375rem;padding:12px 14px;border-radius:0}
+.field textarea{min-height:100px;resize:vertical}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.46);font-family:var(--m);font-size:.84rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hint{font-size:.8125rem;color:rgba(255,255,255,.56);line-height:1.6}
+
+/* ---------- footer ---------- */
+footer{background:#041324;color:rgba(255,255,255,.62);padding-block:clamp(38px,4.4vw,54px) 20px;font-size:.875rem}
+.fgrid{display:grid;grid-template-columns:minmax(0,1.15fr) auto;gap:26px 48px;align-items:start}
+.fbrand .mark{font-size:1.15rem;display:inline-block}
+.fco{margin-top:15px;color:#fff;font-family:var(--d);font-weight:500;font-size:.9375rem;letter-spacing:-.01em}
+.faddr{margin-top:7px;font-size:.8125rem;line-height:1.62;color:rgba(255,255,255,.54);max-width:44ch}
+.faddr span{color:rgba(255,255,255,.44)}
+.flinks{display:flex;flex-wrap:wrap;gap:11px 28px;justify-content:flex-end;align-content:flex-start}
+.flinks a{color:rgba(255,255,255,.84);text-decoration:none;font-family:var(--d);font-weight:500;
+  font-size:.9375rem;padding-bottom:3px;border-bottom:1px solid transparent;
+  transition:color .16s,border-color .16s}
+.flinks a:hover{color:#fff;border-bottom-color:var(--cyan)}
+.legal{margin-top:clamp(28px,3.4vw,42px);padding-top:17px;border-top:1px solid rgba(255,255,255,.13);
+  display:flex;flex-wrap:wrap;gap:10px 30px;justify-content:space-between;align-items:baseline;
+  font-size:.78rem;color:rgba(255,255,255,.46)}
+.fcontact{display:flex;flex-wrap:wrap;gap:5px 24px;font-family:var(--m);letter-spacing:.02em;
+  color:rgba(255,255,255,.74);font-size:.8rem}
+
+@media (max-width:960px){
+  .mast-nav{display:none}
+  .burger{display:inline-flex}
+  .pill{margin-left:auto;padding:9px 16px;font-size:.84rem}
+  .pill .lg{display:none}
+  .pill .sm{display:inline}
+  .mast-top{gap:12px}
+  .hero-copy,.split,.defs{grid-template-columns:1fr}
+  .tabs{grid-template-columns:repeat(2,1fr);gap:14px 18px}
+  .stage{height:clamp(400px,58vh,520px)}
+  .hero-overlay .eyebrow,.hero-overlay .hero-title,.hero-overlay .hero-sub{max-width:none}
+  .cards,.cards.two{grid-template-columns:1fr}
+  .glance,.caps{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .btiles,.bgrid-all{grid-template-columns:repeat(3,1fr)}
+  .bfilter{gap:12px}
+  .bsearch{flex:1 1 100%}
+  .row{grid-template-columns:44px minmax(0,1fr);gap:12px}
+  .row .spec,.row .go{grid-column:2;text-align:left}
+  .fgrid{grid-template-columns:1fr;gap:22px}
+  .flinks{justify-content:flex-start;gap:11px 24px}
+  .split-media{padding-left:22px;padding-top:20px}
+}
+@media (max-width:560px){
+  .glance,.caps,.steps,.pair{grid-template-columns:1fr}
+  .stage{height:auto;aspect-ratio:3/4;min-height:430px}
+  .slide .ph .t{top:20px;right:20px}
+  .slide .ph .t em{display:none}
+  .btiles,.bgrid-all{grid-template-columns:repeat(2,1fr)}
+}
+
+/* phone: one progress line at a time, compact bar */
+@media (max-width:700px){
+  .hero-bar{align-items:center;gap:14px;padding-top:16px}
+  .pp{width:40px;height:40px}
+  .brand{height:28px}
+  .brand-mark{font-size:1.15rem;letter-spacing:.08em}
+  .hero-scrim{background:linear-gradient(to top,rgba(4,16,31,.94) 0%,rgba(4,16,31,.72) 42%,rgba(4,16,31,.18) 100%)}
+  .tabs{display:block;flex:1 1 auto;gap:0}
+  .tab{display:none;width:100%;padding:9px 0}
+  .tab[aria-selected="true"]{display:block}
+  .tab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tab i{width:100%;margin-bottom:0;background:rgba(255,255,255,.26)}
+  .hero-overlay{padding-block:24px}
+  .hero-sub{font-size:.9375rem}
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="wrap mast-top">
+    <!-- ===== LOGO PLACEHOLDER =====
+         Replace the <span> with your artwork, e.g.
+           <img src="treteone-logo.svg" alt="Treteone">
+         The slot is 34px tall (28px on phones); width is free. -->
+    <a class="brand" href="#home" data-go="home" aria-label="Treteone — home">
+      <span class="brand-mark">TRETEONE<i>.</i></span>
+    </a>
+
+    <nav class="mast-nav">
+      <a href="#home" data-go="home">Home</a>
+      <a href="#products" data-go="products">Products</a>
+      <a href="#industries" data-go="industries">Industries</a>
+      <a href="#sourcing" data-go="sourcing">Sourcing</a>
+      <a href="#brands" data-go="brands">Brands</a>
+      <a href="#about" data-go="about">About</a>
+    </nav>
+
+    <a class="pill" href="#quote" data-go="quote"><span class="lg">Request a quote</span><span class="sm">Quote</span> →</a>
+    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+  </div>
+  <span class="scrollbar" id="scrollbar" aria-hidden="true"></span>
+  <div class="drawer" id="drawer">
+    <div class="wrap">
+      <a href="#home" data-go="home">Home</a>
+      <a href="#products" data-go="products">Products</a>
+      <a href="#industries" data-go="industries">Industries</a>
+      <a href="#sourcing" data-go="sourcing">Sourcing</a>
+      <a href="#brands" data-go="brands">Brands</a>
+      <a href="#about" data-go="about">About</a>
+      <a class="cta" href="#quote" data-go="quote">Request a quote</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HOME ================= -->
+<section class="view on" id="v-home">
+  <div class="hero-media" id="heroMedia">
+      <div class="stage" id="stage">
+        <figure class="slide on" id="hslide-0" role="tabpanel" aria-labelledby="htab-0"><span class="ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg> Image<em>Bearings, seals and gaskets on the workbench</em></span></span></figure>
+        <figure class="slide" id="hslide-1" role="tabpanel" aria-labelledby="htab-1"><span class="ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg> Image<em>Process pump and motor on a baseplate</em></span></span></figure>
+        <figure class="slide" id="hslide-2" role="tabpanel" aria-labelledby="htab-2"><span class="ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg> Image<em>Control cabinet with the door open</em></span></span></figure>
+        <figure class="slide" id="hslide-3" role="tabpanel" aria-labelledby="htab-3"><span class="ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg> Image<em>Worn nameplate on an ageing gearbox</em></span></span></figure>
+        <span class="hero-scrim" aria-hidden="true"></span>
+        <div class="hero-overlay"><div class="wrap">
+          <p class="eyebrow dark">Industrial supply &amp; sourcing</p>
+          <p class="hero-title" id="heroTitle">Spare parts &amp; MRO</p>
+          <p class="hero-sub" id="heroLine">The consumables a maintenance team runs through every week — quoted against the reference you already have.</p>
+          <a class="hero-more" id="heroMore" href="#products" data-go="products">Explore spare parts &rarr;</a>
+        </div></div>
+      </div>
+      <div class="wrap hero-bar">
+        <button class="pp" id="pp" type="button" aria-label="Pause the slideshow">❚❚</button>
+        <div class="tabs" id="tabs" role="tablist" aria-label="What we supply">
+          <button class="tab" type="button" role="tab" id="htab-0" aria-controls="hslide-0" aria-selected="true" tabindex="0" data-i="0"><i></i><span>Spare parts &amp; MRO</span></button>
+          <button class="tab" type="button" role="tab" id="htab-1" aria-controls="hslide-1" aria-selected="false" tabindex="-1" data-i="1"><i></i><span>Equipment &amp; machinery</span></button>
+          <button class="tab" type="button" role="tab" id="htab-2" aria-controls="hslide-2" aria-selected="false" tabindex="-1" data-i="2"><i></i><span>Automation &amp; instrumentation</span></button>
+          <button class="tab" type="button" role="tab" id="htab-3" aria-controls="hslide-3" aria-selected="false" tabindex="-1" data-i="3"><i></i><span>Hard-to-find &amp; obsolete</span></button>
+        </div>
+      </div>
+  </div>
+
+  <div class="wrap sec-tight">
+    <div class="hero-copy">
+      <h1>We find the part. Then we supply it.</h1>
+      <div>
+        <p class="lead">A plant stops for one component. Finding that component means reading a nameplate, tracing a reference that may have been superseded twice, and knowing which manufacturer still builds something that satisfies the same duty.</p>
+        <p class="lead">Treteone is an industrial supply and sourcing company in Guangzhou. We work from the part number, the drawing, or the photograph — and quote with price, lead time and the alternatives worth considering.</p>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#quote" data-go="quote">Send a part number</a>
+          <a class="btn btn-out" href="#products" data-go="products">See what we supply</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <h2>Three ways an enquiry arrives</h2>
+    <p class="small" style="margin-top:10px;max-width:62ch">Illustrative of the work, not case studies — no client is named and nothing here is a performance claim.</p>
+    <div class="cards" data-rv style="margin-top:28px">
+      <a class="card" href="#sourcing" data-go="sourcing">
+        <span class="shot ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Control cabinet, module removed from the rack</em></span></span>
+        <h3>A control module that is no longer listed</h3>
+        <p>The reference returns nothing. The build code on the module and the rack it sits in are usually enough to establish what replaced it, and whether the replacement is a drop-in.</p>
+        <span class="rm">How we trace a part →</span>
+      </a>
+      <a class="card" href="#products" data-go="products">
+        <span class="shot ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Pump end stripped — impeller and wear rings</em></span></span>
+        <h3>Wear parts for a pump still in service</h3>
+        <p>Impeller, wear rings, mechanical seal and the gaskets that go with them — quoted as an OEM set and as verified equivalents, side by side, with the trade-off stated.</p>
+        <span class="rm">See the categories →</span>
+      </a>
+      <a class="card" href="#quote" data-go="quote">
+        <span class="shot ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Priced bill of quantities on a desk</em></span></span>
+        <h3>A bill of quantities to be priced</h3>
+        <p>A multi-line spreadsheet across several disciplines, often with gaps in the descriptions. It comes back priced, with the ambiguous lines flagged rather than guessed.</p>
+        <span class="rm">Send your list →</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="pale">
+    <div class="wrap sec">
+      <h2>Treteone at a glance</h2>
+      <div class="glance" data-rv style="margin-top:32px">
+        <div class="gi"><b data-count="12">12</b><small>Product categories, from automation to consumables</small></div>
+        <div class="gi"><b data-count="9">9</b><small>Industries, each with its own duty questions</small></div>
+        <div class="gi"><b>Guangzhou</b><small>Supplying maintenance and procurement teams worldwide</small></div>
+        <div class="gi"><b>No account</b><small>Send an enquiry without registering for anything</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <div class="split">
+      <div class="split-media">
+        <span class="back" aria-hidden="true"></span>
+        <span class="front ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Bearings and seals, packed for shipment</em></span></span>
+      </div>
+      <div>
+        <p class="kicker">Our position</p>
+        <h2>We hold no stock. That is the point.</h2>
+        <p class="lead" style="margin-top:16px">A distributor sells what is on its shelf. A sourcing company starts from the duty and finds whoever satisfies it — which is a different job, and the right one when the item is obsolete, when the original manufacturer has been acquired, or when the specification matters more than the brand on the box.</p>
+        <p class="lead" style="margin-top:14px">So we are not tied to a franchise, and nothing on this site is a stock listing. Every line is quoted against the specification you send.</p>
+        <p style="margin-top:22px"><a class="rm" href="#about" data-go="about">More about how we work →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <h2>From a single component to a complete line.</h2>
+    <p class="lead" style="margin-top:12px">Eight of the twelve categories buyers ask for most. Each is a scope statement, not a catalogue.</p>
+    <div class="caps" data-rv>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Control panel interior</em></span></span><h3>Automation &amp; control — the logic layer</h3><p>PLC, DCS and SCADA hardware, HMIs, remote I/O, drives and servo systems, specified against your control platform.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Pressure transmitter in situ</em></span></span><h3>Instrumentation — what the plant knows</h3><p>Pressure, flow, level and temperature measurement, transmitters and analysers, matched to medium and range.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Control valve with actuator</em></span></span><h3>Valves &amp; flow control — isolate and modulate</h3><p>Ball, gate, globe, butterfly, control and safety valves with actuators and positioners, by pressure class and trim.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Centrifugal pump on its baseplate</em></span></span><h3>Pumps — moving the process</h3><p>Centrifugal, dosing and submersible units, plus the seals, impellers and wear parts that keep them running.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Motor and gearbox assembly</em></span></span><h3>Motors &amp; transmission — power to the shaft</h3><p>Electric motors, gearboxes, couplings, bearings and belts, selected on frame size, rating and duty cycle.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Hydraulic power unit</em></span></span><h3>Hydraulic &amp; pneumatic — force on demand</h3><p>Cylinders, valves, power units, fittings and air preparation, from a circuit diagram or a failed component.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Bearings and seals on the bench</em></span></span><h3>Mechanical &amp; MRO — the consumable layer</h3><p>Bearings, seals, gaskets, fasteners, hoses and filtration — the lines that make up most of a maintenance spend.</p></div>
+      <div class="cap"><span class="ph ph-sm"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Filter elements, boxed</em></span></span><h3>Consumables — what runs out</h3><p>Filter elements, lubricants, abrasives, cutting tools and safety supplies, in the quantities a site actually uses.</p></div>
+    </div>
+    <p style="margin-top:30px"><a class="btn btn-out" href="#products" data-go="products">All 12 categories</a></p>
+  </div>
+
+  <div class="navy">
+    <div class="wrap sec">
+      <div class="split">
+        <div>
+          <p class="kicker">Hard-to-find &amp; obsolete</p>
+          <h2>If it has a nameplate, there is something to work from.</h2>
+          <p class="lead" style="margin-top:16px">Most enquiries that reach us have already failed somewhere else — a reference that returns nothing, a manufacturer that no longer lists the item, a casting with the numbers worn off. That is the normal starting point here, not the exception.</p>
+          <p style="margin-top:24px"><a class="btn btn-solid" href="#sourcing" data-go="sourcing">How we trace a part</a></p>
+        </div>
+        <div>
+          <ul class="checklist">
+            <li><span class="k">01</span><span>The reference as printed, superseded or partly illegible</span></li>
+            <li><span class="k">02</span><span>Equipment model, serial number and a nameplate photograph</span></li>
+            <li><span class="k">03</span><span>Datasheet, general arrangement drawing or P&amp;ID extract</span></li>
+            <li><span class="k">04</span><span>Quantity, required date, and the destination</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <h2>Brands we source</h2>
+    <p class="small" style="margin-top:10px;max-width:62ch">The manufacturers requested most often. If yours is not shown, ask — the list reflects demand, not the limit of what can be sourced.</p>
+    <div class="marquee"><div class="mtrack" aria-hidden="true"><div class="mtile"><span class="box">Logo</span><small>Siemens</small></div><div class="mtile"><span class="box">Logo</span><small>Rockwell / Allen-Bradley</small></div><div class="mtile"><span class="box">Logo</span><small>Omron</small></div><div class="mtile"><span class="box">Logo</span><small>Emerson</small></div><div class="mtile"><span class="box">Logo</span><small>Yokogawa</small></div><div class="mtile"><span class="box">Logo</span><small>WIKA</small></div><div class="mtile"><span class="box">Logo</span><small>Pepperl+Fuchs</small></div><div class="mtile"><span class="box">Logo</span><small>Schaeffler / FAG</small></div><div class="mtile"><span class="box">Logo</span><small>Timken</small></div><div class="mtile"><span class="box">Logo</span><small>WEG</small></div><div class="mtile"><span class="box">Logo</span><small>KSB</small></div><div class="mtile"><span class="box">Logo</span><small>John Crane</small></div><div class="mtile"><span class="box">Logo</span><small>Danfoss</small></div><div class="mtile"><span class="box">Logo</span><small>SMC</small></div><div class="mtile"><span class="box">Logo</span><small>Bosch Rexroth</small></div><div class="mtile"><span class="box">Logo</span><small>Ingersoll Rand</small></div><div class="mtile"><span class="box">Logo</span><small>Siemens</small></div><div class="mtile"><span class="box">Logo</span><small>Rockwell / Allen-Bradley</small></div><div class="mtile"><span class="box">Logo</span><small>Omron</small></div><div class="mtile"><span class="box">Logo</span><small>Emerson</small></div><div class="mtile"><span class="box">Logo</span><small>Yokogawa</small></div><div class="mtile"><span class="box">Logo</span><small>WIKA</small></div><div class="mtile"><span class="box">Logo</span><small>Pepperl+Fuchs</small></div><div class="mtile"><span class="box">Logo</span><small>Schaeffler / FAG</small></div><div class="mtile"><span class="box">Logo</span><small>Timken</small></div><div class="mtile"><span class="box">Logo</span><small>WEG</small></div><div class="mtile"><span class="box">Logo</span><small>KSB</small></div><div class="mtile"><span class="box">Logo</span><small>John Crane</small></div><div class="mtile"><span class="box">Logo</span><small>Danfoss</small></div><div class="mtile"><span class="box">Logo</span><small>SMC</small></div><div class="mtile"><span class="box">Logo</span><small>Bosch Rexroth</small></div><div class="mtile"><span class="box">Logo</span><small>Ingersoll Rand</small></div></div></div>
+    <div class="marquee rev"><div class="mtrack" aria-hidden="true"><div class="mtile"><span class="box">Logo</span><small>ABB</small></div><div class="mtile"><span class="box">Logo</span><small>Schneider Electric</small></div><div class="mtile"><span class="box">Logo</span><small>Mitsubishi Electric</small></div><div class="mtile"><span class="box">Logo</span><small>Honeywell</small></div><div class="mtile"><span class="box">Logo</span><small>Endress+Hauser</small></div><div class="mtile"><span class="box">Logo</span><small>SICK</small></div><div class="mtile"><span class="box">Logo</span><small>SKF</small></div><div class="mtile"><span class="box">Logo</span><small>NSK</small></div><div class="mtile"><span class="box">Logo</span><small>SEW-Eurodrive</small></div><div class="mtile"><span class="box">Logo</span><small>Grundfos</small></div><div class="mtile"><span class="box">Logo</span><small>Flowserve</small></div><div class="mtile"><span class="box">Logo</span><small>Alfa Laval</small></div><div class="mtile"><span class="box">Logo</span><small>Festo</small></div><div class="mtile"><span class="box">Logo</span><small>Parker</small></div><div class="mtile"><span class="box">Logo</span><small>Atlas Copco</small></div><div class="mtile"><span class="box">Logo</span><small>Eaton</small></div><div class="mtile"><span class="box">Logo</span><small>ABB</small></div><div class="mtile"><span class="box">Logo</span><small>Schneider Electric</small></div><div class="mtile"><span class="box">Logo</span><small>Mitsubishi Electric</small></div><div class="mtile"><span class="box">Logo</span><small>Honeywell</small></div><div class="mtile"><span class="box">Logo</span><small>Endress+Hauser</small></div><div class="mtile"><span class="box">Logo</span><small>SICK</small></div><div class="mtile"><span class="box">Logo</span><small>SKF</small></div><div class="mtile"><span class="box">Logo</span><small>NSK</small></div><div class="mtile"><span class="box">Logo</span><small>SEW-Eurodrive</small></div><div class="mtile"><span class="box">Logo</span><small>Grundfos</small></div><div class="mtile"><span class="box">Logo</span><small>Flowserve</small></div><div class="mtile"><span class="box">Logo</span><small>Alfa Laval</small></div><div class="mtile"><span class="box">Logo</span><small>Festo</small></div><div class="mtile"><span class="box">Logo</span><small>Parker</small></div><div class="mtile"><span class="box">Logo</span><small>Atlas Copco</small></div><div class="mtile"><span class="box">Logo</span><small>Eaton</small></div></div></div>
+    <p style="margin-top:26px"><a class="btn btn-out" href="#brands" data-go="brands">Read more about brands</a></p>
+  </div>
+
+  <div class="pale">
+    <div class="wrap sec">
+      <h2>About our work</h2>
+      <div class="cards two" style="margin-top:26px">
+        <a class="card" href="#sourcing" data-go="sourcing">
+          <span class="shot ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Goods being checked before despatch</em></span></span>
+          <h3>How a quote is put together</h3>
+          <p>Identify, source, verify, quote, deliver. Five steps, one point of contact, and any equivalent clearly marked as an equivalent.</p>
+          <span class="rm">Read more →</span>
+        </a>
+        <a class="card" href="#about" data-go="about">
+          <span class="shot ph"><span class="t"><svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5h18v14H3z"/><path d="M3 16.5l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Image<em>Treteone office, Liwan District</em></span></span>
+          <h3>Who you are dealing with</h3>
+          <p>A registered company in Liwan District, Guangzhou, working with maintenance and procurement teams in plants that cannot stand still.</p>
+          <span class="rm">Read more →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRODUCTS ================= -->
+<section class="view" id="v-products">
+  <div class="wrap sec">
+    <p class="kicker">Products · 12 categories</p>
+    <h1>Everything behind the plant, in one enquiry.</h1>
+    <p class="lead" style="margin-top:16px">Categories tell you whether your item is within scope. Nothing is held in stock, and every line is quoted against the specification you send.</p>
+    <div class="rows">
+      <a class="row" href="#quote" data-go="quote"><span class="n">01</span><h3>Automation &amp; Control</h3><span class="spec">PLC · DCS · SCADA · HMI · remote I/O · VFDs · servo drives</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">02</span><h3>Instrumentation &amp; Measurement</h3><span class="spec">Pressure · flow · level · temperature · transmitters · analysers</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">03</span><h3>Electrical &amp; Power</h3><span class="spec">Switchgear · breakers · transformers · panels · UPS · cable</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">04</span><h3>Motors, Drives &amp; Transmission</h3><span class="spec">Motors · gearboxes · couplings · bearings · belts · chain</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">05</span><h3>Pumps &amp; Pump Equipment</h3><span class="spec">Centrifugal · dosing · submersible · seals · impellers · wear parts</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">06</span><h3>Compressors &amp; Compressed Air</h3><span class="spec">Screw · reciprocating · dryers · receivers · service kits</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">07</span><h3>Valves &amp; Flow Control</h3><span class="spec">Ball · gate · globe · butterfly · control · safety · actuators</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">08</span><h3>Mechanical &amp; MRO Spares</h3><span class="spec">Bearings · seals · gaskets · fasteners · hoses · filtration</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">09</span><h3>Hydraulic &amp; Pneumatic</h3><span class="spec">Pumps · cylinders · valves · power units · fittings · FRL</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">10</span><h3>Process &amp; Industrial Equipment</h3><span class="spec">Heat exchangers · filtration · vessels · fans · conveyors</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">11</span><h3>Industrial Machinery</h3><span class="spec">Generators · production lines · packaging · welding plant</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">12</span><h3>Industrial Consumables</h3><span class="spec">Filters · lubricants · abrasives · cutting tools · PPE</span><span class="go">Enquire →</span></a>
+    </div>
+  </div>
+
+  <div class="navy">
+    <div class="wrap sec">
+      <p class="kicker">Scope</p>
+      <h2>From one component to a complete line.</h2>
+      <div class="steps">
+        <div class="step"><span class="k">01</span><h3>Component</h3><p>A bearing, a seal, a sensor — identified from a photograph or a worn original.</p></div>
+        <div class="step"><span class="k">02</span><h3>Spare part</h3><p>OEM reference and tested equivalents, quoted side by side.</p></div>
+        <div class="step"><span class="k">03</span><h3>Assembly</h3><p>Valve and actuator sets, pump ends, drive packages.</p></div>
+        <div class="step"><span class="k">04</span><h3>Machine</h3><p>Pumps, motors and compressors sized to the duty you give us.</p></div>
+        <div class="step"><span class="k">05</span><h3>Complete system</h3><p>Skids, production lines and full equipment packages.</p></div>
+      </div>
+      <p style="margin-top:32px"><a class="btn btn-solid" href="#quote" data-go="quote">Request a quote</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INDUSTRIES ================= -->
+<section class="view" id="v-industries">
+  <div class="wrap sec">
+    <p class="kicker">Industries · 9 sectors</p>
+    <h1>Specified to the duty, not the catalogue.</h1>
+    <p class="lead" style="margin-top:16px">The same nominal part behaves differently in slurry, in sour service and on a dusty kiln line. Below is what each sector tends to ask for, and the duty information that decides the answer.</p>
+    <div class="rows">
+      <a class="row" href="#quote" data-go="quote"><span class="n">01</span><h3>Oil &amp; Gas</h3><span class="spec">Rotating spares · valves · instrumentation — area classification, sour service, pressure class</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">02</span><h3>Refining &amp; Petrochemical</h3><span class="spec">Control valves · exchangers · seals · analysers — temperature, medium, trim material</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">03</span><h3>Power Generation</h3><span class="spec">Switchgear · transformers · turbine auxiliaries — voltage, breaking capacity, protection scheme</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">04</span><h3>Cement</h3><span class="spec">Gearboxes · heavy bearings · fans · wear parts — load, dust ingress, duty cycle</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">05</span><h3>Manufacturing</h3><span class="spec">PLC and drives · sensors · pneumatics · conveyors — control platform, I/O count, cycle time</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">06</span><h3>Steel &amp; Metals</h3><span class="spec">Hydraulics · heavy bearings · motors · cooling — ambient temperature, shock loading</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">07</span><h3>Mining</h3><span class="spec">Slurry pumps · crusher spares · couplings — abrasion, solids content, wear life</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">08</span><h3>Water &amp; Wastewater</h3><span class="spec">Pumps · dosing · level instruments · blowers — chemical compatibility, submersion rating</span><span class="go">Enquire →</span></a>
+      <a class="row" href="#quote" data-go="quote"><span class="n">09</span><h3>Facilities &amp; Institutions</h3><span class="spec">Generators · UPS · HVAC components · distribution — load profile, autonomy, footprint</span><span class="go">Enquire →</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOURCING ================= -->
+<section class="view" id="v-sourcing">
+  <div class="wrap sec">
+    <p class="kicker">Sourcing · hard-to-find &amp; obsolete</p>
+    <h1>How a part with no working reference gets traced.</h1>
+    <p class="lead" style="margin-top:16px">An enquiry usually reaches us after the obvious routes have failed. The work is methodical rather than mysterious: establish what the item actually is, then establish who still makes something that satisfies the same duty.</p>
+    <div class="defs">
+      <div class="def"><h3>Superseded references</h3><p>Manufacturers renumber, and ranges move between brands after an acquisition. A reference that returns nothing today was often valid two or three revisions ago, and the current equivalent is usually reachable from the original.</p></div>
+      <div class="def"><h3>Nameplate data</h3><p>Frame size, rating, serial and build code carry more information than the part number alone. A legible photograph of the plate is frequently enough to rebuild a specification from scratch.</p></div>
+      <div class="def"><h3>Form, fit and function</h3><p>Where the original is genuinely gone, the question becomes which current product matches the mounting, the duty and the materials. Those are quoted as equivalents and labelled as such — never as the original.</p></div>
+      <div class="def"><h3>Documentation</h3><p>Datasheets, test certificates and material certificates are supplied where the manufacturer issues them. Where they cannot be obtained, we say so before you order rather than after.</p></div>
+    </div>
+  </div>
+
+  <div class="navy">
+    <div class="wrap sec">
+      <div class="split">
+        <div>
+          <p class="kicker">What to send</p>
+          <h2>Send whatever you have. A photograph counts.</h2>
+          <p class="lead" style="margin-top:16px">There is no minimum. Enquiries have started from a single blurred nameplate and from a four-hundred-line bill of quantities, and both go to the same team.</p>
+          <p style="margin-top:24px"><a class="btn btn-solid" href="#quote" data-go="quote">Start an enquiry</a></p>
+        </div>
+        <div>
+          <ul class="checklist">
+            <li><span class="k">01</span><span>Part number or manufacturer reference, superseded or not</span></li>
+            <li><span class="k">02</span><span>Equipment model, serial number and nameplate photograph</span></li>
+            <li><span class="k">03</span><span>Datasheet, drawing, P&amp;ID extract or PDF</span></li>
+            <li><span class="k">04</span><span>Excel bill of quantities or a multi-line list</span></li>
+            <li><span class="k">05</span><span>A written description, if that is genuinely all there is</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <p class="kicker">From requirement to delivery</p>
+    <h2>What happens after you press send.</h2>
+    <div class="steps">
+      <div class="step"><span class="k">STEP 01</span><h3>Identify</h3><p>We confirm the exact item, flag anything ambiguous, and come back with one question rather than five.</p></div>
+      <div class="step"><span class="k">STEP 02</span><h3>Source</h3><p>Manufacturers and specialist suppliers are approached directly, including for items no longer listed.</p></div>
+      <div class="step"><span class="k">STEP 03</span><h3>Verify</h3><p>Specification, available documentation and the supplier itself are checked before a price is issued.</p></div>
+      <div class="step"><span class="k">STEP 04</span><h3>Quote</h3><p>Price and lead time, with any equivalent marked as an equivalent and the trade-off stated plainly.</p></div>
+      <div class="step"><span class="k">STEP 05</span><h3>Deliver</h3><p>One contact stays with the order from purchase order through to arrival.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BRANDS ================= -->
+<section class="view" id="v-brands">
+  <div class="wrap sec">
+    <p class="kicker">Brands</p>
+    <h1>The manufacturers buyers ask for by name.</h1>
+    <p class="lead" style="margin-top:16px">Filter by discipline or type a name. The list reflects what is requested most often, not the limit of what can be sourced — if yours is missing, send the enquiry anyway. Logo artwork is pending; names are shown until it is supplied.</p>
+
+    <div class="bfilter">
+      <div class="bsearch">
+        <svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+        <input id="bsearch" type="search" placeholder="Search manufacturer" aria-label="Search manufacturer">
+      </div>
+      <div class="chips" id="bchips" role="group" aria-label="Filter by discipline">
+        <button class="chip" type="button" aria-pressed="true" data-f="all">All<b>32</b></button>
+        <button class="chip" type="button" aria-pressed="false" data-f="auto">Automation &amp; instrumentation<b>13</b></button>
+        <button class="chip" type="button" aria-pressed="false" data-f="rot">Rotating &amp; mechanical<b>12</b></button>
+        <button class="chip" type="button" aria-pressed="false" data-f="flu">Pneumatics &amp; hydraulics<b>7</b></button>
+      </div>
+    </div>
+
+    <p class="bcount" id="bcount" aria-live="polite">Showing all 32 manufacturers</p>
+    <div class="bgrid-all" id="bgrid">
+      <div class="btile" data-g="auto" data-n="siemens"><span class="box">Logo</span><small>Siemens</small></div>
+      <div class="btile" data-g="auto" data-n="abb"><span class="box">Logo</span><small>ABB</small></div>
+      <div class="btile" data-g="auto" data-n="rockwell / allen-bradley"><span class="box">Logo</span><small>Rockwell / Allen-Bradley</small></div>
+      <div class="btile" data-g="auto" data-n="schneider electric"><span class="box">Logo</span><small>Schneider Electric</small></div>
+      <div class="btile" data-g="auto" data-n="omron"><span class="box">Logo</span><small>Omron</small></div>
+      <div class="btile" data-g="auto" data-n="mitsubishi electric"><span class="box">Logo</span><small>Mitsubishi Electric</small></div>
+      <div class="btile" data-g="auto" data-n="emerson"><span class="box">Logo</span><small>Emerson</small></div>
+      <div class="btile" data-g="auto" data-n="honeywell"><span class="box">Logo</span><small>Honeywell</small></div>
+      <div class="btile" data-g="auto" data-n="yokogawa"><span class="box">Logo</span><small>Yokogawa</small></div>
+      <div class="btile" data-g="auto" data-n="endress+hauser"><span class="box">Logo</span><small>Endress+Hauser</small></div>
+      <div class="btile" data-g="auto" data-n="wika"><span class="box">Logo</span><small>WIKA</small></div>
+      <div class="btile" data-g="auto" data-n="sick"><span class="box">Logo</span><small>SICK</small></div>
+      <div class="btile" data-g="auto" data-n="pepperl+fuchs"><span class="box">Logo</span><small>Pepperl+Fuchs</small></div>
+      <div class="btile" data-g="rot" data-n="skf"><span class="box">Logo</span><small>SKF</small></div>
+      <div class="btile" data-g="rot" data-n="schaeffler / fag"><span class="box">Logo</span><small>Schaeffler / FAG</small></div>
+      <div class="btile" data-g="rot" data-n="nsk"><span class="box">Logo</span><small>NSK</small></div>
+      <div class="btile" data-g="rot" data-n="timken"><span class="box">Logo</span><small>Timken</small></div>
+      <div class="btile" data-g="rot" data-n="sew-eurodrive"><span class="box">Logo</span><small>SEW-Eurodrive</small></div>
+      <div class="btile" data-g="rot" data-n="weg"><span class="box">Logo</span><small>WEG</small></div>
+      <div class="btile" data-g="rot" data-n="grundfos"><span class="box">Logo</span><small>Grundfos</small></div>
+      <div class="btile" data-g="rot" data-n="ksb"><span class="box">Logo</span><small>KSB</small></div>
+      <div class="btile" data-g="rot" data-n="flowserve"><span class="box">Logo</span><small>Flowserve</small></div>
+      <div class="btile" data-g="rot" data-n="john crane"><span class="box">Logo</span><small>John Crane</small></div>
+      <div class="btile" data-g="rot" data-n="alfa laval"><span class="box">Logo</span><small>Alfa Laval</small></div>
+      <div class="btile" data-g="rot" data-n="danfoss"><span class="box">Logo</span><small>Danfoss</small></div>
+      <div class="btile" data-g="flu" data-n="festo"><span class="box">Logo</span><small>Festo</small></div>
+      <div class="btile" data-g="flu" data-n="smc"><span class="box">Logo</span><small>SMC</small></div>
+      <div class="btile" data-g="flu" data-n="parker"><span class="box">Logo</span><small>Parker</small></div>
+      <div class="btile" data-g="flu" data-n="bosch rexroth"><span class="box">Logo</span><small>Bosch Rexroth</small></div>
+      <div class="btile" data-g="flu" data-n="atlas copco"><span class="box">Logo</span><small>Atlas Copco</small></div>
+      <div class="btile" data-g="flu" data-n="ingersoll rand"><span class="box">Logo</span><small>Ingersoll Rand</small></div>
+      <div class="btile" data-g="flu" data-n="eaton"><span class="box">Logo</span><small>Eaton</small></div>
+    </div>
+
+    <div class="bnone" id="bnone" hidden>
+      <h3>Not on the list</h3>
+      <p>That does not mean we cannot source it. Send the manufacturer and the part number and we will come back on availability.</p>
+      <p style="margin-top:14px"><a class="rm" href="#quote" data-go="quote">Send an enquiry →</a></p>
+    </div>
+
+    <p class="small" style="margin-top:36px;max-width:78ch">Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.</p>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="view" id="v-about">
+  <div class="wrap sec">
+    <p class="kicker">About</p>
+    <h1>An industrial supply company that reads specifications.</h1>
+    <p class="lead" style="margin-top:16px">Guangzhou Treteone Trading Co., Ltd. is a registered trading company in Liwan District, Guangzhou, working with maintenance and procurement teams in plants that cannot afford to stand still. Enquiries are handled by people who can read a datasheet, not routed through a catalogue search.</p>
+    <div class="defs">
+      <div class="def"><h3>We work from the specification</h3><p>Part numbers, equipment models and datasheets — not product names typed into a search box.</p></div>
+      <div class="def"><h3>Not tied to one brand</h3><p>We quote the manufacturer that fits the duty, rather than the one we happen to represent.</p></div>
+      <div class="def"><h3>Hard-to-find is routine</h3><p>Obsolete and discontinued components are ordinary work here, not a special request.</p></div>
+      <div class="def"><h3>One channel, whole scope</h3><p>A single item and a full bill of quantities go through the same team and the same contact.</p></div>
+      <div class="def"><h3>Documentation where it exists</h3><p>Certificates and datasheets are supplied when the manufacturer issues them, and their absence is stated upfront.</p></div>
+      <div class="def"><h3>A registered company</h3><p>Guangzhou Treteone Trading Co., Ltd. — registered name, licence number and address published in the footer of every page.</p></div>
+    </div>
+  </div>
+  <div class="pale">
+    <div class="wrap sec">
+      <h2>Registered details</h2>
+      <div class="glance" style="margin-top:28px">
+        <div class="gi"><b style="font-size:1.1rem">Registered name</b><small>Guangzhou Treteone Trading Co., Ltd.</small></div>
+        <div class="gi"><b style="font-size:1.1rem">Enquiries</b><small>sales@treteone.com<br>WhatsApp +86 195 4009 4137</small></div>
+        <div class="gi" style="grid-column:span 2"><b style="font-size:1.1rem">Registered address</b><small>Room G063, 5th Floor, No. 80-86 Xizeng Road, Liwan District, Guangzhou, China<br>广州市荔湾区西增路80-86号5、6楼（自编五楼）G063</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUOTE ================= -->
+<section class="view" id="v-quote">
+  <div class="navy">
+    <div class="wrap sec">
+      <div class="split">
+        <div>
+          <p class="kicker">Request a quote</p>
+          <h1>Tell us what you need.</h1>
+          <p class="lead" style="margin-top:16px">No account, ever. Send a part number, a photograph or a whole list and we reply with price and lead time.</p>
+          <ul class="checklist">
+            <li><span class="k">FILES</span><span>PDF, images and Excel. Up to 5 files, 10 MB each, 20 MB in total.</span></li>
+            <li><span class="k">REPLY</span><span>You receive a reference in the form <span class="mono">TO-20261026-K7Q3M</span> to quote back to us.</span></li>
+            <li><span class="k">DIRECT</span><span>sales@treteone.com · WhatsApp +86 195 4009 4137</span></li>
+          </ul>
+        </div>
+        <div>
+          <form class="form" id="rfq">
+            <div class="field">
+              <label for="q-type">What do you need</label>
+              <select id="q-type"><option>Spare part</option><option>Equipment</option><option>Machinery</option><option>Automation</option><option>Instrumentation</option><option>Other</option></select>
+            </div>
+            <div class="field"><label for="q-part">Part number or description</label><input id="q-part" type="text" placeholder="6ES7 214-1AG40-0XB0"></div>
+            <div class="pair">
+              <div class="field"><label for="q-brand">Manufacturer</label><input id="q-brand" type="text" placeholder="Siemens"></div>
+              <div class="field"><label for="q-qty">Quantity</label><input id="q-qty" type="text" placeholder="4"></div>
+            </div>
+            <div class="field"><label for="q-file">Attachments</label><input id="q-file" type="file" multiple></div>
+            <div class="field"><label for="q-notes">Anything else we should know</label><textarea id="q-notes" placeholder="Duty, service conditions, required date, destination"></textarea></div>
+            <div class="pair">
+              <div class="field"><label for="q-name">Name and company</label><input id="q-name" type="text"></div>
+              <div class="field"><label for="q-contact">Email or WhatsApp — required</label><input id="q-contact" type="text"></div>
+            </div>
+            <div>
+              <button class="btn btn-solid" type="submit">Send request</button>
+              <p class="hint" style="margin-top:14px" id="rfq-note">Only the contact field is required. A blurred nameplate photograph and a way to reach you is enough to start.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fbrand">
+        <a class="mark" href="#home" data-go="home">TRETEONE<i>.</i></a>
+        <p class="fco">Guangzhou Treteone Trading Co., Ltd.</p>
+        <p class="faddr">Room G063, 5th Floor, No. 80-86 Xizeng Road, Liwan District, Guangzhou, China<br>
+          <span>广州市荔湾区西增路80-86号5、6楼（自编五楼）G063</span></p>
+      </div>
+      <nav class="flinks" aria-label="Footer">
+        <a href="#products" data-go="products">Products</a>
+        <a href="#industries" data-go="industries">Industries</a>
+        <a href="#sourcing" data-go="sourcing">Sourcing</a>
+        <a href="#brands" data-go="brands">Brands</a>
+        <a href="#about" data-go="about">About</a>
+        <a href="#quote" data-go="quote">Request a quote</a>
+      </nav>
+    </div>
+    <div class="legal">
+      <p class="fcontact"><span>sales@treteone.com</span><span>+86 195 4009 4137</span></p>
+      <p>© 2026 Guangzhou Treteone Trading Co., Ltd.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------- routing ---------------- */
+  var VIEWS=['home','products','industries','sourcing','brands','about','quote'];
+  var navLinks=[].slice.call(document.querySelectorAll('.mast-nav a'));
+  var drawer=document.getElementById('drawer'), burger=document.getElementById('burger');
+  var first=true;
+
+  function go(name,push){
+    if(VIEWS.indexOf(name)===-1) name='home';
+    VIEWS.forEach(function(v){
+      var el=document.getElementById('v-'+v);
+      if(!el) return;
+      var on = (v===name);
+      el.classList.toggle('on', on);
+      el.classList.remove('enter');
+      if(on && !first && !reduce){ void el.offsetWidth; el.classList.add('enter'); }
+    });
+    navLinks.forEach(function(a){
+      if(a.dataset.go===name) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+    });
+    drawer.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+    burger.setAttribute('aria-label','Open menu');
+    if(push){ try{ history.replaceState(null,'','#'+name); }catch(e){} }
+    window.scrollTo(0,0);
+    if(!first){
+      var h=document.querySelector('#v-'+name+' h1');
+      if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+    }
+    first=false;
+    name==='home' ? startRoll() : stopRoll();
+  }
+
+  document.addEventListener('click',function(e){
+    var a=e.target.closest?e.target.closest('[data-go]'):null;
+    if(!a) return;
+    e.preventDefault(); go(a.dataset.go,true);
+  });
+  function setMenu(open){
+    drawer.classList.toggle('open',open);
+    burger.setAttribute('aria-expanded',String(open));
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  burger.addEventListener('click',function(){
+    setMenu(!drawer.classList.contains('open'));
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && drawer.classList.contains('open')){ setMenu(false); burger.focus(); }
+  });
+  window.addEventListener('hashchange',function(){ go((location.hash||'#home').slice(1),false); });
+
+  /* ---------------- rolling hero ---------------- */
+  var SLIDES=[
+    {t:'Spare parts &amp; MRO',
+     l:'The consumables a maintenance team runs through every week — quoted against the reference you already have.',
+     m:'Explore spare parts', g:'products'},
+    {t:'Equipment &amp; machinery',
+     l:'Pumps, motors, compressors and complete production lines, sized to the duty rather than to whatever sits in stock.',
+     m:'Explore equipment', g:'products'},
+    {t:'Automation &amp; instrumentation',
+     l:'PLC and drive hardware, transmitters and analysers — specified from your loop sheets or the failed module itself.',
+     m:'Explore automation', g:'products'},
+    {t:'Hard-to-find &amp; obsolete',
+     l:'Discontinued components and legacy automation. Send a nameplate photograph and we work back to something that still exists.',
+     m:'How we trace a part', g:'sourcing'}
+  ];
+  var media=document.getElementById('heroMedia'),
+      slides=[].slice.call(document.querySelectorAll('#stage .slide')),
+      tabs=[].slice.call(document.querySelectorAll('#tabs .tab')),
+      title=document.getElementById('heroTitle'),
+      line=document.getElementById('heroLine'),
+      more=document.getElementById('heroMore'),
+      pp=document.getElementById('pp'),
+      idx=0, timer=null, paused=reduce;
+
+  function show(n){
+    idx=(n+slides.length)%slides.length;
+    var d=SLIDES[idx];
+    slides.forEach(function(s,i){ s.classList.toggle('on', i===idx); });
+    tabs.forEach(function(t,i){
+      var on=(i===idx);
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      var bar=t.querySelector('i');
+      if(bar){ bar.style.display='none'; void bar.offsetWidth; bar.style.display=''; }
+    });
+    [title,line,more].forEach(function(el){ el.classList.add('fade'); });
+    setTimeout(function(){
+      title.innerHTML=d.t;
+      line.textContent=d.l;
+      more.innerHTML=d.m+' →';
+      more.setAttribute('href','#'+d.g);
+      more.dataset.go=d.g;
+      [title,line,more].forEach(function(el){ el.classList.remove('fade'); });
+    }, reduce?0:200);
+  }
+  function startRoll(){
+    if(paused||reduce) return;
+    clearInterval(timer);
+    timer=setInterval(function(){ show(idx+1); }, 7000);
+  }
+  function stopRoll(){ clearInterval(timer); timer=null; }
+
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){ show(+t.dataset.i); startRoll(); });
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+        e.preventDefault();
+        show(idx + (e.key==='ArrowRight'?1:-1));
+        tabs[idx].focus(); startRoll();
+      }
+    });
+  });
+  pp.addEventListener('click',function(){
+    paused=!paused;
+    media.classList.toggle('paused',paused);
+    pp.textContent = paused ? '▶' : '❚❚';
+    pp.setAttribute('aria-label', paused ? 'Play the slideshow' : 'Pause the slideshow');
+    paused ? stopRoll() : startRoll();
+  });
+  if(reduce){ media.classList.add('paused'); pp.textContent='▶'; }
+  document.addEventListener('visibilitychange',function(){
+    document.hidden ? stopRoll() : startRoll();
+  });
+
+  /* ---------------- scroll chrome ---------------- */
+  var bar=document.getElementById('scrollbar'), mast=document.querySelector('.masthead'), ticking=false;
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=h>0 ? Math.min(1, window.scrollY/h) : 0;
+    bar.style.width=(pct*100)+'%';
+    mast.classList.toggle('stuck', window.scrollY>40);
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){
+    if(!ticking){ ticking=true; requestAnimationFrame(onScroll); }
+  },{passive:true});
+  onScroll();
+
+  /* ---------------- reveals (only for what starts below the fold) ---------------- */
+  if(!reduce && 'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var kids=[].slice.call(e.target.children);
+        kids.forEach(function(k,i){ setTimeout(function(){ k.classList.add('in'); }, i*70); });
+        io.unobserve(e.target);
+      });
+    },{threshold:.12});
+    [].slice.call(document.querySelectorAll('[data-rv]')).forEach(function(el){
+      if(el.getBoundingClientRect().top <= window.innerHeight) return;
+      [].slice.call(el.children).forEach(function(k){ k.classList.add('rv'); });
+      io.observe(el);
+    });
+  }
+
+  /* ---------------- count up ---------------- */
+  if(!reduce && 'IntersectionObserver' in window){
+    var co=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var el=e.target, target=+el.dataset.count, v=0;
+        var step=Math.max(1, Math.round(target/14));
+        (function tick(){
+          v+=step;
+          if(v>=target){ el.textContent=target; return; }
+          el.textContent=v; requestAnimationFrame(tick);
+        })();
+        co.unobserve(el);
+      });
+    },{threshold:.6});
+    [].slice.call(document.querySelectorAll('[data-count]')).forEach(function(el){
+      if(el.getBoundingClientRect().top <= window.innerHeight) return;
+      co.observe(el);
+    });
+  }
+
+  /* ---------------- brand filter ---------------- */
+  (function(){
+    var grid=document.getElementById('bgrid');
+    if(!grid) return;
+    var tiles=[].slice.call(grid.querySelectorAll('.btile')),
+        chips=[].slice.call(document.querySelectorAll('#bchips .chip')),
+        search=document.getElementById('bsearch'),
+        count=document.getElementById('bcount'),
+        none=document.getElementById('bnone'),
+        group='all';
+
+    function apply(){
+      var q=(search.value||'').trim().toLowerCase(), shown=0;
+      tiles.forEach(function(t){
+        var okG = (group==='all') || t.dataset.g===group;
+        var okQ = !q || t.dataset.n.indexOf(q)!==-1;
+        var on = okG && okQ;
+        t.hidden = !on;
+        if(on) shown++;
+      });
+      none.hidden = shown>0;
+      count.textContent = (shown===tiles.length)
+        ? 'Showing all ' + tiles.length + ' manufacturers'
+        : 'Showing ' + shown + ' of ' + tiles.length;
+    }
+    chips.forEach(function(c){
+      c.addEventListener('click',function(){
+        group=c.dataset.f;
+        chips.forEach(function(x){ x.setAttribute('aria-pressed', String(x===c)); });
+        apply();
+      });
+    });
+    search.addEventListener('input', apply);
+    search.addEventListener('keydown', function(e){ if(e.key==='Escape'){ search.value=''; apply(); } });
+  })();
+
+  /* ---------------- form ---------------- */
+  document.getElementById('rfq').addEventListener('submit',function(e){
+    e.preventDefault();
+    document.getElementById('rfq-note').textContent =
+      'Mockup only — this form is not connected. In the live build it posts to a Cloudflare function and returns a reference number.';
+  });
+
+  go((location.hash||'#home').slice(1),false);
+})();
+</script>
