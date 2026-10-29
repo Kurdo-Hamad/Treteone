@@ -89,6 +89,9 @@ src/
     BrandMarquee.astro   ProcessTimeline.astro
     QuoteForm.astro      Footer.astro
   scripts/             one vanilla JS module per interactive component
+  assets/              source photography — Astro derives AVIF/WebP at build
+    hero/              hero-0N.jpg
+    products/          <category slug>.jpg
   pages/
     index.astro
     zh/index.astro
@@ -103,7 +106,7 @@ scripts/               build tooling, run by npm — not shipped to the browser
   verify-noto-sans-sc.mjs   postbuild: fails the build on an uncovered glyph
   cjk-ranges.mjs            the CJK ranges both of the above share
   check-budget.mjs          the §8 first-load payload check
-  make-hero-placeholders.mjs
+  make-placeholders.mjs     §10 placeholder plates, hero and product cards
 ```
 
 Do not confuse `scripts/` at the repo root with `src/scripts/`. The root one is

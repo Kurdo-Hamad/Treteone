@@ -1,17 +1,29 @@
 ---
+import ProductRail from '~/components/ProductRail.astro';
 import RollingHero from '~/components/RollingHero.astro';
+import StatBand from '~/components/StatBand.astro';
+import Ticker from '~/components/Ticker.astro';
 import Base from '~/layouts/Base.astro';
 
 /**
- * Chinese home page — a real route (§2), not a client-side text swap. It is the
- * same component tree; every string resolves through the route's language, so
- * this file stays this short as the remaining sections land.
+ * Chinese home page.
+ *
+ * A real route (§2), not a client-side text swap. Every string resolves through
+ * the route's language, so this file stays this short as sections land.
  *
  * ⚠ §10 — the Chinese copy is the prototype's first pass and still needs a
- * native-speaker review. See src/i18n/zh.ts.
+ * native-speaker review. See src/i18n/zh.ts and the zh fields in src/data/.
+ *
+ * Sections are in the order CLAUDE.md §6 fixes. Built so far: 1, 2, 3, 4, 5 and
+ * 13. Still to come — 6 ScopeScroller, 7 IndustryPicker, 8 SourcingBand,
+ * 9 BrandMarquee, 10 ProcessTimeline, 11 About, 12 QuoteForm — which is why the
+ * nav anchors for those still have nothing to jump to.
  */
 ---
 
 <Base>
   <RollingHero />
+  <Ticker />
+  <StatBand />
+  <ProductRail />
 </Base>

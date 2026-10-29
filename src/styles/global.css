@@ -9,8 +9,9 @@
 
    Keep this file lean. On MesoAxis it reached ~135 KB and blocked every route.
 
-   Noto Sans SC is NOT imported here — it is 101 subsets / ~100 KB of CSS and
-   is linked only on the routes that need it. See Base.astro and the README.
+   Noto Sans SC is NOT declared here. It is generated — glyph set, @font-face
+   and unicode-range all derived from the site's copy by
+   scripts/subset-noto-sans-sc.mjs — and linked from Base.astro.
    ========================================================================= */
 
 @import "./tokens.css";
@@ -245,6 +246,22 @@
   .rv { transition: opacity .7s var(--ease), transform .7s var(--ease); }
   .js-reveal .rv { opacity: 0; transform: translateY(18px); }
   .js-reveal .rv.in { opacity: 1; transform: none; }
+
+  /* §10 — an unmissable marker for content that has not been supplied. This
+     must never be styled down into looking like a real value. Shared, because
+     every placeholder on the site has to read as the same thing. */
+  .pending {
+    display: inline-block;
+    color: var(--signal);
+    border: 1px dashed currentColor;
+    border-radius: var(--radius);
+    padding: 1px 7px;
+    font-family: var(--font-stack-mono);
+    font-size: .75rem;
+    letter-spacing: var(--meso-ls-mono);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
   .sr-only {
     position: absolute;

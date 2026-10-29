@@ -46,6 +46,34 @@ export const en = {
   'hero.slideLabel': (n: number, total: number) => `Show image ${n} of ${total}`,
   'hero.counter': (n: number, total: number) => `Image ${n} of ${total}`,
 
+  // ---- ticker (§6.3) ------------------------------------------------------
+  // The category names come from src/data/categories.ts. These three are the
+  // extra phrases the prototype's strip carries alongside them.
+  'ticker.hardToFind': 'Hard-to-find parts',
+  'ticker.obsolete': 'Obsolete components',
+  'ticker.globalSourcing': 'Global sourcing',
+
+  // ---- stat band (§6.4) ---------------------------------------------------
+  'stats.label': 'Trete One at a glance',
+  'stats.categories': 'product categories',
+  'stats.industries': 'industries served',
+  'stats.base': 'China · supplying worldwide',
+  'stats.reply': 'target reply to an enquiry',
+  // §10 — shown in place of any figure the business has not confirmed.
+  'stats.unconfirmed': 'Unconfirmed',
+  'stats.unconfirmedNote': 'This figure has not been confirmed and is not a commitment.',
+
+  // ---- product rail (§6.5) ------------------------------------------------
+  'products.heading': 'Everything behind the plant.',
+  'products.lede':
+    'Twelve categories covering mechanical, electrical, automation, instrumentation and rotating equipment.',
+  'products.railLabel': 'Product categories',
+  'products.railHint': 'Use the left and right arrow keys to scroll through the categories.',
+  'products.previous': 'Scroll to previous categories',
+  'products.next': 'Scroll to next categories',
+  'products.enquire': 'Enquire',
+  'products.cardLabel': (name: string) => `${name} — send an enquiry`,
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb':
     'Industrial supply and sourcing. Spare parts, equipment and machinery for plants that cannot stop.',

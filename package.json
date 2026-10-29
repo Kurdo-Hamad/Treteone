@@ -15,8 +15,8 @@
     "check": "astro check",
     "budget": "node scripts/check-budget.mjs",
     "fonts:sc": "node scripts/subset-noto-sans-sc.mjs",
-    "hero:placeholders": "node scripts/make-hero-placeholders.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "placeholders": "node scripts/make-placeholders.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

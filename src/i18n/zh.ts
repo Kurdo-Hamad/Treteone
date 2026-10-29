@@ -45,6 +45,30 @@ export const zh: UIStrings = {
   'hero.slideLabel': (n: number, total: number) => `显示第 ${n} 张，共 ${total} 张`,
   'hero.counter': (n: number, total: number) => `第 ${n} 张，共 ${total} 张`,
 
+  // ---- ticker (§6.3) ------------------------------------------------------
+  'ticker.hardToFind': '难寻备件',
+  'ticker.obsolete': '停产件',
+  'ticker.globalSourcing': '全球寻源',
+
+  // ---- stat band (§6.4) ---------------------------------------------------
+  'stats.label': 'Trete One 概览',
+  'stats.categories': '产品大类',
+  'stats.industries': '服务行业',
+  'stats.base': '中国 · 全球供应',
+  'stats.reply': '询价回复目标时间',
+  'stats.unconfirmed': '待确认',
+  'stats.unconfirmedNote': '此数据尚未确认，不构成承诺。',
+
+  // ---- product rail (§6.5) ------------------------------------------------
+  'products.heading': '工厂背后的一切。',
+  'products.lede': '十二个大类，覆盖机械、电气、自动化、仪器仪表与旋转设备。',
+  'products.railLabel': '产品大类',
+  'products.railHint': '使用左右方向键浏览各个大类。',
+  'products.previous': '滚动到上一组大类',
+  'products.next': '滚动到下一组大类',
+  'products.enquire': '询价',
+  'products.cardLabel': (name: string) => `${name} — 提交询价`,
+
   // ---- footer -------------------------------------------------------------
   'footer.blurb': '工业供应与采购。为不能停机的工厂提供备件、设备与机械。',
   'footer.products': '产品',

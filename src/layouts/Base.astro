@@ -104,6 +104,14 @@ const alternates = alternateLinks(Astro.url);
     <slot name="head" />
   </head>
 
+  <!--
+    Scroll reveal is page-level, not component-level, so it is loaded once here
+    rather than imported by each section that uses .rv.
+  -->
+  <script>
+    import '~/scripts/reveal';
+  </script>
+
   <body>
     <a class="skip-link" href="#main">{t('nav.skip')}</a>
     <Header />

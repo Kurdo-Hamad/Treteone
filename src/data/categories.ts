@@ -1,21 +1,35 @@
+import type { ImageMetadata } from 'astro';
 import type { Localised } from '~/i18n/ui';
+
+import imgAutomationControl from '~/assets/products/automation-control.jpg';
+import imgInstrumentationMeasurement from '~/assets/products/instrumentation-measurement.jpg';
+import imgElectricalPower from '~/assets/products/electrical-power.jpg';
+import imgMotorsDrivesTransmission from '~/assets/products/motors-drives-transmission.jpg';
+import imgPumps from '~/assets/products/pumps.jpg';
+import imgCompressorsCompressedAir from '~/assets/products/compressors-compressed-air.jpg';
+import imgValvesFlowControl from '~/assets/products/valves-flow-control.jpg';
+import imgMechanicalMro from '~/assets/products/mechanical-mro.jpg';
+import imgHydraulicPneumatic from '~/assets/products/hydraulic-pneumatic.jpg';
+import imgProcessEquipment from '~/assets/products/process-equipment.jpg';
+import imgIndustrialMachinery from '~/assets/products/industrial-machinery.jpg';
+import imgIndustrialConsumables from '~/assets/products/industrial-consumables.jpg';
 
 /**
  * The 12 product categories (CLAUDE.md §3). One definition drives the product
  * rail, the ticker and the footer's Products column.
  *
- * Pass 1 uses this for the footer only; the rail and ticker land in pass 2 and
- * read the same array.
+ * The footer, the ticker and the product rail all read this one array.
  *
- * `image` is the basename of the photograph in src/assets/products/. §10 — the
- * real photography has not been supplied, so those files do not exist yet and
- * nothing imports them. Do not substitute stock imagery without approval.
+ * ⚠ §10 — the real photography has not been supplied. Every `image` below is a
+ * clearly-marked "PHOTOGRAPH PENDING" plate from scripts/make-placeholders.mjs.
+ * Replace src/assets/products/<slug>.jpg with the real file and nothing else
+ * changes. Do not substitute stock imagery without approval.
  */
 export interface Category {
   readonly slug: string;
   readonly name: Localised;
   readonly blurb: Localised;
-  readonly image: string;
+  readonly image: ImageMetadata;
 }
 
 export const categories: readonly Category[] = [
@@ -26,7 +40,7 @@ export const categories: readonly Category[] = [
       en: 'PLC · DCS · SCADA · HMI · Remote I/O · VFDs · servo',
       zh: 'PLC · DCS · SCADA · 人机界面 · 远程I/O · 变频器 · 伺服',
     },
-    image: 'automation-control',
+    image: imgAutomationControl,
   },
   {
     slug: 'instrumentation-measurement',
@@ -35,7 +49,7 @@ export const categories: readonly Category[] = [
       en: 'Pressure · flow · level · temperature · transmitters',
       zh: '压力 · 流量 · 液位 · 温度 · 变送器',
     },
-    image: 'instrumentation-measurement',
+    image: imgInstrumentationMeasurement,
   },
   {
     slug: 'electrical-power',
@@ -44,7 +58,7 @@ export const categories: readonly Category[] = [
       en: 'Switchgear · breakers · transformers · panels · UPS',
       zh: '开关柜 · 断路器 · 变压器 · 控制柜 · UPS',
     },
-    image: 'electrical-power',
+    image: imgElectricalPower,
   },
   {
     slug: 'motors-drives-transmission',
@@ -53,7 +67,7 @@ export const categories: readonly Category[] = [
       en: 'Motors · gearboxes · couplings · bearings · belts',
       zh: '电动机 · 减速机 · 联轴器 · 轴承 · 皮带',
     },
-    image: 'motors-drives-transmission',
+    image: imgMotorsDrivesTransmission,
   },
   {
     slug: 'pumps',
@@ -62,7 +76,7 @@ export const categories: readonly Category[] = [
       en: 'Centrifugal · dosing · submersible · seals · impellers',
       zh: '离心泵 · 计量泵 · 潜水泵 · 机械密封 · 叶轮',
     },
-    image: 'pumps',
+    image: imgPumps,
   },
   {
     slug: 'compressors-compressed-air',
@@ -71,7 +85,7 @@ export const categories: readonly Category[] = [
       en: 'Screw · reciprocating · dryers · receivers · spares',
       zh: '螺杆机 · 活塞机 · 干燥机 · 储气罐 · 备件',
     },
-    image: 'compressors-compressed-air',
+    image: imgCompressorsCompressedAir,
   },
   {
     slug: 'valves-flow-control',
@@ -80,7 +94,7 @@ export const categories: readonly Category[] = [
       en: 'Ball · gate · butterfly · control · safety · actuators',
       zh: '球阀 · 闸阀 · 蝶阀 · 调节阀 · 安全阀 · 执行器',
     },
-    image: 'valves-flow-control',
+    image: imgValvesFlowControl,
   },
   {
     slug: 'mechanical-mro',
@@ -89,7 +103,7 @@ export const categories: readonly Category[] = [
       en: 'Bearings · seals · gaskets · fasteners · hoses · filters',
       zh: '轴承 · 密封件 · 垫片 · 紧固件 · 软管 · 滤芯',
     },
-    image: 'mechanical-mro',
+    image: imgMechanicalMro,
   },
   {
     slug: 'hydraulic-pneumatic',
@@ -98,7 +112,7 @@ export const categories: readonly Category[] = [
       en: 'Pumps · cylinders · valves · power units · fittings',
       zh: '液压泵 · 油缸 · 阀 · 液压站 · 接头',
     },
-    image: 'hydraulic-pneumatic',
+    image: imgHydraulicPneumatic,
   },
   {
     slug: 'process-equipment',
@@ -107,7 +121,7 @@ export const categories: readonly Category[] = [
       en: 'Heat exchangers · filtration · vessels · fans · conveyors',
       zh: '换热器 · 过滤设备 · 容器 · 风机 · 输送设备',
     },
-    image: 'process-equipment',
+    image: imgProcessEquipment,
   },
   {
     slug: 'industrial-machinery',
@@ -116,7 +130,7 @@ export const categories: readonly Category[] = [
       en: 'Generators · production lines · packaging · welding',
       zh: '发电机组 · 生产线 · 包装机械 · 焊接设备',
     },
-    image: 'industrial-machinery',
+    image: imgIndustrialMachinery,
   },
   {
     slug: 'industrial-consumables',
@@ -125,7 +139,7 @@ export const categories: readonly Category[] = [
       en: 'Filters · lubricants · abrasives · cutting tools · PPE',
       zh: '滤芯 · 润滑油 · 磨料 · 刀具 · 劳保用品',
     },
-    image: 'industrial-consumables',
+    image: imgIndustrialConsumables,
   },
 ];
 

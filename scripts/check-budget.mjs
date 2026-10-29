@@ -43,9 +43,40 @@ const size = (urlPath) => {
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
-/** Picks the candidate a browser would choose from a `srcset` + `sizes="100vw"`. */
-function pickCandidate(srcset) {
-  const target = VIEWPORT * DPR;
+/**
+ * Resolves a `sizes` attribute to the CSS pixel width the image will occupy.
+ * Handles what this site actually uses: a list of `(min-width: Npx) <length>`
+ * conditions with a bare fallback, where a length is px or vw.
+ *
+ * Without this the rail cards get costed at their 1020w rendition instead of
+ * the 680w one a phone really fetches — a 25% overstatement on the images.
+ */
+function resolveSizes(sizes) {
+  if (!sizes) return VIEWPORT;
+
+  const toPx = (length) => {
+    const value = parseFloat(length);
+    if (!Number.isFinite(value)) return VIEWPORT;
+    return length.trim().endsWith('vw') ? (value / 100) * VIEWPORT : value;
+  };
+
+  for (const entry of sizes.split(',')) {
+    const part = entry.trim();
+    const condition = part.match(/^\((min|max)-width:\s*([\d.]+)px\)\s+(.+)$/);
+
+    if (!condition) return toPx(part); // bare fallback length
+    const [, direction, threshold, length] = condition;
+    const matches =
+      direction === 'min' ? VIEWPORT >= parseFloat(threshold) : VIEWPORT <= parseFloat(threshold);
+    if (matches) return toPx(length);
+  }
+
+  return VIEWPORT;
+}
+
+/** Picks the candidate a browser would choose from a `srcset` at this viewport. */
+function pickCandidate(srcset, sizes) {
+  const target = resolveSizes(sizes) * DPR;
   const candidates = srcset
     .split(',')
     .map((entry) => entry.trim().split(/\s+/))
@@ -108,15 +139,41 @@ function measure(route, htmlPath) {
     }
   }
 
-  // Hero frames. All five load — see the note in RollingHero.astro — so all
-  // five count against the budget.
+  // Images, split by whether they actually load on arrival.
+  //
+  //   hero — all five. Every figure sits at inset:0, so the browser counts them
+  //          all as in-viewport and fetches them whatever their opacity.
+  //   rail — horizontally off-screen, so loading="lazy" really does defer them.
+  //          They are still counted against the budget: this check is meant to
+  //          be pessimistic, and a visitor who flicks the rail pays for them.
+  let deferred = 0;
+
   for (const picture of html.match(/<picture[\s\S]*?<\/picture>/g) ?? []) {
+    const index = html.indexOf(picture);
+    const preceding = html.slice(Math.max(0, index - 400), index);
+    const isRail = preceding.includes('card__frame');
+
     const avif = picture.match(/<source[^>]+type="image\/avif"[^>]*>/)?.[0]
       ?? picture.match(/<source[^>]+srcset="([^"]+)"[^>]*>/)?.[0];
     const srcset = avif?.match(/srcset="([^"]+)"/)?.[1];
     if (!srcset) continue;
-    const picked = pickCandidate(srcset);
-    if (picked) items.push({ label: `${picked.url} (${picked.width}w)`, bytes: size(picked.url) });
+
+    const picked = pickCandidate(srcset, avif?.match(/\ssizes="([^"]+)"/)?.[1]);
+    if (!picked) continue;
+
+    const bytes = size(picked.url);
+    if (isRail) deferred += bytes;
+    items.push({
+      label: `${picked.url} (${picked.width}w)${isRail ? ' — deferred, rail' : ''}`,
+      bytes,
+    });
+  }
+
+  if (deferred > 0) {
+    items.push({
+      label: `  ↳ ${kb(deferred)} of the above is rail cards, fetched only as the rail is scrolled`,
+      bytes: 0,
+    });
   }
 
   const total = items.reduce((sum, item) => sum + item.bytes, 0);
