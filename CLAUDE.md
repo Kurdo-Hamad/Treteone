@@ -77,7 +77,7 @@ The homepage is a gateway; detail lives on its own routes.
 | `/products` | Page head · 12 categories as index rows · navy five-step scope band (component → complete system) |
 | `/industries` | Page head · 9 sectors as index rows, spec line naming the duty data |
 | `/sourcing` | Page head · four definition blocks · navy "what to send" band · five-step process |
-| `/brands` | Page head · filterable brand directory (chips + search) · trademark disclaimer |
+| `/brands` | Page head · filterable brand directory (chips + search) |
 | `/about` | Page head · six definition blocks · registered-details band on pale |
 | `/quote` | The form, on its own page |
 
@@ -398,7 +398,7 @@ bottom edge (moved from the top, client request Nov 2026) that draws in as they 
   zoom to 1.04 on hover. Use the `scale` property, not `transform`, for hover
   zoom — the reveal and rise-in animations own `transform`.
 - /brands: choosing a discipline re-deals the visible tiles; the filter bar, count,
-  every tile and the disclaimer reveal on scroll.
+  and every tile reveal on scroll.
 - The remaining blocks reveal too: intro heading and buttons, notes, "All 12
   categories", the hard-to-find and scope buttons, the marquee rows and notes, and
   the footer (brand block, contact columns, legal row).
@@ -449,7 +449,8 @@ Until set, the endpoint returns 502 and the form tells the buyer to email direct
 - Logos render greyscale, full colour on hover.
 - Moving rows are `aria-hidden`; assistive tech gets a plain list. Under reduced
   motion the rows stop and wrap into a static grid.
-- Trademark disclaimer stays. Wording stays "Brands we source".
+- The trademark note under the brand list was removed at the client's request
+  (Nov 2026). Wording stays "Brands we source".
 
 ---
 

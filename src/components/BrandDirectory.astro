@@ -20,8 +20,9 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
  *    which also refuses a raster in an SVG wrapper). No file means the dashed
  *    slot. No <img onerror> — the CSP forbids inline handlers.
  *
- * ⚠ §13 — "Brands we source", and the trademark disclaimer stays. Nothing here
- * may imply authorisation, distributorship or agency.
+ * ⚠ §13 — "Brands we source". Nothing here may imply authorisation,
+ * distributorship or agency. (The trademark note was removed at the client's
+ * request, Nov 2026; see CLAUDE.md §9.)
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -115,8 +116,6 @@ const searchKey = (name: string): string => name.toLowerCase();
       </a>
     </p>
   </div>
-
-  <p class="small bdisclaimer">{t('brands.disclaimer')}</p>
 </div>
 
 <script>
@@ -347,10 +346,6 @@ const searchKey = (name: string): string => name.toLowerCase();
     margin-top: 14px;
   }
 
-  .bdisclaimer {
-    margin-top: 36px;
-    max-width: 78ch;
-  }
 
   @media (max-width: 960px) {
     .bfilter {

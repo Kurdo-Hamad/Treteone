@@ -149,8 +149,6 @@ export const home = {
     'The manufacturers requested most often. If yours is not shown, ask — the list reflects demand, not the limit of what can be sourced.',
   'home.brands.listLabel': 'Manufacturers we source',
   'home.brands.more': 'Read more about brands',
-  'home.brands.disclaimer':
-    'Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.',
 
   // ---- 9. about our work --------------------------------------------------
   'home.work.heading': 'About our work',

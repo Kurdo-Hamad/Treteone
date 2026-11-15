@@ -34,6 +34,4 @@ export const brands: BrandsStrings = {
     '这并不代表我们无法采购。请发来制造商名称和部件号，我们会就供货情况回复您。',
   'brands.none.link': '发送询价',
 
-  'brands.disclaimer':
-    '所有品牌名称及商标归各自所有者所有。除另有说明外，提及制造商并不表示我们获得其授权、代理或与其存在任何关联。',
 };

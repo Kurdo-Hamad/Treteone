@@ -131,8 +131,6 @@ export const home: HomeStrings = {
   'home.brands.note': '以下是询价最多的制造商。如果没有您需要的品牌，请直接询问——这份名单反映的是需求，而不是我们采购能力的上限。',
   'home.brands.listLabel': '我们采购的制造商',
   'home.brands.more': '进一步了解品牌',
-  'home.brands.disclaimer':
-    '品牌名称及商标均归其各自所有者所有。除非另有说明，提及任何制造商均不代表获得授权，也不表示分销、代理或隶属关系。',
 
   // ---- 9. about our work --------------------------------------------------
   'home.work.heading': '关于我们的工作',

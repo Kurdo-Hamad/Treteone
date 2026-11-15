@@ -39,8 +39,6 @@ export const brands = {
     'That does not mean we cannot source it. Send the manufacturer and the part number and we will come back on availability.',
   'brands.none.link': 'Send an enquiry',
 
-  'brands.disclaimer':
-    'Brand names and trademarks are the property of their respective owners. Unless stated otherwise, references to manufacturers do not imply authorisation, distributorship, agency or affiliation.',
 };
 
 export type BrandsStrings = typeof brands;

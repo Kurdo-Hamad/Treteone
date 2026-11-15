@@ -74,7 +74,6 @@ const rows: readonly (readonly string[])[] = [
     <p class="marquee__more">
       <a class="btn btn-out" href={localisePath(brandsHref, lang)}>{t('home.brands.more')}</a>
     </p>
-    <p class="small marquee__legal">{t('home.brands.disclaimer')}</p>
   </div>
 </section>
 
@@ -186,12 +185,6 @@ const rows: readonly (readonly string[])[] = [
 
   .marquee__more {
     margin-top: 26px;
-  }
-  .marquee__legal {
-    margin-top: 18px;
-    max-width: 78ch;
-    font-size: .78rem;
-    color: var(--text-quiet);
   }
 
   /* §9, §11 — under reduced motion the rows stop and wrap into a static grid. */

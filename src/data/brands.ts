@@ -4,8 +4,8 @@
  *
  * ⚠ §11 — "Never claim authorised distributor, agent or partner status. Wording
  * stays 'Brands we source'." Nothing in this module or the component that reads
- * it may imply authorisation, and the trademark disclaimer below the marquee is
- * not optional. Brand names are not translated: they are proper nouns.
+ * it may imply authorisation. (The trademark note was removed at the client's
+ * request, Nov 2026; see CLAUDE.md §9.) Brand names are not translated: they are proper nouns.
  *
  * ⚠ §10 — no logo files have been supplied, and it is still an open question
  * which of these may be shown as a logo at all. public/logos/ is empty, so every

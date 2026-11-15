@@ -47,10 +47,8 @@ const SINGLES = [
   '.marquee__note',
   '.marquee',
   '.marquee__more',
-  '.marquee__legal',
   '.bfilter',
   '.bcount',
-  '.bdisclaimer',
   // footer
   '.ftop > *',
   '.legal',
