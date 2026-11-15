@@ -124,7 +124,7 @@ const t = useTranslations(lang);
   .hero__stage {
     position: relative;
     isolation: isolate;
-    height: clamp(400px, 52vh, 540px);
+    height: clamp(480px, 66vh, 700px);
   }
 
   /* Panels never create a stacking context of their own (no opacity, no
@@ -165,12 +165,12 @@ const t = useTranslations(lang);
     background:
       linear-gradient(
         80deg,
-        rgb(var(--scrim-rgb) / .94) 0%,
-        rgb(var(--scrim-rgb) / .78) 38%,
-        rgb(var(--scrim-rgb) / .26) 72%,
-        rgb(var(--scrim-rgb) / .1) 100%
+        rgb(var(--scrim-rgb) / .8) 0%,
+        rgb(var(--scrim-rgb) / .6) 38%,
+        rgb(var(--scrim-rgb) / .14) 72%,
+        rgb(var(--scrim-rgb) / .05) 100%
       ),
-      linear-gradient(to top, rgb(var(--scrim-rgb) / .7) 0%, rgb(var(--scrim-rgb) / 0) 48%);
+      linear-gradient(to top, rgb(var(--scrim-rgb) / .5) 0%, rgb(var(--scrim-rgb) / 0) 48%);
   }
 
   .hero__overlay {
@@ -382,7 +382,7 @@ const t = useTranslations(lang);
   /* -- breakpoints (mockup: 960 / 700 / 560) -------------------------------- */
   @media (max-width: 960px) {
     .hero__stage {
-      height: clamp(400px, 58vh, 520px);
+      height: clamp(440px, 64vh, 620px);
     }
     .hero__eyebrow,
     .hero__title,
@@ -400,9 +400,9 @@ const t = useTranslations(lang);
     .hero__scrim {
       background: linear-gradient(
         to top,
-        rgb(var(--scrim-rgb) / .94) 0%,
-        rgb(var(--scrim-rgb) / .72) 42%,
-        rgb(var(--scrim-rgb) / .18) 100%
+        rgb(var(--scrim-rgb) / .8) 0%,
+        rgb(var(--scrim-rgb) / .55) 42%,
+        rgb(var(--scrim-rgb) / .1) 100%
       );
     }
     .hero__overlay {
@@ -450,8 +450,8 @@ const t = useTranslations(lang);
   @media (max-width: 560px) {
     .hero__stage {
       height: auto;
-      aspect-ratio: 3 / 4;
-      min-height: 430px;
+      aspect-ratio: 4 / 5;
+      min-height: 480px;
       /* With min-height in play the aspect ratio would otherwise transfer a
          minimum width of 430 x 3/4 = 323px, wider than a 320px phone. */
       width: 100%;

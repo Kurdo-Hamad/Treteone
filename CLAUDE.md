@@ -297,7 +297,8 @@ Chinese overrides: line-height 1.85, letter-spacing 0 on headings, no italics.
 From the approved mockup. **Full-bleed**, flush under the masthead, no side
 margins, no gap above.
 
-- Height `clamp(400px, 52vh, 540px)`; below 560px, `aspect-ratio: 3/4`, min 430px.
+- Height `clamp(480px, 66vh, 700px)` (raised from 400–540px, client request Nov 2026);
+  960px and below `clamp(440px, 64vh, 620px)`; below 560px, `aspect-ratio: 4/5`, min 480px.
 - Four slides, each a tab panel: spare parts & MRO · equipment & machinery ·
   automation & instrumentation · hard-to-find & obsolete.
 - Each slide is an `ImagePlaceholder` with `variant="hero"` carrying its real
@@ -306,7 +307,9 @@ margins, no gap above.
   replace the files with Treteone's own photographs or set `SHOW_STAND_INS = false`
   (§12). "Treteone office" deliberately keeps its placeholder.
 - A left-to-right navy scrim (`rgb(var(--scrim-rgb) / a)`) keeps the overlay
-  legible. Do not tint the whole photograph blue.
+  legible. Do not tint the whole photograph blue. Lightened Nov 2026 at the
+  client's request: the copy side starts at .8 (was .94) and the photograph shows
+  more clearly.
 - Overlay bottom-left, aligned to the page gutter: eyebrow, rotating title, one
   line, one text link whose target changes per slide.
 - Bar below the image, inside the same container: pause/play button plus four
