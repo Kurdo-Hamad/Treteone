@@ -471,6 +471,24 @@
   :is(.def, .reg__item, .step, .checklist > li, .htf__list > li):hover::before {
     width: 100%;
   }
+  /* …and the block itself zooms in a touch. The `scale` property, not
+     `transform`, so it never fights the reveal and rise-in animations, which
+     own `transform`. */
+  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li) {
+    transform-origin: left center;
+    transition: scale .45s var(--ease-out-expo);
+  }
+  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li):hover {
+    scale: 1.04;
+  }
+  /* Revealed blocks take the reveal's transition list, which would drop the
+     zoom's easing; carry it on, with no reveal delay. */
+  .js-reveal :is(.def, .reg__item, .step, .checklist > li, .htf__list > li).rv {
+    transition:
+      opacity .7s var(--ease) var(--rv-delay, 0ms),
+      transform .8s var(--ease-out-expo) var(--rv-delay, 0ms),
+      scale .45s var(--ease-out-expo);
+  }
   .js-reveal :is(.def, .reg__item, .step, .checklist > li, .htf__list > li).rv::before {
     transform: scaleX(0);
     transition:

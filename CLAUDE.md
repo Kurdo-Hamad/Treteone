@@ -394,6 +394,9 @@ as they arrive and runs full width on hover.
   a soft navy shadow, the photograph zooms to 1.1, a cyan bar draws along its foot,
   and the heading takes the link colour — on hover and on keyboard focus alike.
   Each capability item links to its row on /products (`#<category-slug>`).
+  Definition blocks, registered details, process steps and "what to send" rows
+  zoom to 1.04 on hover. Use the `scale` property, not `transform`, for hover
+  zoom — the reveal and rise-in animations own `transform`.
 - /brands: choosing a discipline re-deals the visible tiles; the filter bar, count,
   every tile and the disclaimer reveal on scroll.
 - The remaining blocks reveal too: intro heading and buttons, notes, "All 12
