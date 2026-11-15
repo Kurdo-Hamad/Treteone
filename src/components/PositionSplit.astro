@@ -73,6 +73,35 @@ const t = useTranslations(lang);
     aspect-ratio: 4 / 3;
   }
 
+  /* Depth: as the section crosses the screen the cyan block and the
+     photograph move at slightly different speeds. Scroll-driven, no script;
+     without support (or with reduced motion) both stay still. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .split__back {
+        animation: split-back linear both;
+      }
+      .split__front {
+        animation: split-front linear both;
+      }
+      /* Timeline in its own, more specific rule: the minifier otherwise
+         folds it into the animation shorthand, which browsers reject. */
+      .split__media .split__back,
+      .split__media .split__front {
+        animation-timeline: view();
+        animation-range: cover;
+      }
+      @keyframes split-back {
+        from { transform: translateY(36px); }
+        to { transform: translateY(-36px); }
+      }
+      @keyframes split-front {
+        from { transform: translateY(-10px); }
+        to { transform: translateY(10px); }
+      }
+    }
+  }
+
   .split__p1 {
     margin-top: 16px;
   }

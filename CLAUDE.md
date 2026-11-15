@@ -353,7 +353,24 @@ repeated. From the mockup, in order:
 9. **"About our work"** — two cards on the pale band
 
 Nothing animates into existence that was not already readable. Reveals apply only
-to grids that start below the fold, and only once JS has run.
+to content that starts below the fold, and only once JS has run.
+
+**Motion (added Nov 2026, client request "more dynamic").** All of it stops under
+`prefers-reduced-motion`; none of it hides content when JS is off.
+- Scroll reveal (`src/scripts/reveal.ts`): section headings, kickers, leads, and
+  the items of every list and grid fade up; items arriving together stagger 70 ms.
+  Hero, page-head bands and footer are excluded.
+- Hero: slow zoom on the active photograph; on a slide change the copy arrives
+  line by line (never on first paint).
+- Page-head bands: photograph settles on load, cyan rule draws, photograph drifts
+  on scroll (CSS scroll-driven; no script; still image where unsupported).
+- Positioning split: cyan block and photograph move at different speeds on scroll.
+- Hover: nav underline grows in, trailing arrows nudge, index rows draw a cyan rule
+  and shift, brand tiles lift, card headings take the link colour.
+- /brands: choosing a discipline re-deals the visible tiles.
+- Keep `animation-timeline` in its own rule (the minifier otherwise folds it into
+  the `animation` shorthand, which browsers reject), and use `overflow: clip`, not
+  `hidden`, on any ancestor of a scroll-driven element.
 
 **Not on the homepage:** a search field (no product database behind it — §12) and
 the amber ticker.

@@ -189,6 +189,31 @@ const t = useTranslations(lang);
     transition: opacity .35s var(--ease) .3s;
   }
 
+  /* Slow zoom on the photograph of the active slide: it starts a touch
+     close and settles over the slide's dwell, so the image is always
+     moving while it is on screen. Image only — never the copy (§7). */
+  .hero__panel.is-on :global(.ph__img) {
+    animation: hero-zoom calc(var(--hero-dwell) + 1.5s) var(--ease-out-expo) both;
+  }
+  @keyframes hero-zoom {
+    from { transform: scale(1.09); }
+    to { transform: scale(1); }
+  }
+
+  /* When the slide changes (rolling-hero.ts adds .is-enter), the copy
+     arrives line by line. The first slide never gets .is-enter. */
+  .hero__panel.is-enter :is(.hero__eyebrow, .hero__title, .hero__line, .hero__more) {
+    animation: hero-copy-in .8s var(--ease-out-expo) backwards;
+  }
+  .hero__panel.is-enter .hero__eyebrow { animation-delay: .25s; }
+  .hero__panel.is-enter .hero__title { animation-delay: .33s; }
+  .hero__panel.is-enter .hero__line { animation-delay: .43s; }
+  .hero__panel.is-enter .hero__more { animation-delay: .53s; }
+  @keyframes hero-copy-in {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: none; }
+  }
+
   .hero__eyebrow,
   .hero__title,
   .hero__line {

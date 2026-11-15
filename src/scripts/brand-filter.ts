@@ -66,12 +66,23 @@ if (root) {
     }
   };
 
+  // Choosing a discipline re-deals the grid: the visible tiles fade up in
+  // sequence (CSS on .bgrid.is-dealt). Not on every keystroke in the search
+  // box — that would restart the motion while someone is typing.
+  const deal = (): void => {
+    if (!grid) return;
+    grid.classList.remove('is-dealt');
+    void grid.offsetWidth; // restart the animation
+    grid.classList.add('is-dealt');
+  };
+
   chips.forEach((chip) => {
     chip.disabled = false;
     chip.addEventListener('click', () => {
       group = chip.dataset['brandChip'] ?? 'all';
       chips.forEach((other) => other.setAttribute('aria-pressed', String(other === chip)));
       apply();
+      deal();
     });
   });
 

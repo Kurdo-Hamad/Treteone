@@ -189,19 +189,39 @@ const quote = localisePath(quoteHref, lang);
     font-size: .9rem;
   }
   .mast-nav a {
+    position: relative;
     color: rgba(255, 255, 255, .78);
     text-decoration: none;
-    padding-block: 4px;
-    border-bottom: 2px solid transparent;
+    padding-block: 6px;
     white-space: nowrap;
     transition: color .16s;
+  }
+  /* Underline grows from the left on hover; the current page holds it in
+     cyan. Not colour alone — the current page is also full white. */
+  .mast-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, .55);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s var(--ease-out-expo);
   }
   .mast-nav a:hover {
     color: var(--text-inverse);
   }
+  .mast-nav a:hover::after {
+    transform: none;
+  }
   .mast-nav a[aria-current='page'] {
     color: var(--text-inverse);
-    border-bottom-color: var(--color-cyan);
+  }
+  .mast-nav a[aria-current='page']::after {
+    background: var(--color-cyan);
+    transform: none;
   }
 
   /* -- language ------------------------------------------------------------- */

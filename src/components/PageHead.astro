@@ -88,7 +88,10 @@ const hasBody = Astro.slots.has('default');
 
     position: relative;
     isolation: isolate;
-    overflow: hidden;
+    /* clip, not hidden: hidden makes the band a scroll container, and the
+       photograph's scroll-driven drift would then track the band (which
+       never scrolls) instead of the page. */
+    overflow: clip;
     background: var(--color-navy);
     color: var(--text-inverse);
   }
@@ -136,6 +139,34 @@ const hasBody = Astro.slots.has('default');
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* The photograph settles as the page opens. Image only — the copy is
+       readable from the first frame (§7). */
+    animation: phead-settle 1.8s var(--ease-out-expo) both;
+  }
+  @keyframes phead-settle {
+    from { transform: scale(1.1); opacity: .4; }
+    to { transform: none; opacity: 1; }
+  }
+
+  /* As the band scrolls away the photograph drifts a little slower than the
+     page. Scroll-driven, no script; browsers without support get a still
+     image. The wrapper is scaled so the drift never shows an edge. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .phead__media :global(picture) {
+        animation: phead-drift linear both;
+      }
+      /* Timeline in its own, more specific rule: the minifier otherwise
+         folds it into the animation shorthand, which browsers reject. */
+      .phead .phead__media :global(picture) {
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+      @keyframes phead-drift {
+        from { transform: translateY(0) scale(1.08); }
+        to { transform: translateY(6%) scale(1.08); }
+      }
+    }
   }
   .phead__media::after {
     content: '';
@@ -160,6 +191,12 @@ const hasBody = Astro.slots.has('default');
     width: 56px;
     height: 2px;
     background: var(--color-cyan);
+    transform-origin: left;
+    animation: phead-rule .9s var(--ease-out-expo) .35s both;
+  }
+  @keyframes phead-rule {
+    from { transform: scaleX(0); }
+    to { transform: none; }
   }
 
   /* The body follows the band directly: a tighter top than a full section,

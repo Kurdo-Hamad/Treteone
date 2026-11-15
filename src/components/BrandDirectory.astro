@@ -251,6 +251,20 @@ const searchKey = (name: string): string => name.toLowerCase();
   .btile {
     text-align: center;
   }
+  /* After a chip is chosen (brand-filter.ts adds .is-dealt) the visible
+     tiles fade up in sequence. Never on first load. */
+  .bgrid.is-dealt .btile {
+    animation: tile-deal .5s var(--ease-out-expo) backwards;
+  }
+  .bgrid.is-dealt .btile:nth-child(6n + 2) { animation-delay: 30ms; }
+  .bgrid.is-dealt .btile:nth-child(6n + 3) { animation-delay: 60ms; }
+  .bgrid.is-dealt .btile:nth-child(6n + 4) { animation-delay: 90ms; }
+  .bgrid.is-dealt .btile:nth-child(6n + 5) { animation-delay: 120ms; }
+  .bgrid.is-dealt .btile:nth-child(6n + 6) { animation-delay: 150ms; }
+  @keyframes tile-deal {
+    from { opacity: 0; transform: translateY(10px) scale(.97); }
+    to { opacity: 1; transform: none; }
+  }
   /* The tile is the logo slot (§9). With no logo file yet it carries the
      brand name set as a quiet wordmark — a clean placeholder rather than a
      box that says "LOGO". Dropping slug.svg into public/logos/ replaces it. */
@@ -263,7 +277,13 @@ const searchKey = (name: string): string => name.toLowerCase();
     background: var(--surface-page);
     border: 1px solid var(--line);
     text-align: center;
-    transition: border-color var(--dur-fast), background var(--dur-fast);
+    transition:
+      border-color var(--dur-fast),
+      background var(--dur-fast),
+      transform .3s var(--ease-out-expo);
+  }
+  .btile:hover .box {
+    transform: translateY(-3px);
   }
   .box__name {
     font-family: var(--font-stack-display);

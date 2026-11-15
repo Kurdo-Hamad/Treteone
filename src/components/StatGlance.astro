@@ -130,6 +130,15 @@ const figures: readonly Figure[] = [
     width: 32px;
     height: 2px;
     background: var(--color-cyan);
+    transform-origin: left;
+  }
+  /* The measure draws itself just after its figure arrives. */
+  :global(.js-reveal) .glance__item:global(.rv)::before {
+    transform: scaleX(0);
+    transition: transform .9s var(--ease-out-expo) calc(var(--rv-delay, 0ms) + .25s);
+  }
+  :global(.js-reveal) .glance__item:global(.rv.in)::before {
+    transform: none;
   }
   .glance__value {
     margin: 0;
@@ -152,9 +161,6 @@ const figures: readonly Figure[] = [
     color: var(--text-quiet);
   }
 
-  .glance__item.rv:nth-child(2) { transition-delay: 70ms; }
-  .glance__item.rv:nth-child(3) { transition-delay: 140ms; }
-  .glance__item.rv:nth-child(4) { transition-delay: 210ms; }
 
   @media (max-width: 960px) {
     .glance {

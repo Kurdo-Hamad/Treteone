@@ -375,11 +375,33 @@
     border-color: var(--text-inverse);
   }
 
-  /* Scroll reveal. Content starts visible and is only hidden once JS has added
-     .js-reveal, so the page stays readable with JS off or broken. */
-  .rv { transition: opacity .55s var(--ease), transform .55s var(--ease); }
-  .js-reveal .rv { opacity: 0; transform: translateY(12px); }
+  /* Scroll reveal (src/scripts/reveal.ts). Content starts visible and is
+     only hidden once the script has added .js-reveal, so the page stays
+     readable with JS off or broken. --rv-delay staggers items that arrive
+     together. */
+  .js-reveal .rv {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity .7s var(--ease) var(--rv-delay, 0ms),
+      transform .8s var(--ease-out-expo) var(--rv-delay, 0ms);
+  }
   .js-reveal .rv.in { opacity: 1; transform: none; }
+
+  /* Every trailing arrow in a link or button nudges forward on hover. */
+  .rm > [aria-hidden='true'],
+  .btn > [aria-hidden='true'],
+  .link-arrow__icon {
+    display: inline-block;
+    transition: transform .25s var(--ease-out-expo);
+  }
+  .rm:hover > [aria-hidden='true'],
+  .btn:hover > [aria-hidden='true'] {
+    transform: translateX(4px);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
 
   /* §12 — an unmissable marker for content that has not been supplied. Must
      never be styled down into looking like a real value. */

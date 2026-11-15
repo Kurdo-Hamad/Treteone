@@ -134,6 +134,10 @@ const titleId = `${set}-title`;
   }
   .card h3 {
     margin-top: 16px;
+    transition: color .2s;
+  }
+  .card:hover h3 {
+    color: var(--fg-link);
   }
   .card p {
     margin-top: 8px;
@@ -149,9 +153,6 @@ const titleId = `${set}-title`;
     transform: translateX(4px);
   }
 
-  /* Staggered reveal, as the mockup's 70ms per child. */
-  .card.rv:nth-child(2) { transition-delay: 70ms; }
-  .card.rv:nth-child(3) { transition-delay: 140ms; }
 
   @media (max-width: 960px) {
     .cards,

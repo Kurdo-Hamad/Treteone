@@ -162,6 +162,10 @@
   --dur-slow: .6s;
   --dur-cross: 1.5s;
   --ease: ease;
+  /* Motion curves. ease-out-expo for things arriving (fast start, long soft
+     settle); ease-in-out for things moving between two resting states. */
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
 
   /* One source for the hero cadence: the progress bar and the timer both
      read it, so they cannot drift apart. */

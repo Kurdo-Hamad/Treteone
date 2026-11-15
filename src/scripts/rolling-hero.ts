@@ -83,9 +83,21 @@ if (root) {
 
   function select(next: number, focus = false): void {
     if (panels.length === 0) return;
+    const previous = index;
     index = (next + panels.length) % panels.length;
 
     panels.forEach((panel, i) => panel.classList.toggle('is-on', i === index));
+
+    // The incoming panel's copy slides in. Only on a change of slide, never
+    // on first paint: the first slide is readable from the start (§7).
+    if (index !== previous) {
+      const panel = panels[index];
+      panels.forEach((p) => p.classList.remove('is-enter'));
+      if (panel) {
+        void panel.offsetWidth; // restart the animation if it ran before
+        panel.classList.add('is-enter');
+      }
+    }
     tabs.forEach((tab, i) => {
       const on = i === index;
       tab.setAttribute('aria-selected', String(on));

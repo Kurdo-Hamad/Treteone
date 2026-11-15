@@ -76,10 +76,35 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     border-bottom: 1px solid var(--line);
     color: inherit;
     text-decoration: none;
-    transition: background var(--dur-fast);
+    position: relative;
+    transition: background .35s var(--ease-out-expo);
+  }
+  /* A cyan rule draws along the top of the hovered row. */
+  .row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 2px;
+    background: var(--color-cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .45s var(--ease-out-expo);
   }
   .row:hover {
     background: var(--surface-pale);
+  }
+  .row:hover::before {
+    transform: none;
+  }
+  .row__n,
+  .row__name {
+    transition: transform .35s var(--ease-out-expo), color .2s;
+  }
+  .row:hover .row__n,
+  .row:hover .row__name {
+    transform: translateX(8px);
   }
 
   .row__n {
@@ -106,10 +131,18 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     color: var(--fg-link);
     text-align: right;
     white-space: nowrap;
-    transition: transform var(--dur-fast), color var(--dur-fast);
+    transition: color var(--dur-fast);
   }
+  /* Navy, not cyan: cyan text on the pale hover ground is about 2:1. */
   .row:hover .row__go {
-    color: var(--color-cyan);
+    color: var(--color-navy);
+  }
+  /* Only the arrow moves, so the label never slides past the row's edge. */
+  .row__go > [aria-hidden='true'] {
+    display: inline-block;
+    transition: transform .3s var(--ease-out-expo);
+  }
+  .row:hover .row__go > [aria-hidden='true'] {
     transform: translateX(4px);
   }
 
