@@ -311,6 +311,10 @@ const t = useTranslations(lang);
   }
   .hero__tab {
     position: relative;
+    /* Shrink to the label, so the progress line above it is exactly as long
+       as the phrase (client request, Nov 2026). */
+    justify-self: start;
+    max-width: 100%;
     padding: 0;
     border: 0;
     background: none;
@@ -328,19 +332,20 @@ const t = useTranslations(lang);
     color: var(--text-inverse);
   }
 
-  /* The 80px progress segment. The fill runs only once the script is live
-     (.is-run), so with JS off nothing pretends to advance. */
+  /* The progress segment: as long as its label, 3px heavy. The fill runs
+     only once the script is live (.is-run), so with JS off nothing pretends
+     to advance. */
   .hero__seg {
     position: relative;
     display: block;
-    width: 80px;
-    height: 2px;
-    margin-bottom: 11px;
+    width: 100%;
+    height: 3px;
+    margin-bottom: 12px;
     overflow: hidden;
-    background: rgba(255, 255, 255, .22);
+    background: rgba(255, 255, 255, .26);
   }
   .hero__tab[aria-selected='true'] .hero__seg {
-    background: rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .34);
   }
   .hero__seg::after {
     content: '';
@@ -429,7 +434,7 @@ const t = useTranslations(lang);
     .hero__seg {
       width: 100%;
       margin-bottom: 0;
-      background: rgba(255, 255, 255, .26);
+      background: rgba(255, 255, 255, .3);
     }
   }
 
