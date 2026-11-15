@@ -38,10 +38,19 @@ const { subject, variant = 'wide', class: className, image, priority = false } =
 const t = useTranslations(getLangFromUrl(Astro.url));
 
 // Rendered widths per variant, so a phone never downloads a desktop file.
+// `sizes` matches the real rendered width (the page gutter is 20px a side,
+// the content column caps at 1140px), so a phone at 412px x 1.75 asks for
+// ~650px and gets the 720 file, not the 960 one (Lighthouse, Nov 2026).
 const sizing = {
   hero: { widths: [640, 960, 1280, 1920], sizes: '100vw' },
-  wide: { widths: [480, 720, 960, 1200], sizes: '(max-width: 960px) 100vw, 40vw' },
-  small: { widths: [320, 480, 640], sizes: '(max-width: 560px) 100vw, (max-width: 960px) 50vw, 25vw' },
+  wide: {
+    widths: [480, 640, 720, 960, 1200],
+    sizes: '(max-width: 960px) calc(100vw - 40px), (max-width: 1180px) 48vw, 560px',
+  },
+  small: {
+    widths: [320, 480, 640],
+    sizes: '(max-width: 560px) calc(100vw - 40px), (max-width: 960px) calc(50vw - 30px), 270px',
+  },
 }[variant];
 ---
 

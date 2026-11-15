@@ -21,6 +21,11 @@ static output · Cloudflare Pages.
 | `npm run fonts:sc` | Rebuild the Noto Sans SC subset. Add `-- --force` to rebuild unconditionally. |
 | `npm run placeholders` | Fill any image slot that has no file with a §10 plate. Add `-- --force` to replace existing images. |
 | `npm run test:quote` | Exercise the §7 quote endpoint offline (22 assertions) |
+| `NODE_PATH="$(npm root -g)" node scripts/make-og-cards.mjs` | Re-render the share cards `public/og-card.png` and `public/og-card-zh.png` after a headline change. Needs a global Playwright; not part of the build. |
+
+After the build, `scripts/flatten-404.mjs` copies the Chinese not-found page to
+`dist/zh/404.html`, where Cloudflare Pages looks for it (without any 404.html,
+Pages answers every bad address with the homepage and a 200).
 
 `npm run build` is three steps, wired through npm's `prebuild`/`postbuild`, so
 they also run on Cloudflare:

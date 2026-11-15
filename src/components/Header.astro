@@ -27,7 +27,13 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isCurrent = (href: string): boolean => (href.replace(/\/$/, '') || '/') === current;
 
 // The other language, for the switch.
-const other = alternateLinks(Astro.url).find((alternate) => alternate.lang !== lang);
+const otherRaw = alternateLinks(Astro.url).find((alternate) => alternate.lang !== lang);
+// On a not-found page there is no "same page" in the other language: switch to
+// that language's homepage instead of a 404 address.
+const other =
+  otherRaw && /\/404\/?$/.test(otherRaw.href)
+    ? { ...otherRaw, href: localisePath(homeHref, otherRaw.lang) }
+    : otherRaw;
 const quote = localisePath(quoteHref, lang);
 ---
 
@@ -344,7 +350,9 @@ const quote = localisePath(quoteHref, lang);
     background: var(--color-navy-2);
   }
   .drawer.is-open {
-    display: block;
+    /* flow-root, not block: the last link's bottom margin would otherwise
+       collapse through and show as a white strip under the drawer. */
+    display: flow-root;
     animation: drawer-in .22s ease both;
   }
   @keyframes drawer-in {

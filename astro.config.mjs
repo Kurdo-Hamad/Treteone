@@ -56,6 +56,8 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      // Not-found pages are noindex; keep them out of the sitemap too.
+      filter: (page) => !/\/404\/?$/.test(new URL(page).pathname),
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', zh: 'zh-CN' },
@@ -72,6 +74,11 @@ export default defineConfig({
       // limit is written straight into the document, which cannot satisfy
       // `script-src 'self'` (§8). 0 forces every script out to its own file.
       assetsInlineLimit: 0,
+      // One stylesheet for the whole site instead of four to six per page.
+      // Lighthouse (mobile, Nov 2026) put the render-blocking CSS requests at
+      // ~1.2s of the homepage's LCP; the merged file is ~70 KB raw (~13 KB
+      // compressed) and is cached after the first page.
+      cssCodeSplit: false,
     },
   },
 });

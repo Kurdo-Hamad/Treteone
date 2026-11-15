@@ -2,6 +2,7 @@
 import Footer from '~/components/Footer.astro';
 import Header from '~/components/Header.astro';
 import {
+  allLangs,
   alternateLinks,
   defaultLang,
   getLangFromUrl,
@@ -21,14 +22,19 @@ interface Props {
   /** Overrides the site title. Defaults to the localised site title. */
   title?: string;
   description?: string;
+  /** Not-found pages: tell search engines not to index, and omit the
+   *  canonical and language alternates, which would point at a page that
+   *  does not exist. */
+  noindex?: boolean;
 }
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-const { title = t('site.title'), description = t('site.description') } = Astro.props;
+const { title = t('site.title'), description = t('site.description'), noindex = false } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(lang === 'zh' ? '/og-card-zh.png' : '/og-card.png', Astro.site).href;
 const alternates = alternateLinks(Astro.url);
 // x-default is this page in the default language, not the homepage.
 const defaultAlternate =
@@ -43,7 +49,7 @@ const defaultAlternate =
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical.href} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical.href} />}
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {/* --color-navy. A meta value cannot read a custom property. */}
@@ -51,19 +57,24 @@ const defaultAlternate =
 
     {/* §2 — each language is a real route, so each is separately indexable. */}
     {
-      alternates.map((alternate) => (
+      !noindex &&
+        alternates.map((alternate) => (
+          <link
+            rel="alternate"
+            hreflang={alternate.hreflang}
+            href={new URL(alternate.href, Astro.site).href}
+          />
+        ))
+    }
+    {
+      !noindex && (
         <link
           rel="alternate"
-          hreflang={alternate.hreflang}
-          href={new URL(alternate.href, Astro.site).href}
+          hreflang="x-default"
+          href={new URL(defaultAlternate, Astro.site).href}
         />
-      ))
+      )
     }
-    <link
-      rel="alternate"
-      hreflang="x-default"
-      href={new URL(defaultAlternate, Astro.site).href}
-    />
 
     {/*
       §8 — every face is self-hosted. There is no Google Fonts stylesheet link
@@ -101,8 +112,19 @@ const defaultAlternate =
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta property="og:locale" content={languages[lang].ogLocale} />
-    {/* No og:image — §10, the real photography has not been supplied. */}
-    <meta name="twitter:card" content="summary" />
+    {
+      allLangs
+        .filter((other) => other !== lang)
+        .map((other) => <meta property="og:locale:alternate" content={languages[other].ogLocale} />)
+    }
+    {/* Share card: a typographic navy card, not a photograph (no stock image
+        presented as Treteone's own, §12). Rendered by scripts/make-og-cards.mjs. */}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t('site.title')} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
 
     <slot name="head" />
   </head>

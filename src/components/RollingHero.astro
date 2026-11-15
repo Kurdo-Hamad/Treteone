@@ -452,6 +452,10 @@ const t = useTranslations(lang);
       height: auto;
       aspect-ratio: 3 / 4;
       min-height: 430px;
+      /* With min-height in play the aspect ratio would otherwise transfer a
+         minimum width of 430 x 3/4 = 323px, wider than a 320px phone. */
+      width: 100%;
+      min-width: 0;
     }
   }
 </style>

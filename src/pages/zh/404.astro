@@ -1,0 +1,11 @@
+---
+import Page from '../404.astro';
+
+/**
+ * /zh/404 — the same page as /404, in Chinese. Cloudflare Pages serves the
+ * nearest 404.html, so a bad address under /zh/ gets this one (see
+ * scripts/flatten-404.mjs, which writes it to dist/zh/404.html).
+ */
+---
+
+<Page />

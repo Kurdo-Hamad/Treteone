@@ -34,6 +34,14 @@ export const common = {
   'cta.quoteShort': 'Quote',
   'cta.whatsapp': 'WhatsApp',
 
+  // ---- 404 page (src/pages/404.astro, zh/404.astro) -------------------------
+  'notFound.meta.title': 'Page not found — Treteone',
+  'notFound.meta.description': 'The page you asked for is not on treteone.com.',
+  'notFound.kicker': 'Error 404',
+  'notFound.title': 'This page is not here.',
+  'notFound.lead': 'The address may be mistyped, or the page may have moved. Start from one of the pages below — or send the part number and we will take it from there.',
+  'notFound.home': 'Back to the homepage',
+
   // ---- image placeholder (ImagePlaceholder.astro) -------------------------
   // Every photography slot shows this until the real photograph is supplied.
   'placeholder.image': 'Image',

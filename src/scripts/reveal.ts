@@ -82,6 +82,11 @@ for (const selector of [...SINGLES, ...REVEAL_GROUPS]) {
     if (!el.closest(EXCLUDE)) candidates.add(el);
   }
 }
+// Anything already settling in by CSS (on-screen blocks on desktop — see
+// global.css) is left to that animation, not hidden and revealed again.
+for (const el of Array.from(candidates)) {
+  if (getComputedStyle(el).animationName.includes('settle-in')) candidates.delete(el);
+}
 
 // Document order, so a batch staggers top-to-bottom, left-to-right.
 const items = Array.from(candidates).sort((a, b) =>

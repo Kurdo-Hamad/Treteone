@@ -1,0 +1,63 @@
+---
+import PageHead from '~/components/PageHead.astro';
+import { homeHref, primaryNav, quoteHref } from '~/data/navigation';
+import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import Base from '~/layouts/Base.astro';
+
+/**
+ * Not-found page. Cloudflare Pages serves the nearest 404.html for any path
+ * with no file (/zh/404.html for paths under /zh/). Without one, Pages treats
+ * the site as a single-page app and answers every bad address with the
+ * homepage and a 200 — a soft 404 for search engines, and a confusing dead end
+ * for a buyer with a mistyped link.
+ *
+ * Same navy band as every detail route, then the site's pages as a short list,
+ * so a lost visitor is one click from somewhere useful. noindex, and left out
+ * of the sitemap (astro.config.mjs).
+ */
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const links = primaryNav.filter((item) => item.href !== homeHref);
+---
+
+<Base title={t('notFound.meta.title')} description={t('notFound.meta.description')} noindex>
+  <PageHead kicker={t('notFound.kicker')} title={t('notFound.title')} lead={t('notFound.lead')}>
+    <div class="nf">
+      <p class="nf__actions">
+        <a class="btn btn-solid" href={localisePath(quoteHref, lang)}>
+          {t('cta.quote')} <span aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn-out" href={localisePath(homeHref, lang)}>{t('notFound.home')}</a>
+      </p>
+      <ul class="nf__links">
+        {
+          links.map((item) => (
+            <li>
+              <a class="rm" href={localisePath(item.href, lang)}>
+                {t(item.key)} <span aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </PageHead>
+</Base>
+
+<style>
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 32px;
+    margin: 36px 0 0;
+    padding: 24px 0 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+</style>

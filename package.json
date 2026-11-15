@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "prebuild": "node scripts/subset-noto-sans-sc.mjs",
     "build": "astro build",
-    "postbuild": "node scripts/verify-noto-sans-sc.mjs",
+    "postbuild": "node scripts/verify-noto-sans-sc.mjs && node scripts/flatten-404.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "budget": "node scripts/check-budget.mjs",

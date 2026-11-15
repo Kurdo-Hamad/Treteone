@@ -407,6 +407,28 @@
   .settle-in > :nth-child(7) { animation-delay: 420ms; }
   .settle-in > :nth-child(n + 8) { animation-delay: 490ms; }
 
+  /* Desktop: the blocks that sit right under a page band, or right under the
+     homepage hero, are already on screen when the page opens — so the scroll
+     reveal never gets to animate them. They settle in instead, just after the
+     band copy, in sequence. Phones show these blocks below the fold, where the
+     scroll reveal handles them (reveal.ts skips anything already settling). */
+  @media (min-width: 961px) {
+    .phead__body :is(.defs > .def, .bfilter, .bcount),
+    .phead__body .rows > li:nth-child(-n + 6),
+    .phead__body .bgrid > li:nth-child(-n + 12),
+    .intro > * {
+      animation: settle-in .9s var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--settle-i, 0) * 70ms + 260ms);
+    }
+    :is(.defs > .def, .rows > li, .bgrid > li, .intro > *):nth-child(2) { --settle-i: 1; }
+    :is(.defs > .def, .rows > li, .bgrid > li):nth-child(3) { --settle-i: 2; }
+    :is(.defs > .def, .rows > li, .bgrid > li):nth-child(4) { --settle-i: 3; }
+    :is(.defs > .def, .rows > li, .bgrid > li):nth-child(5) { --settle-i: 4; }
+    :is(.defs > .def, .rows > li, .bgrid > li):nth-child(6) { --settle-i: 5; }
+    .bgrid > li:nth-child(n + 7) { --settle-i: 6; }
+    .phead__body .bcount { --settle-i: 1; }
+  }
+
   /* Every trailing arrow in a link or button nudges forward on hover. */
   .rm > [aria-hidden='true'],
   .btn > [aria-hidden='true'],
@@ -468,8 +490,12 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: .001ms !important;
+    /* Delays too: a staggered settle-in would otherwise hold items at half
+       opacity for up to ~0.6s before its near-instant animation runs. */
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
+    transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
   .js-reveal .rv { opacity: 1 !important; transform: none !important; }

@@ -8,7 +8,7 @@ import { zh } from './zh/index';
  */
 
 export const languages = {
-  en: { label: 'English', short: 'EN', htmlLang: 'en', ogLocale: 'en' },
+  en: { label: 'English', short: 'EN', htmlLang: 'en', ogLocale: 'en_GB' },
   zh: { label: '中文', short: '中文', htmlLang: 'zh-CN', ogLocale: 'zh_CN' },
 } as const;
 

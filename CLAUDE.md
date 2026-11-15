@@ -81,7 +81,17 @@ The homepage is a gateway; detail lives on its own routes.
 | `/about` | Page head · six definition blocks · registered-details band on pale |
 | `/quote` | The form, on its own page |
 
-Each mirrored under `/zh/`. Fourteen routes.
+Each mirrored under `/zh/`. Fourteen routes, plus a not-found page in each language
+(`src/pages/404.astro`, `zh/404.astro`; noindex, out of the sitemap). Cloudflare
+Pages serves the nearest `404.html` — without one it answers every bad address with
+the homepage and a 200.
+
+**Every `/zh/` page renders its English template** (`<Page />` from `../<route>.astro`);
+the language comes from the URL. Never copy a template into `zh/` — the copies of
+home, brands and quote drifted and missed later changes until Nov 2026.
+
+Share cards: `public/og-card.png` / `og-card-zh.png`, typographic (no stock photo),
+rendered by `scripts/make-og-cards.mjs`.
 
 Every route shares the same masthead (`Header.astro`), the same footer
 (`Footer.astro`), and every detail route opens with the same page head (kicker,

@@ -1,22 +1,12 @@
 ---
-import BrandDirectory from '~/components/BrandDirectory.astro';
-import PageHead from '~/components/PageHead.astro';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
-import Base from '~/layouts/Base.astro';
+import Page from '../brands.astro';
 
 /**
- * /zh/brands — page head, then one filterable brand directory with the
- * trademark disclaimer beneath it (CLAUDE.md §3, §9; approved mockup #v-brands).
- * §13 — the wording stays "Brands we source"; nothing implies authorisation.
+ * /zh/brands — the same page as /brands. Every string resolves from the route's
+ * language (getLangFromUrl reads /zh/ from Astro.url), so the two languages
+ * share one template and cannot drift apart. (This page used to be a copy of
+ * the English template; the copy missed later changes — Nov 2026.)
  */
-
-const t = useTranslations(getLangFromUrl(Astro.url));
 ---
 
-<Base title={t('meta.brands.title')} description={t('meta.brands.description')}>
-  <section class="wrap sec">
-    <PageHead kicker={t('brands.eyebrow')} title={t('brands.title')} lead={t('brands.lede')}>
-      <BrandDirectory />
-    </PageHead>
-  </section>
-</Base>
+<Page />
