@@ -389,7 +389,7 @@ bottom edge (moved from the top, client request Nov 2026) that draws in as they 
   on scroll (CSS scroll-driven; no script; still image where unsupported).
 - Positioning split: cyan block and photograph move at different speeds on scroll.
 - Hover: nav underline grows in, trailing arrows nudge, index rows draw a cyan rule
-  and shift, brand tiles lift. Photo cards (enquiry cards, "About our work", the
+  along their bottom edge and shift, brand tiles lift. Photo cards (enquiry cards, "About our work", the
   capability grid) share one effect in `ImagePlaceholder.astro`: the frame lifts on
   a soft navy shadow, the photograph zooms to 1.1, a cyan bar draws along its foot,
   and the heading takes the link colour — on hover and on keyboard focus alike.

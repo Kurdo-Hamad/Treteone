@@ -79,13 +79,13 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     position: relative;
     transition: background .35s var(--ease-out-expo);
   }
-  /* A cyan rule draws along the top of the hovered row. */
+  /* A cyan rule draws along the bottom of the hovered row. */
   .row::before {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    top: -1px;
+    bottom: -1px;
     height: 2px;
     background: var(--color-cyan);
     transform: scaleX(0);
