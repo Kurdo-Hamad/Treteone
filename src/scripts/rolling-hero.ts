@@ -1,7 +1,7 @@
 /**
  * Homepage rolling hero (CLAUDE.md §6, approved mockup #v-home).
  *
- * Four tab panels, 7s each. Every panel is complete in the HTML; this script
+ * Four tab panels, 5s each. Every panel is complete in the HTML; this script
  * only moves the selection — it never writes copy, so translations stay in
  * src/i18n and the page reads correctly with JS off (panel one stays up).
  *
@@ -34,7 +34,7 @@ if (root) {
   const dwellMs = ((): number => {
     const raw = getComputedStyle(root).getPropertyValue('--hero-dwell').trim();
     const value = parseFloat(raw);
-    if (!Number.isFinite(value) || value <= 0) return 7000;
+    if (!Number.isFinite(value) || value <= 0) return 5000;
     return raw.endsWith('ms') ? value : value * 1000;
   })();
 

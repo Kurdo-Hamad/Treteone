@@ -293,7 +293,8 @@ margins, no gap above.
 - Overlay bottom-left, aligned to the page gutter: eyebrow, rotating title, one
   line, one text link whose target changes per slide.
 - Bar below the image, inside the same container: pause/play button plus four
-  40px progress segments with labels. 7s per slide.
+  80px progress segments with labels. 5s per slide (changed at the client's
+  request, November 2026).
 - **Below 700px: one segment only**, full width, labels visually hidden.
 - A real tablist: `role="tab"`, `aria-selected`, roving tabindex, arrow keys.
 - Freezes under `prefers-reduced-motion`: rests on slide one, play icon showing.
