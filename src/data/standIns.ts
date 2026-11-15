@@ -5,15 +5,17 @@ import heroValves from '~/assets/hero/hero-01.jpg';
 import heroControlRoom from '~/assets/hero/hero-02.jpg';
 import heroControls from '~/assets/hero/hero-03.jpg';
 import heroPlant from '~/assets/hero/hero-04.jpg';
+import heroMachine from '~/assets/hero/hero-05.jpg';
 import automation from '~/assets/products/automation-control.jpg';
 import consumables from '~/assets/products/industrial-consumables.jpg';
+import plantInterior from '~/assets/products/electrical-power.jpg';
+import heavyPlant from '~/assets/products/process-equipment.jpg';
 import fluid from '~/assets/products/hydraulic-pneumatic.jpg';
 import instruments from '~/assets/products/instrumentation-measurement.jpg';
 import mro from '~/assets/products/mechanical-mro.jpg';
 import motors from '~/assets/products/motors-drives-transmission.jpg';
 import pumps from '~/assets/products/pumps.jpg';
 import valves from '~/assets/products/valves-flow-control.jpg';
-import warehouse from '~/assets/about/portrait.jpg';
 import transport from '~/assets/sourcing/plate.jpg';
 
 /**
@@ -49,8 +51,9 @@ const standIns: Partial<Record<UIKey, ImageMetadata>> = {
   'home.enquiries.module.subject': automation,
   'home.enquiries.pump.subject': pumps,
   'home.enquiries.boq.subject': consumables,
-  // positioning split
-  'home.position.subject': warehouse,
+  // positioning split. Not the warehouse photograph: racks of stock beside
+  // "We hold no stock. That is the point." contradict the copy.
+  'home.position.subject': plantInterior,
   // capability grid
   'home.caps.automation.subject': automation,
   'home.caps.instruments.subject': instruments,
@@ -63,6 +66,22 @@ const standIns: Partial<Record<UIKey, ImageMetadata>> = {
   // "About our work"
   'home.work.quote.subject': transport,
 };
+
+/** Page-head bands on the detail routes (PageHead.astro). */
+export type PageImageKey = 'products' | 'industries' | 'sourcing' | 'brands' | 'about';
+
+const pageImages: Record<PageImageKey, ImageMetadata> = {
+  products: heroMachine,
+  industries: heavyPlant,
+  sourcing: heroControlRoom,
+  brands: heroControls,
+  about: heroPlant,
+};
+
+/** The stand-in photograph for a page-head band, or undefined for plain navy. */
+export function pageImage(page: PageImageKey): ImageMetadata | undefined {
+  return SHOW_STAND_INS ? pageImages[page] : undefined;
+}
 
 /** The stand-in photograph for a slot, or undefined to keep the placeholder. */
 export function standIn(subjectKey: UIKey): ImageMetadata | undefined {

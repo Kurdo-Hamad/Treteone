@@ -58,10 +58,10 @@ const rows: readonly (readonly string[])[] = [
                       {tile.logo ? (
                         <img src={tile.logo} alt="" loading="lazy" decoding="async" />
                       ) : (
-                        t('home.brands.logo')
+                        <span class="mtile__name">{name}</span>
                       )}
                     </span>
-                    <small>{name}</small>
+                    {tile.logo && <small>{name}</small>}
                   </div>
                 );
               }),
@@ -136,28 +136,28 @@ const rows: readonly (readonly string[])[] = [
     margin-right: clamp(12px, 1.6vw, 18px);
     text-align: center;
   }
+  /* Logo slot (§9): with no logo file the tile carries the brand name as a
+     quiet wordmark instead of a "LOGO" placeholder. */
   .mtile__box {
     position: relative;
     display: grid;
     place-items: center;
     aspect-ratio: 3 / 2;
-    background: var(--surface-pale);
-    font-family: var(--font-stack-mono);
-    font-size: .6rem;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    transition: background var(--dur-fast);
+    padding: 12px;
+    background: var(--surface-page);
+    border: 1px solid var(--line);
+    text-align: center;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
   }
-  .mtile__box::after {
-    content: '';
-    position: absolute;
-    inset: 8px;
-    border: 1px dashed var(--placeholder-dash);
-    transition: border-color var(--dur-fast);
-  }
-  .mtile__box--logo::after {
-    display: none;
+  .mtile__name {
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: clamp(.8125rem, .76rem + .22vw, .95rem);
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--color-navy);
+    opacity: .7;
+    transition: opacity var(--dur-fast);
   }
   .mtile__box img {
     max-width: 70%;
@@ -168,10 +168,11 @@ const rows: readonly (readonly string[])[] = [
     transition: filter var(--dur-fast);
   }
   .mtile:hover .mtile__box {
-    background: var(--surface-pale-hover);
+    border-color: var(--color-navy);
+    background: var(--surface-pale);
   }
-  .mtile:hover .mtile__box::after {
-    border-color: var(--color-cyan);
+  .mtile:hover .mtile__name {
+    opacity: 1;
   }
   .mtile:hover .mtile__box img {
     filter: none;

@@ -109,22 +109,35 @@ const figures: readonly Figure[] = [
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: clamp(22px, 3vw, 40px);
-    margin: 32px 0 0;
+    margin: clamp(28px, 3.4vw, 44px) 0 0;
   }
   /* Value above label visually; label first in the DOM so each pair reads
-     as term then figure. */
+     as term then figure. Each figure stands on a hairline with a short cyan
+     segment at its start — the site's one accent, used as a measure. */
   .glance__item {
+    position: relative;
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-end;
+    padding-top: 22px;
+    border-top: 1px solid var(--placeholder-dash);
+  }
+  .glance__item::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 32px;
+    height: 2px;
+    background: var(--color-cyan);
   }
   .glance__value {
     margin: 0;
     font-family: var(--font-stack-display);
-    font-weight: 700;
-    font-size: 1.65rem;
-    line-height: 1.05;
-    letter-spacing: -.03em;
+    font-weight: 600;
+    font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -.035em;
     color: var(--color-navy);
     font-variant-numeric: tabular-nums;
   }
@@ -132,9 +145,10 @@ const figures: readonly Figure[] = [
     letter-spacing: 0;
   }
   .glance__label {
-    margin-top: 6px;
-    font-size: .8125rem;
-    line-height: 1.5;
+    margin-top: 12px;
+    max-width: 30ch;
+    font-size: .875rem;
+    line-height: 1.55;
     color: var(--text-quiet);
   }
 
@@ -149,7 +163,7 @@ const figures: readonly Figure[] = [
   }
   @media (max-width: 560px) {
     .glance {
-      grid-template-columns: 1fr;
+      gap: 28px 20px;
     }
   }
 </style>

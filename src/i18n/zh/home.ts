@@ -129,7 +129,6 @@ export const home: HomeStrings = {
   // ---- 8. brand marquee ---------------------------------------------------
   'home.brands.heading': '我们采购的品牌',
   'home.brands.note': '以下是询价最多的制造商。如果没有您需要的品牌，请直接询问——这份名单反映的是需求，而不是我们采购能力的上限。',
-  'home.brands.logo': '标志',
   'home.brands.listLabel': '我们采购的制造商',
   'home.brands.more': '进一步了解品牌',
   'home.brands.disclaimer':

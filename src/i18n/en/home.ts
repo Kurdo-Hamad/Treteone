@@ -147,7 +147,6 @@ export const home = {
   'home.brands.heading': 'Brands we source',
   'home.brands.note':
     'The manufacturers requested most often. If yours is not shown, ask — the list reflects demand, not the limit of what can be sourced.',
-  'home.brands.logo': 'Logo',
   'home.brands.listLabel': 'Manufacturers we source',
   'home.brands.more': 'Read more about brands',
   'home.brands.disclaimer':

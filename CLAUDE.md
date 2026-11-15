@@ -83,9 +83,13 @@ The homepage is a gateway; detail lives on its own routes.
 
 Each mirrored under `/zh/`. Fourteen routes.
 
-Every route shares the same masthead (`Header.astro`), the same compact footer
+Every route shares the same masthead (`Header.astro`), the same footer
 (`Footer.astro`), and every detail route opens with the same page head (kicker,
-h1, lead), so the seven pages read as one product.
+h1, lead), so the seven pages read as one product. On /products, /industries,
+/sourcing, /brands and /about the page head is a full-bleed navy band flush
+under the masthead, with a photograph on the right behind a navy scrim
+(`PageHead.astro`, image from `pageImage()` in `src/data/standIns.ts`); /quote
+uses the plain variant inside its navy form band.
 
 **No per-category pages.** Twelve pages each holding one heading and a line of
 subcategory names is thin content — a buyer reads it as padding and Google treats it
@@ -380,8 +384,9 @@ Until set, the endpoint returns 502 and the form tells the buyer to email direct
 
 ## 9. Brands
 
-- Logo placeholders for every brand — a dashed tile carrying the name, resolved at
-  **build time** by reading `public/logos/`. No `<img onerror>`; no error handler for
+- Logo placeholders for every brand — a hairline tile carrying the brand name as a
+  quiet wordmark (no "LOGO" text; changed for a more finished look, Nov 2026),
+  resolved at **build time** by reading `public/logos/`. No `<img onerror>`; no error handler for
   the CSP to trip; no broken-image flash.
 - Dropping `siemens.svg` into `public/logos/` replaces that tile. Nothing else changes.
 - The build **refuses a raster wrapped in an SVG** and names the file. This is the

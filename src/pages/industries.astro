@@ -1,6 +1,7 @@
 ---
 import IndexRows from '~/components/IndexRows.astro';
 import PageHead from '~/components/PageHead.astro';
+import { pageImage } from '~/data/standIns';
 import { industries } from '~/data/industries';
 import { quoteHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
@@ -26,18 +27,17 @@ const rows = industries.map((industry) => ({
 ---
 
 <Base title={t('meta.industries.title')} description={t('meta.industries.description')}>
-  <div class="wrap sec">
-    <PageHead
-      kicker={t('industries.page.kicker')(industries.length)}
-      title={t('industries.page.title')}
-      lead={t('industries.page.lead')}
-    >
-      <IndexRows
-        rows={rows}
-        href={localisePath(quoteHref, lang)}
-        action={t('industries.rows.enquire')}
-        label={t('industries.listLabel')}
-      />
-    </PageHead>
-  </div>
+  <PageHead
+    kicker={t('industries.page.kicker')(industries.length)}
+    title={t('industries.page.title')}
+    lead={t('industries.page.lead')}
+    image={pageImage('industries')}
+  >
+    <IndexRows
+      rows={rows}
+      href={localisePath(quoteHref, lang)}
+      action={t('industries.rows.enquire')}
+      label={t('industries.listLabel')}
+    />
+  </PageHead>
 </Base>

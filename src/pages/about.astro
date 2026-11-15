@@ -1,6 +1,7 @@
 ---
 import DefinitionGrid from '~/components/DefinitionGrid.astro';
 import PageHead from '~/components/PageHead.astro';
+import { pageImage } from '~/data/standIns';
 import { company, mailHref, telHref } from '~/data/company';
 import { getLangFromUrl, languages, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
@@ -40,15 +41,14 @@ const definitions = [
 ---
 
 <Base title={t('meta.about.title')} description={t('meta.about.description')}>
-  <div class="wrap sec">
-    <PageHead
-      kicker={t('about.page.kicker')}
-      title={t('about.page.title')}
-      lead={t('about.page.lead')(company.registeredName)}
-    >
-      <DefinitionGrid items={definitions} />
-    </PageHead>
-  </div>
+  <PageHead
+    kicker={t('about.page.kicker')}
+    title={t('about.page.title')}
+    lead={t('about.page.lead')(company.registeredName)}
+    image={pageImage('about')}
+  >
+    <DefinitionGrid items={definitions} />
+  </PageHead>
 
   <section class="pale" aria-labelledby="registered-title">
     <div class="wrap sec">
@@ -90,23 +90,29 @@ const definitions = [
     grid-column: span 2;
   }
 
+  /* Labels as small caps, values at reading size — the same pattern as the
+     footer's contact block, so the two read as one system. */
+  .reg__item {
+    padding-top: 18px;
+    border-top: 1px solid var(--placeholder-dash);
+  }
   .reg dt {
     font-family: var(--font-stack-display);
-    font-weight: 700;
-    font-size: 1.1rem;
-    line-height: 1.05;
-    letter-spacing: -.03em;
-    color: var(--fg-heading);
+    font-weight: 600;
+    font-size: var(--fs-kicker);
+    letter-spacing: var(--tracking-kicker);
+    text-transform: uppercase;
+    color: var(--fg-kicker);
   }
   html[lang^='zh'] .reg dt {
-    letter-spacing: 0;
+    letter-spacing: .06em;
   }
 
   .reg dd {
-    margin: 6px 0 0;
-    font-size: .8125rem;
-    line-height: 1.5;
-    color: var(--fg-muted);
+    margin: 10px 0 0;
+    font-size: .9375rem;
+    line-height: 1.6;
+    color: var(--fg-strong);
     overflow-wrap: anywhere;
   }
   /* The mockup shows these as plain text; as links they take link-blue and

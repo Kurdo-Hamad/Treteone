@@ -1,6 +1,7 @@
 ---
 import BrandDirectory from '~/components/BrandDirectory.astro';
 import PageHead from '~/components/PageHead.astro';
+import { pageImage } from '~/data/standIns';
 import { getLangFromUrl, useTranslations } from '~/i18n/ui';
 import Base from '~/layouts/Base.astro';
 
@@ -14,9 +15,12 @@ const t = useTranslations(getLangFromUrl(Astro.url));
 ---
 
 <Base title={t('meta.brands.title')} description={t('meta.brands.description')}>
-  <section class="wrap sec">
-    <PageHead kicker={t('brands.eyebrow')} title={t('brands.title')} lead={t('brands.lede')}>
-      <BrandDirectory />
-    </PageHead>
-  </section>
+  <PageHead
+    kicker={t('brands.eyebrow')}
+    title={t('brands.title')}
+    lead={t('brands.lede')}
+    image={pageImage('brands')}
+  >
+    <BrandDirectory />
+  </PageHead>
 </Base>

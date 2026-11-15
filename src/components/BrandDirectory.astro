@@ -95,10 +95,12 @@ const searchKey = (name: string): string => name.toLowerCase();
             {tile.logo ? (
               <img src={tile.logo} alt="" loading="lazy" decoding="async" />
             ) : (
-              t('brands.logoSlot')
+              <span class="box__name">{tile.name}</span>
             )}
           </span>
-          <span class="name">{tile.name}</span>
+          {/* Until a logo file exists the tile itself shows the name, so the
+              caption would repeat it; it stays for assistive tech. */}
+          <span class:list={['name', { 'sr-only': tile.logo === null }]}>{tile.name}</span>
         </li>
       ))
     }
@@ -249,28 +251,36 @@ const searchKey = (name: string): string => name.toLowerCase();
   .btile {
     text-align: center;
   }
+  /* The tile is the logo slot (§9). With no logo file yet it carries the
+     brand name set as a quiet wordmark — a clean placeholder rather than a
+     box that says "LOGO". Dropping slug.svg into public/logos/ replaces it. */
   .box {
     position: relative;
     display: grid;
     place-items: center;
     aspect-ratio: 3 / 2;
-    padding: 12px;
+    padding: 14px;
+    background: var(--surface-page);
+    border: 1px solid var(--line);
+    text-align: center;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
+  }
+  .box__name {
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: clamp(.875rem, .8rem + .25vw, 1rem);
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--color-navy);
+    opacity: .72;
+    transition: opacity var(--dur-fast);
+  }
+  .btile:hover .box {
+    border-color: var(--color-navy);
     background: var(--surface-pale);
-    font-family: var(--font-stack-mono);
-    font-size: .6rem;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
   }
-  .box::after {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    border: 1px dashed var(--placeholder-dash);
-    pointer-events: none;
-  }
-  .box--logo::after {
-    display: none;
+  .btile:hover .box__name {
+    opacity: 1;
   }
   /* §9 — logos greyscale, full colour on hover. */
   .box img {
@@ -336,6 +346,10 @@ const searchKey = (name: string): string => name.toLowerCase();
   @media (max-width: 560px) {
     .bgrid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* Shorter tiles on phones, so 32 names are not a long scroll. */
+    .box {
+      aspect-ratio: 2 / 1;
     }
   }
 </style>

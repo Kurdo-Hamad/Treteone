@@ -1,6 +1,7 @@
 ---
 import DefinitionGrid from '~/components/DefinitionGrid.astro';
 import PageHead from '~/components/PageHead.astro';
+import { pageImage } from '~/data/standIns';
 import ProcessSteps from '~/components/ProcessSteps.astro';
 import { quoteHref } from '~/data/navigation';
 import { processSteps } from '~/data/process';
@@ -42,15 +43,14 @@ const steps = processSteps.map((step, i) => ({
 ---
 
 <Base title={t('meta.sourcing.title')} description={t('meta.sourcing.description')}>
-  <div class="wrap sec">
-    <PageHead
-      kicker={t('sourcing.page.kicker')}
-      title={t('sourcing.page.title')}
-      lead={t('sourcing.page.lead')}
-    >
-      <DefinitionGrid items={definitions} />
-    </PageHead>
-  </div>
+  <PageHead
+    kicker={t('sourcing.page.kicker')}
+    title={t('sourcing.page.title')}
+    lead={t('sourcing.page.lead')}
+    image={pageImage('sourcing')}
+  >
+    <DefinitionGrid items={definitions} />
+  </PageHead>
 
   <section class="navy" aria-labelledby="send-title">
     <div class="wrap sec">

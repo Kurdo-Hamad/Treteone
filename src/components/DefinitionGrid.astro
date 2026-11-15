@@ -39,12 +39,18 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2';
   .defs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(24px, 3.4vw, 46px);
+    gap: clamp(28px, 3.4vw, 44px) clamp(28px, 4.4vw, 64px);
     margin-top: 32px;
   }
 
+  /* Each block stands on a hairline, like the index rows above it on other
+     pages, so the grid reads as a set of entries rather than loose text. */
+  .def {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
   .def__title {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 1.0625rem;
     line-height: 1.35;
   }

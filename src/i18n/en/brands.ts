@@ -33,8 +33,6 @@ export const brands = {
   'brands.group.fluid': 'Pneumatics & hydraulics',
   'brands.showingAll': (n: number) => `Showing all ${n} manufacturers`,
   'brands.showing': (shown: number, total: number) => `Showing ${shown} of ${total}`,
-  /** The word in an empty logo slot. Decorative: the name sits beneath it. */
-  'brands.logoSlot': 'Logo',
 
   'brands.none.title': 'Not on the list',
   'brands.none.body':

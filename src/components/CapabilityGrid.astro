@@ -29,6 +29,12 @@ const caps = [
 
 const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): TextKey =>
   `home.caps.${cap}.${part}`;
+
+/* Headings are written "Automation & control — the logic layer" (and with
+   "——" in Chinese). Set the name and the clause on their own lines instead of
+   letting the dash fall wherever the line breaks. */
+const splitHeading = (heading: string): string[] =>
+  heading.split(/\s*(?:——|—)\s*/).filter((part) => part.length > 0);
 ---
 
 <section aria-labelledby="caps-title">
@@ -44,7 +50,18 @@ const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): 
               variant="small"
               image={standIn(key(cap, 'subject'))}
             />
-            <h3>{t(key(cap, 'heading'))}</h3>
+            <h3>
+              {splitHeading(t(key(cap, 'heading'))).map((part, i) =>
+                i === 0 ? (
+                  <span class="cap__name">{part}</span>
+                ) : (
+                  <>
+                    <span class="sr-only"> — </span>
+                    <span class="cap__clause">{part}</span>
+                  </>
+                ),
+              )}
+            </h3>
             <p>{t(key(cap, 'body'))}</p>
           </li>
         ))
@@ -75,8 +92,17 @@ const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): 
     margin-bottom: 16px;
   }
   .cap h3 {
-    font-size: .9375rem;
-    line-height: 1.35;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  .cap__name,
+  .cap__clause {
+    display: block;
+  }
+  .cap__clause {
+    margin-top: 2px;
+    font-weight: 400;
+    color: var(--text-muted);
   }
   .cap p {
     margin-top: 8px;

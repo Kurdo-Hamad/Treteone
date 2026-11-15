@@ -1,6 +1,7 @@
 ---
 import IndexRows from '~/components/IndexRows.astro';
 import PageHead from '~/components/PageHead.astro';
+import { pageImage } from '~/data/standIns';
 import ScopeSteps from '~/components/ScopeSteps.astro';
 import { categories } from '~/data/categories';
 import { quoteHref } from '~/data/navigation';
@@ -26,19 +27,18 @@ const rows = categories.map((category) => ({
 ---
 
 <Base title={t('meta.products.title')} description={t('meta.products.description')}>
-  <div class="wrap sec">
-    <PageHead
-      kicker={t('products.page.kicker')(categories.length)}
-      title={t('products.page.title')}
-      lead={t('products.page.lead')}
-    >
-      <IndexRows
-        rows={rows}
-        href={localisePath(quoteHref, lang)}
-        action={t('products.rows.enquire')}
-        label={t('products.listLabel')}
-      />
-    </PageHead>
-  </div>
+  <PageHead
+    kicker={t('products.page.kicker')(categories.length)}
+    title={t('products.page.title')}
+    lead={t('products.page.lead')}
+    image={pageImage('products')}
+  >
+    <IndexRows
+      rows={rows}
+      href={localisePath(quoteHref, lang)}
+      action={t('products.rows.enquire')}
+      label={t('products.listLabel')}
+    />
+  </PageHead>
   <ScopeSteps />
 </Base>

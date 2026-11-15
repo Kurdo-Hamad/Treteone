@@ -28,7 +28,6 @@ export const brands: BrandsStrings = {
   'brands.group.fluid': '气动与液压',
   'brands.showingAll': (n: number) => `显示全部 ${n} 个制造商`,
   'brands.showing': (shown: number, total: number) => `显示 ${shown} 个，共 ${total} 个`,
-  'brands.logoSlot': '标志',
 
   'brands.none.title': '不在列表中',
   'brands.none.body':

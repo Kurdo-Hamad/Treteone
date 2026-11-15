@@ -206,6 +206,12 @@ const sizing = {
     transform: scale(1.03);
   }
 
+  /* On a pale band the placeholder takes the white ground, or it would vanish
+     into the band and leave a floating dashed frame. */
+  :global(.pale) .ph:not(.ph--photo):not(.ph--hero) {
+    background: var(--surface-page);
+  }
+
   /* A card that wraps a placeholder highlights its frame on hover. */
   :global(a:hover) > .ph::after,
   :global(.card:hover) .ph::after {
