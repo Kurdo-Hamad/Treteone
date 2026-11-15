@@ -40,7 +40,12 @@ export const common = {
   'placeholder.label': (subject: string) => `Photograph to come: ${subject}`,
 
   // ---- footer -------------------------------------------------------------
-  'footer.label': 'Footer',
+  'footer.tagline': 'Industrial supply and sourcing, from Guangzhou to plants worldwide.',
+  'footer.ctaKicker': 'Have a part number?',
+  'footer.email': 'Email',
+  'footer.phone': 'Phone · WhatsApp',
+  'footer.office': 'Office',
+  'footer.top': 'Back to top',
   'footer.rights': (year: number, name: string) => `© ${year} ${name}`,
 };
 

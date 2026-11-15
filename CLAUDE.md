@@ -507,7 +507,7 @@ here so nobody "fixes" it back by accident:
 | Type scale | `--fs-h1` up to 4.5rem, body up to 1.35rem | `--fs-display` up to 3.4rem, body 1rem |
 | Buttons | General Sans 500, square, uppercase | General Sans 600, pill, sentence case |
 | Header | transparent over the hero, white after | solid navy always, single row, Home in the nav |
-| Footer | four columns, copy-address button, licence placeholder | compact: wordmark, registered name, address, one row of links, email and phone |
+| Footer | four columns, copy-address button, licence placeholder | no navigation (client request, Nov 2026): wordmark, registered name, tagline, quote button; labelled email, phone, office; © and back-to-top |
 | Hero | five photographs, three buttons on the image, frame counter | four tab panels, one rotating line and link, tab bar below the image |
 | Homepage | ecosystem, industries preview, closing CTA | the nine blocks in §7 |
 | Count-up stats | removed (§7, previous version) | 12 and 9 count up once on the at-a-glance band |

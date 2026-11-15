@@ -40,6 +40,11 @@ export const common: CommonStrings = {
   'placeholder.label': (subject: string) => `待补充照片：${subject}`,
 
   // ---- footer -------------------------------------------------------------
-  'footer.label': '页脚',
+  'footer.tagline': '工业供应与采购——立足广州，服务全球工厂。',
+  'footer.ctaKicker': '有零件型号？',
+  'footer.email': '电子邮件',
+  'footer.phone': '电话 · WhatsApp',
+  'footer.office': '办公地址',
+  'footer.top': '返回顶部',
   'footer.rights': (year: number, name: string) => `© ${year} ${name}`,
 };

@@ -47,13 +47,3 @@ export const companyNav: readonly NavItem[] = [
   { key: 'nav.brands', href: brandsHref },
   { key: 'cta.quote', href: quoteHref },
 ];
-
-/** The compact footer's single row of links (approved mockup). */
-export const footerNav: readonly NavItem[] = [
-  { key: 'nav.products', href: productsHref },
-  { key: 'nav.industries', href: industriesHref },
-  { key: 'nav.sourcing', href: sourcingHref },
-  { key: 'nav.brands', href: brandsHref },
-  { key: 'nav.about', href: aboutHref },
-  { key: 'cta.quote', href: quoteHref },
-];
