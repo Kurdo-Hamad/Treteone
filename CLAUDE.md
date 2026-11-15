@@ -369,7 +369,11 @@ to content that starts below the fold, and only once JS has run.
   on scroll (CSS scroll-driven; no script; still image where unsupported).
 - Positioning split: cyan block and photograph move at different speeds on scroll.
 - Hover: nav underline grows in, trailing arrows nudge, index rows draw a cyan rule
-  and shift, brand tiles lift, card headings take the link colour.
+  and shift, brand tiles lift. Photo cards (enquiry cards, "About our work", the
+  capability grid) share one effect in `ImagePlaceholder.astro`: the frame lifts on
+  a soft navy shadow, the photograph zooms to 1.1, a cyan bar draws along its foot,
+  and the heading takes the link colour — on hover and on keyboard focus alike.
+  Each capability item links to its row on /products (`#<category-slug>`).
 - /brands: choosing a discipline re-deals the visible tiles.
 - Keep `animation-timeline` in its own rule (the minifier otherwise folds it into
   the `animation` shorthand, which browsers reject), and use `overflow: clip`, not

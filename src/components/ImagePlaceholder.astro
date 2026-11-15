@@ -200,10 +200,41 @@ const sizing = {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform .6s var(--ease);
+    transition: transform .9s var(--ease-out-expo);
   }
-  :global(.card:hover) .ph--photo :global(.ph__img) {
-    transform: scale(1.03);
+
+  /* -- photo cards: hover and keyboard focus ---------------------------------
+     Any card link that wraps a placeholder (.card, .cap__link): the frame
+     lifts on a soft navy shadow, the photograph zooms in, and a cyan bar
+     draws along its foot. Focus gets the same, so a keyboard user sees what
+     a mouse user sees (§11). The hero is excluded — it is not a card. */
+  .ph:not(.ph--hero) {
+    transition:
+      transform .5s var(--ease-out-expo),
+      box-shadow .5s var(--ease-out-expo);
+  }
+  .ph:not(.ph--hero)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    height: 3px;
+    background: var(--color-cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .55s var(--ease-out-expo);
+  }
+  :global(:is(.card, .cap__link):is(:hover, :focus-visible)) .ph:not(.ph--hero) {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-floating);
+  }
+  :global(:is(.card, .cap__link):is(:hover, :focus-visible)) .ph:not(.ph--hero)::before {
+    transform: none;
+  }
+  :global(:is(.card, .cap__link):is(:hover, :focus-visible)) .ph--photo :global(.ph__img) {
+    transform: scale(1.1);
   }
 
   /* On a pale band the placeholder takes the white ground, or it would vanish
@@ -212,9 +243,10 @@ const sizing = {
     background: var(--surface-page);
   }
 
-  /* A card that wraps a placeholder highlights its frame on hover. */
+  /* A card that wraps a placeholder (no photograph yet) highlights its
+     dashed frame on hover. */
   :global(a:hover) > .ph::after,
-  :global(.card:hover) .ph::after {
+  :global(:is(.card, .cap__link):hover) .ph::after {
     border-color: var(--color-cyan);
   }
 

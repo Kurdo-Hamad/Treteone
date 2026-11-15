@@ -30,6 +30,20 @@ const caps = [
 const key = (cap: (typeof caps)[number], part: 'subject' | 'heading' | 'body'): TextKey =>
   `home.caps.${cap}.${part}`;
 
+/* Each item opens its own row on /products (IndexRows gives every row the
+   category slug as its id), so the hover leads somewhere real. */
+const categoryOf: Record<(typeof caps)[number], string> = {
+  automation: 'automation-control',
+  instruments: 'instrumentation-measurement',
+  valves: 'valves-flow-control',
+  pumps: 'pumps',
+  motors: 'motors-drives-transmission',
+  fluid: 'hydraulic-pneumatic',
+  mro: 'mechanical-mro',
+  consumables: 'industrial-consumables',
+};
+const productsPath = localisePath(productsHref, lang);
+
 /* Headings are written "Automation & control — the logic layer" (and with
    "——" in Chinese). Set the name and the clause on their own lines instead of
    letting the dash fall wherever the line breaks. */
@@ -45,12 +59,13 @@ const splitHeading = (heading: string): string[] =>
       {
         caps.map((cap) => (
           <li class="cap rv">
+            <a class="cap__link" href={`${productsPath}#${categoryOf[cap]}`} aria-labelledby={`cap-${cap}`}>
             <ImagePlaceholder
               subject={t(key(cap, 'subject'))}
               variant="small"
               image={standIn(key(cap, 'subject'))}
             />
-            <h3>
+            <h3 id={`cap-${cap}`}>
               {splitHeading(t(key(cap, 'heading'))).map((part, i) =>
                 i === 0 ? (
                   <span class="cap__name">{part}</span>
@@ -63,6 +78,7 @@ const splitHeading = (heading: string): string[] =>
               )}
             </h3>
             <p>{t(key(cap, 'body'))}</p>
+            </a>
           </li>
         ))
       }
@@ -88,8 +104,19 @@ const splitHeading = (heading: string): string[] =>
     padding: 0;
     list-style: none;
   }
+  .cap__link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
   .cap :global(.ph) {
     margin-bottom: 16px;
+  }
+  .cap h3 {
+    transition: color .2s;
+  }
+  .cap__link:is(:hover, :focus-visible) .cap__name {
+    color: var(--fg-link);
   }
   .cap h3 {
     font-size: 1rem;

@@ -136,7 +136,7 @@ const titleId = `${set}-title`;
     margin-top: 16px;
     transition: color .2s;
   }
-  .card:hover h3 {
+  .card:is(:hover, :focus-visible) h3 {
     color: var(--fg-link);
   }
   .card p {
@@ -149,7 +149,7 @@ const titleId = `${set}-title`;
     margin-top: 12px;
     transition: transform var(--dur-fast) var(--ease), color var(--dur-fast);
   }
-  .card:hover .rm {
+  .card:is(:hover, :focus-visible) .rm {
     transform: translateX(4px);
   }
 
