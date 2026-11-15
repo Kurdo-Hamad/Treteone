@@ -448,7 +448,7 @@
 
   /* Cyan measure on text blocks: definitions, registered details, process
      steps and the numbered "what to send" rows. A short cyan rule on the
-     block's top edge that draws in when the block arrives, and runs the full
+     block's bottom edge that draws in when the block arrives, and runs the full
      width on hover. Cyan-light on navy. */
   :is(.def, .reg__item, .step, .checklist > li, .htf__list > li) {
     position: relative;
@@ -456,7 +456,7 @@
   :is(.def, .reg__item, .step, .checklist > li, .htf__list > li)::before {
     content: '';
     position: absolute;
-    top: -1px;
+    bottom: -1px;
     left: 0;
     width: 48px;
     height: 3px;

@@ -375,8 +375,8 @@ Blocks right under a page band or the homepage hero (definitions, first index
 rows, brand filter and first tiles, intro) are not the largest paint, so on desktop
 they *rise in* from hidden (`rise-in`, 1.1 s, 120 ms stagger) — "settle-in" was too
 subtle and read as static (client, Nov 2026). Definitions, registered details,
-process steps and "what to send" rows carry a 48 × 3px cyan measure that draws in
-as they arrive and runs full width on hover.
+process steps and "what to send" rows carry a 48 × 3px cyan measure on their
+bottom edge (moved from the top, client request Nov 2026) that draws in as they arrive and runs full width on hover.
 
 **Motion (added Nov 2026, client request "more dynamic").** All of it stops under
 `prefers-reduced-motion`; none of it hides content when JS is off.

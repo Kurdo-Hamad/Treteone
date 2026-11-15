@@ -112,20 +112,20 @@ const figures: readonly Figure[] = [
     margin: clamp(28px, 3.4vw, 44px) 0 0;
   }
   /* Value above label visually; label first in the DOM so each pair reads
-     as term then figure. Each figure stands on a hairline with a short cyan
+     as term then figure. Each figure sits above a hairline with a short cyan
      segment at its start — the site's one accent, used as a measure. */
   .glance__item {
     position: relative;
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-end;
-    padding-top: 22px;
-    border-top: 1px solid var(--placeholder-dash);
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--placeholder-dash);
   }
   .glance__item::before {
     content: '';
     position: absolute;
-    top: -1px;
+    bottom: -1px;
     left: 0;
     width: 32px;
     height: 2px;
