@@ -49,7 +49,7 @@ const hasBody = Astro.slots.has('default');
               alt=""
               formats={['avif', 'webp']}
               widths={[480, 800, 1200, 1600].filter((w) => w <= image.width)}
-              sizes="(max-width: 960px) 100vw, 48vw"
+              sizes="(max-width: 960px) 100vw, 50vw"
               loading="eager"
               fetchpriority="high"
               decoding="async"
@@ -101,8 +101,10 @@ const hasBody = Astro.slots.has('default');
     z-index: 2;
     padding-block: clamp(56px, 7.5vw, 104px) clamp(48px, 6.5vw, 88px);
   }
+  /* The copy stays in the left half; the photograph starts at the centre
+     line. They never overlap on desktop, so the photograph can stay clear. */
   .phead--media .phead__in > * {
-    max-width: min(620px, 54%);
+    max-width: min(600px, calc(50% - 48px));
   }
 
   .phead h1 {
@@ -127,8 +129,12 @@ const hasBody = Astro.slots.has('default');
     top: 0;
     right: 0;
     bottom: 0;
-    width: 48%;
+    left: 50%;
     z-index: 0;
+    /* The drift enlarges the photograph slightly; clip it to its box so no
+       edge ever shows outside the shading. clip, not hidden, so the
+       scroll-driven drift still follows the page. */
+    overflow: clip;
   }
   .phead__media :global(picture) {
     display: block;
@@ -144,7 +150,7 @@ const hasBody = Astro.slots.has('default');
     animation: phead-settle 1.8s var(--ease-out-expo) both;
   }
   @keyframes phead-settle {
-    from { transform: scale(1.1); opacity: .4; }
+    from { transform: scale(1.1); opacity: .7; }
     to { transform: none; opacity: 1; }
   }
 
@@ -172,11 +178,14 @@ const hasBody = Astro.slots.has('default');
     content: '';
     position: absolute;
     inset: 0;
+    /* Light shading: a soft navy join at the left edge only, then the
+       photograph shows clearly (client request, Nov 2026). */
     background: linear-gradient(
       to right,
       var(--color-navy) 0%,
-      rgb(var(--scrim-rgb) / .55) 38%,
-      rgb(var(--scrim-rgb) / .12) 100%
+      rgb(var(--scrim-rgb) / .35) 14%,
+      rgb(var(--scrim-rgb) / .08) 36%,
+      rgb(var(--scrim-rgb) / 0) 60%
     );
   }
 
@@ -208,17 +217,27 @@ const hasBody = Astro.slots.has('default');
     margin-top: 0;
   }
 
-  /* Phones and tablets: the photograph sits behind the whole band under a
-     heavier scrim, so the copy keeps its full width. */
+  /* Phones and tablets: the photograph gets its own strip above the copy,
+     so it shows clearly and the text sits on plain navy. A short fade at
+     the bottom of the strip joins it to the band. */
   @media (max-width: 960px) {
     .phead--media .phead__in > * {
       max-width: none;
     }
     .phead__media {
-      width: 100%;
+      position: relative;
+      left: auto;
+      height: clamp(190px, 46vw, 340px);
     }
     .phead__media::after {
-      background: rgb(var(--scrim-rgb) / .84);
+      background: linear-gradient(
+        to bottom,
+        rgb(var(--scrim-rgb) / 0) 55%,
+        var(--color-navy) 100%
+      );
+    }
+    .phead--media .phead__in {
+      padding-top: clamp(20px, 4vw, 32px);
     }
   }
 </style>

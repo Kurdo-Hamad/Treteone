@@ -87,7 +87,10 @@ Every route shares the same masthead (`Header.astro`), the same footer
 (`Footer.astro`), and every detail route opens with the same page head (kicker,
 h1, lead), so the seven pages read as one product. On /products, /industries,
 /sourcing, /brands and /about the page head is a full-bleed navy band flush
-under the masthead, with a photograph on the right behind a navy scrim
+under the masthead. The photograph fills the right half (from the centre line,
+clipped to its box) with only a soft navy join at its left edge, so it shows
+clearly; the copy stays in the left half. Below 960px the photograph is its own
+strip above the copy (client request, Nov 2026: no gaps, less shade).
 (`PageHead.astro`, image from `pageImage()` in `src/data/standIns.ts`); /quote
 uses the plain variant inside its navy form band.
 
