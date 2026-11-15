@@ -1,6 +1,6 @@
 /**
  * Masthead behaviour (approved mockup): the hamburger drawer below 960px,
- * the 2px scroll-progress line, and the slightly tighter bar once scrolled.
+ * and the slightly tighter bar once scrolled.
  *
  * No inline handlers anywhere — the CSP is `default-src 'self'` (§10).
  * No copy in here either: every label the script needs is rendered into a
@@ -13,7 +13,6 @@
 const header = document.querySelector<HTMLElement>('[data-header]');
 const drawer = document.querySelector<HTMLElement>('[data-header-drawer]');
 const burger = document.querySelector<HTMLButtonElement>('[data-header-burger]');
-const progress = document.querySelector<HTMLElement>('[data-header-progress]');
 
 /* -- hamburger drawer ----------------------------------------------------- */
 if (header && drawer && burger) {
@@ -53,15 +52,12 @@ if (header && drawer && burger) {
   });
 }
 
-/* -- scroll progress and the tighter bar --------------------------------- */
-if (header && progress) {
+/* -- the slightly tighter bar once scrolled ------------------------------ */
+if (header) {
   let ticking = false;
 
   const update = (): void => {
     ticking = false;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-    progress.style.transform = `scaleX(${ratio})`;
     header.classList.toggle('is-stuck', window.scrollY > 40);
   };
 

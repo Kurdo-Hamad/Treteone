@@ -404,8 +404,8 @@ bottom edge (moved from the top, client request Nov 2026) that draws in as they 
   the footer (brand block, contact columns, legal row).
 - Quote form: fields settle in on load; on focus the border lights, a cyan-light
   rule draws under the control and its label turns cyan-light.
-- Masthead scroll progress: 3px cyan-light on a faint full-width track (client
-  request, Nov 2026: stronger). Band and footer cyan rules: 72 × 3px.
+- Masthead has no scroll-progress line (removed, client request Nov 2026).
+  Band and footer cyan rules: 72 × 3px.
 - Keep `animation-timeline` in its own rule (the minifier otherwise folds it into
   the `animation` shorthand, which browsers reject), and use `overflow: clip`, not
   `hidden`, on any ancestor of a scroll-driven element.

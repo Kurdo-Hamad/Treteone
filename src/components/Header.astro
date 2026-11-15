@@ -14,7 +14,6 @@ import {
  *
  * One row, solid navy, sticky:  logo slot · nav (right) · language · quote pill.
  * Below 960px the nav folds into a hamburger and a drawer under the bar.
- * A 2px cyan line along the bottom edge shows scroll progress.
  *
  * The language control is a real link to the real route in the other
  * language (§2), never a button that swaps text in place. The mockup has no
@@ -98,7 +97,6 @@ const quote = localisePath(quoteHref, lang);
     </button>
   </div>
 
-  <span class="scrollbar" aria-hidden="true" data-header-progress></span>
 
   <div class="drawer" id="site-drawer" data-header-drawer>
     <nav class="wrap" aria-label={t('nav.label')}>
@@ -316,33 +314,6 @@ const quote = localisePath(quoteHref, lang);
   .burger[aria-expanded='true'] .bars i:nth-child(1) { top: 6px; transform: rotate(45deg); }
   .burger[aria-expanded='true'] .bars i:nth-child(2) { opacity: 0; }
   .burger[aria-expanded='true'] .bars i:nth-child(3) { top: 6px; transform: rotate(-45deg); }
-
-  /* -- scroll progress ------------------------------------------------------ */
-  /* Scroll progress: a 3px cyan-light line (about 11:1 on navy) running on
-     a faint full-width track, so both how far you are and how far is left
-     read at a glance (client request, Nov 2026: stronger, more noticeable). */
-  .masthead::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 3px;
-    background: rgba(255, 255, 255, .08);
-    pointer-events: none;
-  }
-  .scrollbar {
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 3px;
-    background: var(--color-cyan-light);
-    transform: scaleX(0);
-    transform-origin: left;
-    pointer-events: none;
-  }
 
   /* -- drawer --------------------------------------------------------------- */
   .drawer {
