@@ -7,8 +7,9 @@
  *   - the items of the site's lists and grids (REVEAL_GROUPS), which arrive
  *     in sequence: items that scroll into view together are staggered by
  *     their order, 70 ms apart.
- * The hero and the page-head bands are excluded — they are above the fold,
- * and nothing above the fold animates into existence (§7).
+ * The hero, the page-head bands and anything marked .settle-in are excluded:
+ * they are on screen when the page opens and settle in by CSS instead, never
+ * starting invisible (§7).
  *
  * Three things this deliberately gets right:
  *
@@ -29,7 +30,31 @@
  * unaffected (§10).
  */
 
-const SINGLES = ['main section h2', 'main section .kicker', 'main section .lead', '.split__media'];
+const SINGLES = [
+  'main section h2',
+  'main section .kicker',
+  'main section .lead',
+  '.split__media',
+  // the remaining blocks, so nothing on a page sits still
+  '.intro__h1',
+  '.intro__actions',
+  '.cards__note',
+  '.split__more',
+  '.split__cta',
+  '.caps__all',
+  '.htf__cta',
+  '.scope-band__cta',
+  '.marquee__note',
+  '.marquee',
+  '.marquee__more',
+  '.marquee__legal',
+  '.bfilter',
+  '.bcount',
+  '.bdisclaimer',
+  // footer
+  '.ftop > *',
+  '.legal',
+];
 
 const REVEAL_GROUPS = [
   '.rows > li',
@@ -41,9 +66,11 @@ const REVEAL_GROUPS = [
   '.glance > .glance__item',
   '.caps > .cap',
   '.cards > .card',
+  '.bgrid > li',
+  '.fdetails > .fd',
 ];
 
-const EXCLUDE = '.hero, .phead, .site-footer, [hidden]';
+const EXCLUDE = '.hero, .phead, .settle-in, [hidden]';
 const STEP_MS = 70;
 const MAX_STEPS = 6;
 

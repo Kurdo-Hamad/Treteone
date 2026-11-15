@@ -205,6 +205,15 @@ const t = useTranslations(lang);
   .hero__panel.is-enter :is(.hero__eyebrow, .hero__title, .hero__line, .hero__more) {
     animation: hero-copy-in .8s var(--ease-out-expo) backwards;
   }
+  /* First paint: the first slide's copy settles in (never from invisible —
+     see .settle-in in global.css). Later slides use .is-enter instead. */
+  .hero__panel.is-on:not(.is-enter) :is(.hero__eyebrow, .hero__title, .hero__line, .hero__more) {
+    animation: settle-in 1s var(--ease-out-expo) backwards;
+  }
+  .hero__panel.is-on:not(.is-enter) .hero__title { animation-delay: 80ms; }
+  .hero__panel.is-on:not(.is-enter) .hero__line { animation-delay: 160ms; }
+  .hero__panel.is-on:not(.is-enter) .hero__more { animation-delay: 240ms; }
+
   .hero__panel.is-enter .hero__eyebrow { animation-delay: .25s; }
   .hero__panel.is-enter .hero__title { animation-delay: .33s; }
   .hero__panel.is-enter .hero__line { animation-delay: .43s; }

@@ -34,7 +34,7 @@ const hasBody = Astro.slots.has('default');
 
 {
   plain ? (
-    <header class="page-head">
+    <header class="page-head settle-in">
       <p class="kicker">{kicker}</p>
       <h1>{title}</h1>
       {lead && <p class="lead page-head__lead">{lead}</p>}
@@ -57,7 +57,7 @@ const hasBody = Astro.slots.has('default');
             />
           </div>
         )}
-        <div class="wrap phead__in">
+        <div class="wrap phead__in settle-in">
           <p class="kicker">{kicker}</p>
           <h1>{title}</h1>
           {lead && <p class="lead phead__lead">{lead}</p>}
@@ -197,8 +197,8 @@ const hasBody = Astro.slots.has('default');
     bottom: 0;
     left: max(var(--wrap-pad), calc((100% - var(--wrap-max)) / 2 + var(--wrap-pad)));
     z-index: 3;
-    width: 56px;
-    height: 2px;
+    width: 72px;
+    height: 3px;
     background: var(--color-cyan);
     transform-origin: left;
     animation: phead-rule .9s var(--ease-out-expo) .35s both;

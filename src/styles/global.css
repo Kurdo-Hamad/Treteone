@@ -388,6 +388,25 @@
   }
   .js-reveal .rv.in { opacity: 1; transform: none; }
 
+  /* Settle-in, for copy that is on screen when a page opens (page heads, the
+     first hero slide, the quote form). It never starts invisible: half
+     opacity and 14px low, settling in under a second, so the text is
+     readable from the first frame and the largest paint is not delayed. */
+  @keyframes settle-in {
+    from { opacity: .5; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  .settle-in > * {
+    animation: settle-in .9s var(--ease-out-expo) backwards;
+  }
+  .settle-in > :nth-child(2) { animation-delay: 70ms; }
+  .settle-in > :nth-child(3) { animation-delay: 140ms; }
+  .settle-in > :nth-child(4) { animation-delay: 210ms; }
+  .settle-in > :nth-child(5) { animation-delay: 280ms; }
+  .settle-in > :nth-child(6) { animation-delay: 350ms; }
+  .settle-in > :nth-child(7) { animation-delay: 420ms; }
+  .settle-in > :nth-child(n + 8) { animation-delay: 490ms; }
+
   /* Every trailing arrow in a link or button nudges forward on hover. */
   .rm > [aria-hidden='true'],
   .btn > [aria-hidden='true'],

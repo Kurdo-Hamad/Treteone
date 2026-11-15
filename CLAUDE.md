@@ -356,13 +356,17 @@ repeated. From the mockup, in order:
 9. **"About our work"** — two cards on the pale band
 
 Nothing animates into existence that was not already readable. Reveals apply only
-to content that starts below the fold, and only once JS has run.
+to content that starts below the fold, and only once JS has run. Copy that is on
+screen when a page opens (page-head bands, the first hero slide, the quote form)
+may *settle in* — `.settle-in` in global.css: from half opacity and 14px low, under
+a second — but never starts invisible, so it is readable from the first frame and
+does not delay the largest paint (client request, Nov 2026: "animate everything").
 
 **Motion (added Nov 2026, client request "more dynamic").** All of it stops under
 `prefers-reduced-motion`; none of it hides content when JS is off.
 - Scroll reveal (`src/scripts/reveal.ts`): section headings, kickers, leads, and
   the items of every list and grid fade up; items arriving together stagger 70 ms.
-  Hero, page-head bands and footer are excluded.
+  Hero, page-head bands and .settle-in blocks are excluded (they settle in instead).
 - Hero: slow zoom on the active photograph; on a slide change the copy arrives
   line by line (never on first paint).
 - Page-head bands: photograph settles on load, cyan rule draws, photograph drifts
@@ -374,7 +378,15 @@ to content that starts below the fold, and only once JS has run.
   a soft navy shadow, the photograph zooms to 1.1, a cyan bar draws along its foot,
   and the heading takes the link colour — on hover and on keyboard focus alike.
   Each capability item links to its row on /products (`#<category-slug>`).
-- /brands: choosing a discipline re-deals the visible tiles.
+- /brands: choosing a discipline re-deals the visible tiles; the filter bar, count,
+  every tile and the disclaimer reveal on scroll.
+- The remaining blocks reveal too: intro heading and buttons, notes, "All 12
+  categories", the hard-to-find and scope buttons, the marquee rows and notes, and
+  the footer (brand block, contact columns, legal row).
+- Quote form: fields settle in on load; on focus the border lights, a cyan-light
+  rule draws under the control and its label turns cyan-light.
+- Masthead scroll progress: 3px cyan-light on a faint full-width track (client
+  request, Nov 2026: stronger). Band and footer cyan rules: 72 × 3px.
 - Keep `animation-timeline` in its own rule (the minifier otherwise folds it into
   the `animation` shorthand, which browsers reject), and use `overflow: clip`, not
   `hidden`, on any ancestor of a scroll-driven element.
