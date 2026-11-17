@@ -11,8 +11,6 @@
  */
 export const home = {
   // ---- 1. rolling hero (CLAUDE.md §6) -------------------------------------
-  // Uppercase on the eyebrow is applied in CSS.
-  'home.hero.eyebrow': 'Industrial supply & sourcing',
   'home.hero.tablist': 'What we supply',
   'home.hero.pause': 'Pause the slideshow',
   'home.hero.play': 'Play the slideshow',
@@ -54,7 +52,7 @@ export const home = {
   'home.enquiries.heading': 'Three ways an enquiry arrives',
   // Keep: these are illustrative, not case studies (CLAUDE.md §7, §13).
   'home.enquiries.note':
-    'Illustrative of the work, not case studies — no client is named and nothing here is a performance claim.',
+    'Typical enquiries, described in general terms. No client is named.',
   'home.enquiries.module.subject': 'Control cabinet, module removed from the rack',
   'home.enquiries.module.heading': 'A control module that is no longer listed',
   'home.enquiries.module.body':
@@ -82,7 +80,6 @@ export const home = {
 
   // ---- 5. positioning split -----------------------------------------------
   'home.position.subject': 'Bearings and seals, packed for shipment',
-  'home.position.kicker': 'Our position',
   'home.position.heading': 'We hold no stock. That is the point.',
   'home.position.lead1':
     'A distributor sells what is on its shelf. A sourcing company starts from the duty and finds whoever satisfies it — which is a different job, and the right one when the item is obsolete, when the original manufacturer has been acquired, or when the specification matters more than the brand on the box.',
@@ -129,7 +126,6 @@ export const home = {
     'Filter elements, lubricants, abrasives, cutting tools and safety supplies, in the quantities a site actually uses.',
 
   // ---- 7. hard-to-find navy band ------------------------------------------
-  'home.htf.kicker': 'Hard-to-find & obsolete',
   'home.htf.heading': 'If it has a nameplate, there is something to work from.',
   'home.htf.lead':
     'Most enquiries that reach us have already failed somewhere else — a reference that returns nothing, a manufacturer that no longer lists the item, a casting with the numbers worn off. That is the normal starting point here, not the exception.',
@@ -149,6 +145,8 @@ export const home = {
     'The manufacturers requested most often. If yours is not shown, ask — the list reflects demand, not the limit of what can be sourced.',
   'home.brands.listLabel': 'Manufacturers we source',
   'home.brands.more': 'Read more about brands',
+  'home.brands.pause': 'Pause the moving list',
+  'home.brands.play': 'Play the moving list',
 
   // ---- 9. about our work --------------------------------------------------
   'home.work.heading': 'About our work',

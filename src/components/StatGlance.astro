@@ -105,48 +105,39 @@ const figures: readonly Figure[] = [
 </script>
 
 <style>
+  /* Four facts in one ruled strip: a hairline above and below, hairlines
+     between the cells, the figure first and its meaning under it. No accent
+     stubs — the figures carry the band. */
   .glance {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(22px, 3vw, 40px);
     margin: clamp(28px, 3.4vw, 44px) 0 0;
+    border-block: 1px solid var(--placeholder-dash);
   }
   /* Value above label visually; label first in the DOM so each pair reads
-     as term then figure. Each figure sits above a hairline with a short cyan
-     segment at its start — the site's one accent, used as a measure. */
+     as term then figure. */
   .glance__item {
-    position: relative;
+    min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-end;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--placeholder-dash);
+    gap: 12px;
+    padding: clamp(22px, 2.6vw, 32px) clamp(18px, 2.4vw, 32px);
   }
-  .glance__item::before {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 32px;
-    height: 2px;
-    background: var(--color-cyan);
-    transform-origin: left;
+  .glance__item + .glance__item {
+    border-left: 1px solid var(--placeholder-dash);
   }
-  /* The measure draws itself just after its figure arrives. */
-  :global(.js-reveal) .glance__item:global(.rv)::before {
-    transform: scaleX(0);
-    transition: transform .9s var(--ease-out-expo) calc(var(--rv-delay, 0ms) + .25s);
-  }
-  :global(.js-reveal) .glance__item:global(.rv.in)::before {
-    transform: none;
+  .glance__item:first-child {
+    padding-left: 0;
   }
   .glance__value {
     margin: 0;
     font-family: var(--font-stack-display);
-    font-weight: 600;
-    font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.75rem);
+    font-weight: var(--weight-heading);
+    font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.5rem);
     line-height: 1;
-    letter-spacing: -.035em;
+    letter-spacing: var(--tracking-tight);
     color: var(--color-navy);
     font-variant-numeric: tabular-nums;
   }
@@ -154,22 +145,24 @@ const figures: readonly Figure[] = [
     letter-spacing: 0;
   }
   .glance__label {
-    margin-top: 12px;
-    max-width: 30ch;
-    font-size: .875rem;
+    max-width: 28ch;
+    font-size: var(--fs-small);
     line-height: 1.55;
     color: var(--text-quiet);
   }
 
-
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .glance {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-  }
-  @media (max-width: 560px) {
-    .glance {
-      gap: 28px 20px;
+    /* Same weight as the "+" rule above, so this one wins on phones. */
+    .glance__item + .glance__item:nth-child(odd),
+    .glance__item:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .glance__item:nth-child(n + 3) {
+      border-top: 1px solid var(--placeholder-dash);
     }
   }
 </style>

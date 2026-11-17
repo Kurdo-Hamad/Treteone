@@ -1,5 +1,7 @@
 ---
+import { categories } from '~/data/categories';
 import { company, mailHref } from '~/data/company';
+import { industries } from '~/data/industries';
 import {
   ACCEPT_ATTRIBUTE,
   QUOTE_ENDPOINT,
@@ -7,7 +9,7 @@ import {
   enquiryTypes,
   mb,
 } from '~/data/quote';
-import { getLangFromUrl, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, pick, useTranslations } from '~/i18n/ui';
 
 /**
  * /quote — CLAUDE.md §8, the only conversion point on the site. It must work.
@@ -38,6 +40,19 @@ const t = useTranslations(lang);
 
 const maxFileMb = mb(QUOTE_LIMITS.maxFileBytes);
 const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
+
+/* Slug -> localised name, for the ?category= / ?industry= prefill. JSON in a
+   data attribute: no inline script for the CSP to block (§10). */
+const prefill = JSON.stringify({
+  category: {
+    label: t('quote.prefill.category'),
+    names: Object.fromEntries(categories.map((c) => [c.slug, pick(c.name, lang)])),
+  },
+  industry: {
+    label: t('quote.prefill.industry'),
+    names: Object.fromEntries(industries.map((i) => [i.slug, pick(i.name, lang)])),
+  },
+});
 ---
 
 <section class="navy quote" id="quote">
@@ -47,13 +62,13 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 
       <ul class="quote__facts">
         <li>
-          <span class="quote__key">{t('quote.aside.files')}</span>
+          <span class="label quote__key">{t('quote.aside.files')}</span>
           <span id="quote-files-hint">
             {t('quote.files.hint')(QUOTE_LIMITS.maxFiles, maxFileMb, maxTotalMb)}
           </span>
         </li>
         <li>
-          <span class="quote__key">{t('quote.aside.reply')}</span>
+          <span class="label quote__key">{t('quote.aside.reply')}</span>
           <span>
             {/* Explicit spaces: Astro trims the whitespace around expressions.
                 Chinese also takes a space either side of a Latin run. */}
@@ -61,7 +76,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
           </span>
         </li>
         <li>
-          <span class="quote__key">{t('quote.aside.direct')}</span>
+          <span class="label quote__key">{t('quote.aside.direct')}</span>
           <span>
             <a class="quote__direct" href={mailHref}>{company.email}</a>
             <span aria-hidden="true"> · </span>
@@ -94,6 +109,9 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
       data-msg-error-title={t('quote.error.title')}
       data-msg-error-body={t('quote.error.body')(company.email)}
       data-msg-contact-required={t('quote.error.contactRequired')}
+      data-msg-contact-invalid={t('quote.error.contactInvalid')}
+      data-email={company.email}
+      data-prefill={prefill}
       data-msg-too-many-files={t('quote.error.tooManyFiles')(QUOTE_LIMITS.maxFiles)}
       data-msg-file-too-large={t('quote.error.fileTooLarge')('{name}', maxFileMb)}
       data-msg-total-too-large={t('quote.error.totalTooLarge')(maxTotalMb)}
@@ -134,7 +152,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
             id="quote-manufacturer"
             name="manufacturer"
             type="text"
-            autocomplete="organization"
+            autocomplete="off"
             placeholder={t('quote.manufacturer.placeholder')}
           />
         </div>
@@ -144,6 +162,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
             id="quote-quantity"
             name="quantity"
             type="text"
+            autocomplete="off"
             placeholder={t('quote.quantity.placeholder')}
           />
         </div>
@@ -164,7 +183,8 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 
       <div class="field">
         <label for="quote-notes">{t('quote.notes.label')}</label>
-        <textarea id="quote-notes" name="notes" placeholder={t('quote.notes.placeholder')}></textarea>
+        <textarea id="quote-notes" name="notes" placeholder={t('quote.notes.placeholder')} data-quote-notes
+        ></textarea>
       </div>
 
       <div class="pair">
@@ -180,9 +200,12 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
             type="text"
             required
             autocomplete="email"
-            aria-describedby="quote-hint"
+            aria-describedby="quote-contact-error quote-hint"
             data-quote-contact
           />
+          {/* Filled by the script when the contact is missing or unusable, so
+              the problem is named next to the field, in the page's language. */}
+          <p class="field__error" id="quote-contact-error" data-quote-contact-error hidden></p>
         </div>
       </div>
 
@@ -223,12 +246,17 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
 </script>
 
 <style>
-  /* Mockup .split: copy left, form right; one column below 960px. */
+  /* Copy left, form right; one column below 960px, where the facts move
+     under the form so the first field is near the top of a phone screen. */
   .quote__split {
     display: grid;
     grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
     gap: clamp(26px, 4vw, 60px);
     align-items: center;
+  }
+  /* The result box is written in later; it must not replay the settle-in. */
+  .quote__form > [data-quote-result] {
+    animation: none;
   }
 
   /* -- the three facts (mockup .checklist) ------------------------------- */
@@ -240,20 +268,16 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   }
   .quote__facts li {
     display: grid;
-    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-columns: 76px minmax(0, 1fr);
     gap: 14px;
-    padding: 15px 0;
+    padding: 16px 0;
     border-bottom: 1px solid var(--line-dark);
-    font-size: .9375rem;
+    font-size: var(--fs-small);
     color: var(--on-dark-2);
   }
   .quote__key {
+    --fg-label: var(--color-cyan-light);
     padding-top: 3px;
-    font-family: var(--font-stack-mono);
-    font-size: .72rem;
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-    color: var(--color-cyan-light);
   }
   .quote__direct {
     color: var(--on-dark-1);
@@ -283,18 +307,15 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     gap: 16px;
   }
 
+  /* Sentence-case labels at a readable size — a form is read, not scanned
+     like a table. */
   .field label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     font-family: var(--font-stack-display);
-    font-weight: 600;
-    font-size: .78rem;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--on-dark-3);
-  }
-  html[lang^='zh'] .field label {
-    letter-spacing: .02em;
+    font-weight: 500;
+    font-size: var(--fs-small);
+    color: var(--on-dark-2);
   }
 
   .field :is(input, select, textarea) {
@@ -303,13 +324,13 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     padding: 12px 14px;
     /* A control's boundary needs 3:1 (WCAG 1.4.11). The mockup's .22 white
        is about 1.9:1 on navy; --rule-control on navy is the .50 tier. */
-    border: 1px solid var(--rule-control);
-    border-radius: 0;
-    background: color-mix(in srgb, var(--color-white) 6%, transparent);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius);
+    background: var(--on-dark-tint);
     color: var(--on-dark-1);
     font-family: var(--font-stack-body);
     /* 16px or more stops iOS zooming the page on focus. */
-    font-size: 1rem;
+    font-size: var(--fs-body);
     /* Native parts — the select arrow, its option list, the file button —
        render for a dark ground. */
     color-scheme: dark;
@@ -344,25 +365,23 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   }
   .field :is(input, textarea)::placeholder {
     color: var(--on-dark-4);
-    font-family: var(--font-stack-mono);
-    font-size: .84rem;
     opacity: 1;
   }
   .field input[type='file'] {
     padding: 8px 10px;
-    font-size: .875rem;
+    font-size: var(--fs-small);
     color: var(--on-dark-2);
   }
   .field input[type='file']::file-selector-button {
     margin-right: 12px;
     padding: 6px 14px;
-    border: 1px solid var(--on-dark-4);
-    border-radius: var(--radius-pill);
+    border: 1px solid var(--on-dark-line);
+    border-radius: var(--radius);
     background: transparent;
     color: var(--on-dark-1);
     font-family: var(--font-stack-display);
     font-weight: 600;
-    font-size: .8125rem;
+    font-size: var(--fs-caption);
     cursor: pointer;
     transition: border-color var(--dur-fast);
   }
@@ -371,10 +390,28 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   }
 
   /* Invalid is marked by a doubled red border, not the colour alone, and the
-     script writes the reason into the result box beneath. */
+     reason is written next to the field (.field__error) in words. */
   .field :is(input, select, textarea)[aria-invalid='true'] {
     border-color: var(--feedback-error);
     box-shadow: inset 0 0 0 1px var(--feedback-error);
+  }
+  .field__error {
+    display: flex;
+    gap: .6em;
+    margin-top: 8px;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--on-dark-1);
+  }
+  .field__error::before {
+    content: '';
+    flex: none;
+    width: 3px;
+    margin-block: 2px;
+    background: var(--feedback-error);
+  }
+  .field__error[hidden] {
+    display: none;
   }
 
   /* §8 honeypot — off-screen rather than display:none, which some bots skip. */
@@ -392,7 +429,7 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   }
   .quote__hint {
     margin-top: 14px;
-    font-size: .8125rem;
+    font-size: var(--fs-caption);
     line-height: 1.6;
     color: var(--on-dark-3);
   }
@@ -404,27 +441,44 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
   .quote__result {
     padding: 18px 20px;
     border: 1px solid var(--line-dark);
-    border-left-width: 4px;
-    background: color-mix(in srgb, var(--color-white) 6%, transparent);
+    border-radius: var(--radius);
+    background: var(--on-dark-tint);
   }
-  /* The success state's colour is --feedback-success; that is what the token
-     is for. The title says the outcome in words, so colour is never the only
-     signal (§11). */
+  /* The state's colour runs round the whole box. The title says the outcome
+     in words, so colour is never the only signal (§11). */
   .quote__result[data-state='success'] {
-    border-left-color: var(--feedback-success);
+    border-color: var(--feedback-success);
   }
   .quote__result[data-state='error'] {
-    border-left-color: var(--feedback-error);
+    border-color: var(--feedback-error);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .quote__split {
       grid-template-columns: minmax(0, 1fr);
     }
+    /* Page head, then the form, then the three facts. */
+    .quote__intro {
+      display: contents;
+    }
+    .quote__form {
+      order: 1;
+    }
+    .quote__facts {
+      order: 2;
+      margin-top: 8px;
+    }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 35rem) {
     .pair {
       grid-template-columns: minmax(0, 1fr);
+    }
+    /* No room to keep these on one line: let them wrap rather than push the
+       page sideways. */
+    .quote__direct,
+    .quote__facts .mono {
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
     .quote__submit {
       width: 100%;
@@ -440,27 +494,31 @@ const maxTotalMb = mb(QUOTE_LIMITS.maxTotalBytes);
     display: block;
     margin-bottom: 6px;
     font-family: var(--font-stack-display);
-    font-size: 1.125rem;
+    font-size: var(--fs-lead);
     font-weight: 600;
     color: var(--fg-heading);
   }
   .quote-result__body {
     display: block;
-    font-size: .9375rem;
+    font-size: var(--fs-small);
     color: var(--fg-body);
+  }
+  .quote-result__body a {
+    color: var(--text-inverse);
+    text-decoration: underline;
   }
   .quote-result__reference {
     display: block;
     margin-top: 12px;
-    font-family: var(--font-stack-mono);
-    font-size: .8125rem;
-    letter-spacing: var(--tracking-mono);
+    font-size: var(--fs-small);
     color: var(--fg-body);
   }
+  /* The reference is a code the buyer quotes back: mono earns its place. */
   .quote-result__reference b {
     font-family: var(--font-stack-mono);
     font-weight: 400;
-    font-size: 1.0625rem;
+    font-size: var(--fs-lead);
+    letter-spacing: var(--tracking-mono);
     color: var(--color-cyan-light);
   }
 </style>

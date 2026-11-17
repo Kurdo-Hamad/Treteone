@@ -13,7 +13,6 @@ export const sourcing: SourcingStrings = {
     '停产、淘汰及无标识的工业备件。发送部件号、铭牌照片或清单，我们来查。询价处理的五个步骤。',
 
   // ---- /sourcing page head ------------------------------------------------
-  'sourcing.page.kicker': '寻源 · 难寻件与停产件',
   'sourcing.page.title': '没有可用型号的部件，如何追溯。',
   'sourcing.page.lead':
     '询价到我们这里时，常规渠道通常已经走不通了。这项工作靠的是方法，而不是运气：先确定这个物品究竟是什么，再确定谁仍在生产能满足同样工况的产品。',
@@ -33,7 +32,6 @@ export const sourcing: SourcingStrings = {
     '制造商出具数据表、测试证书和材质证书的，我们随附提供。无法取得的，我们会在您下单之前说明，而不是之后。',
 
   // ---- navy "what to send" band -------------------------------------------
-  'sourcing.what.kicker': '需要提供什么',
   'sourcing.what.title': '手上有什么就发什么。一张照片也算。',
   'sourcing.what.lead':
     '没有最低要求。有的询价只从一张模糊的铭牌照片开始，有的是一份四百行的物料清单，两者都由同一个团队处理。',
@@ -45,7 +43,6 @@ export const sourcing: SourcingStrings = {
   'sourcing.what.description': '文字描述——如果手上确实只有这些',
 
   // ---- five-step process --------------------------------------------------
-  'process.kicker': '从需求到交付',
   'process.title': '点击发送之后会发生什么。',
   'process.stepLabel': (n: string) => `步骤 ${n}`,
 

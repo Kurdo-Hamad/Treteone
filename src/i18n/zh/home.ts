@@ -9,7 +9,6 @@ import type { HomeStrings } from '../en/home';
  */
 export const home: HomeStrings = {
   // ---- 1. rolling hero ----------------------------------------------------
-  'home.hero.eyebrow': '工业供应与采购',
   'home.hero.tablist': '我们供应的产品',
   'home.hero.pause': '暂停轮播',
   'home.hero.play': '播放轮播',
@@ -48,7 +47,7 @@ export const home: HomeStrings = {
 
   // ---- 3. three ways an enquiry arrives -----------------------------------
   'home.enquiries.heading': '询价通常以这三种方式到来',
-  'home.enquiries.note': '以下仅用于说明我们的工作，并非案例研究——不涉及任何客户名称，也不构成任何业绩承诺。',
+  'home.enquiries.note': '以下为典型询价的概括描述，不涉及任何客户名称。',
   'home.enquiries.module.subject': '控制柜，模块已从机架上取下',
   'home.enquiries.module.heading': '一个已不再列入目录的控制模块',
   'home.enquiries.module.body':
@@ -75,7 +74,6 @@ export const home: HomeStrings = {
 
   // ---- 5. positioning split -----------------------------------------------
   'home.position.subject': '已包装待发运的轴承与密封件',
-  'home.position.kicker': '我们的定位',
   'home.position.heading': '我们不囤货，这正是关键所在。',
   'home.position.lead1':
     '分销商卖的是自己货架上的东西。采购公司则从工况出发，去找能满足它的供应方——这是另一种工作，而当物料已经停产、原制造商已被收购，或规格比包装盒上的品牌更重要时，这才是正确的做法。',
@@ -115,7 +113,6 @@ export const home: HomeStrings = {
   'home.caps.consumables.body': '滤芯、润滑油脂、磨料、刀具与劳保用品，按现场实际用量供应。',
 
   // ---- 7. hard-to-find navy band ------------------------------------------
-  'home.htf.kicker': '难寻件与停产件',
   'home.htf.heading': '只要有铭牌，就有据可查。',
   'home.htf.lead':
     '来到我们这里的询价，大多已在别处碰过壁——型号查不到结果，制造商已不再列出该物料，或者铸件上的编号已被磨掉。在这里，这是常规的起点，而不是例外。',
@@ -131,6 +128,8 @@ export const home: HomeStrings = {
   'home.brands.note': '以下是询价最多的制造商。如果没有您需要的品牌，请直接询问——这份名单反映的是需求，而不是我们采购能力的上限。',
   'home.brands.listLabel': '我们采购的制造商',
   'home.brands.more': '进一步了解品牌',
+  'home.brands.pause': '暂停滚动',
+  'home.brands.play': '继续滚动',
 
   // ---- 9. about our work --------------------------------------------------
   'home.work.heading': '关于我们的工作',

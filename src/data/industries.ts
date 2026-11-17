@@ -41,7 +41,7 @@ export interface Industry {
 export const industries: readonly Industry[] = [
   {
     slug: 'oil-gas',
-    name: { en: 'Oil & Gas', zh: '石油天然气' },
+    name: { en: 'Oil & gas', zh: '石油天然气' },
     blurb: {
       en: 'Pumps · valves · instrumentation · rotating equipment spares',
       zh: '泵 · 阀门 · 仪表 · 旋转设备备件',
@@ -54,7 +54,7 @@ export const industries: readonly Industry[] = [
   },
   {
     slug: 'refining-petrochemical',
-    name: { en: 'Refining & Petrochemical', zh: '炼化与石化' },
+    name: { en: 'Refining & petrochemical', zh: '炼化与石化' },
     blurb: {
       en: 'Control valves · heat exchangers · seals · analysers',
       zh: '调节阀 · 换热器 · 密封件 · 分析仪',
@@ -67,7 +67,7 @@ export const industries: readonly Industry[] = [
   },
   {
     slug: 'power-generation',
-    name: { en: 'Power Generation', zh: '电力' },
+    name: { en: 'Power generation', zh: '电力' },
     blurb: {
       en: 'Switchgear · transformers · turbine auxiliaries · protection',
       zh: '开关柜 · 变压器 · 汽机辅机 · 保护装置',
@@ -106,7 +106,7 @@ export const industries: readonly Industry[] = [
   },
   {
     slug: 'steel-metals',
-    name: { en: 'Steel & Metals', zh: '钢铁与金属' },
+    name: { en: 'Steel & metals', zh: '钢铁与金属' },
     blurb: {
       en: 'Hydraulics · heavy bearings · motors · cooling systems',
       zh: '液压 · 重载轴承 · 电机 · 冷却系统',
@@ -132,7 +132,7 @@ export const industries: readonly Industry[] = [
   },
   {
     slug: 'water-wastewater',
-    name: { en: 'Water & Wastewater', zh: '给排水' },
+    name: { en: 'Water & wastewater', zh: '给排水' },
     blurb: {
       en: 'Pumps · dosing systems · level instruments · blowers',
       zh: '水泵 · 加药系统 · 液位仪表 · 鼓风机',
@@ -145,7 +145,7 @@ export const industries: readonly Industry[] = [
   },
   {
     slug: 'facilities-institutions',
-    name: { en: 'Facilities & Institutions', zh: '公共与商业设施' },
+    name: { en: 'Facilities & institutions', zh: '公共与商业设施' },
     blurb: {
       en: 'Generators · UPS · HVAC components · distribution',
       zh: '发电机 · UPS · 暖通部件 · 配电',

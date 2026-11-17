@@ -1,4 +1,5 @@
 ---
+import Icon from '~/components/Icon.astro';
 import { brandTile } from '~/data/brand-logos';
 import { brands } from '~/data/brands';
 import { brandsHref } from '~/data/navigation';
@@ -8,16 +9,17 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
  * §7.8 Brand marquee — presentation only. The list comes from
  * src/data/brands.ts and the logo files are resolved at build time by
  * src/data/brand-logos.ts (§9): a logo shows the moment
- * public/logos/<slug>.svg exists; until then each tile is the dashed
- * "Logo" placeholder with the name beneath, as in the approved mockup.
+ * public/logos/<slug>.svg exists; until then the row carries the name, set in
+ * the display face — a running line of type, not a row of empty boxes.
  *
- * ⚠ §9, §13 — the wording is "Brands we source" and the trademark line stays.
- * Nothing here may imply authorisation, distributorship or agency.
+ * ⚠ §9, §13 — the wording is "Brands we source". Nothing here may imply
+ * authorisation, distributorship or agency.
  *
- * Two rows in opposite directions; each row is its tiles twice over so the
- * loop has no seam. Pauses on hover. Edge fades left and right. The moving
+ * Two rows in opposite directions; each row is its names twice over so the
+ * loop has no seam. A visible pause/play button stops both rows for anyone,
+ * on touch or keyboard too (WCAG 2.2.2); hovering also pauses. The moving
  * rows are aria-hidden; assistive tech gets the plain list. Under reduced
- * motion the rows stop, the duplicate goes, and the tiles wrap into a grid.
+ * motion the rows stop, the duplicate goes, and the names wrap.
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -36,7 +38,7 @@ const rows: readonly (readonly string[])[] = [
 ];
 ---
 
-<section aria-labelledby="brands-title">
+<section aria-labelledby="brands-title" data-marquee>
   <div class="wrap sec">
     <h2 id="brands-title">{t('home.brands.heading')}</h2>
     <p class="small marquee__note">{t('home.brands.note')}</p>
@@ -44,55 +46,69 @@ const rows: readonly (readonly string[])[] = [
     <ul class="sr-only" aria-label={t('home.brands.listLabel')}>
       {names.map((name) => <li>{name}</li>)}
     </ul>
+  </div>
 
-    {
-      rows.map((row, r) => (
-        <div class:list={['marquee', { 'marquee--rev': r === 1 }]} aria-hidden="true">
-          <div class="marquee__track">
-            {[0, 1].map((copy) =>
-              row.map((name) => {
-                const tile = brandTile(name);
-                return (
-                  <div class:list={['mtile', { 'mtile--clone': copy === 1 }]}>
-                    <span class:list={['mtile__box', { 'mtile__box--logo': tile.logo !== null }]}>
-                      {tile.logo ? (
-                        <img src={tile.logo} alt="" loading="lazy" decoding="async" />
-                      ) : (
-                        <span class="mtile__name">{name}</span>
-                      )}
-                    </span>
-                    {tile.logo && <small>{name}</small>}
-                  </div>
-                );
-              }),
-            )}
-          </div>
+  {
+    rows.map((row, r) => (
+      <div class:list={['marquee', { 'marquee--rev': r === 1 }]} aria-hidden="true">
+        <div class="marquee__track">
+          {[0, 1].map((copy) =>
+            row.map((name) => {
+              const tile = brandTile(name);
+              return (
+                <span class:list={['mname', { 'mname--clone': copy === 1 }]}>
+                  {tile.logo ? <img src={tile.logo} alt="" loading="lazy" decoding="async" /> : name}
+                </span>
+              );
+            }),
+          )}
         </div>
-      ))
-    }
+      </div>
+    ))
+  }
 
-    <p class="marquee__more">
-      <a class="btn btn-out" href={localisePath(brandsHref, lang)}>{t('home.brands.more')}</a>
-    </p>
+  <div class="wrap marquee__foot">
+    <button
+      class="marquee__pp"
+      type="button"
+      data-marquee-pp
+      data-label-pause={t('home.brands.pause')}
+      data-label-play={t('home.brands.play')}
+      aria-label={t('home.brands.pause')}
+    >
+      <Icon name="pause" class="marquee__icon marquee__icon--pause" />
+      <Icon name="play" class="marquee__icon marquee__icon--play" />
+    </button>
+    <a class="btn btn-out" href={localisePath(brandsHref, lang)}>{t('home.brands.more')}</a>
   </div>
 </section>
 
+<script>
+  import '~/scripts/marquee';
+</script>
+
 <style>
   .marquee__note {
-    margin-top: 10px;
+    margin-top: 12px;
     max-width: 62ch;
+  }
+  /* The rows run full-bleed; the heading above and the controls below keep
+     to the page gutter. */
+  section > .wrap.sec {
+    padding-bottom: clamp(24px, 3vw, 36px);
   }
 
   .marquee {
     position: relative;
     overflow: hidden;
-    margin-top: 28px;
+    padding-block: clamp(10px, 1.4vw, 16px);
+    border-top: 1px solid var(--line);
   }
-  .marquee + .marquee {
-    margin-top: clamp(12px, 1.6vw, 18px);
+  .marquee--rev {
+    border-bottom: 1px solid var(--line);
   }
-  /* Edge fades: the page ground over the ends of the row, so tiles arrive
-     and leave rather than being cut by the gutter. */
+  /* Edge fades: the page ground over the ends of the row, so names arrive
+     and leave rather than being cut at the window edge. */
   .marquee::before,
   .marquee::after {
     content: '';
@@ -100,7 +116,7 @@ const rows: readonly (readonly string[])[] = [
     top: 0;
     bottom: 0;
     z-index: 2;
-    width: clamp(36px, 7vw, 90px);
+    width: clamp(36px, 8vw, 120px);
     pointer-events: none;
   }
   .marquee::before {
@@ -114,15 +130,16 @@ const rows: readonly (readonly string[])[] = [
 
   .marquee__track {
     display: flex;
+    align-items: center;
     width: max-content;
-    animation: marquee 52s linear infinite;
+    animation: marquee 60s linear infinite;
   }
   .marquee--rev .marquee__track {
     animation-direction: reverse;
-    animation-duration: 64s;
+    animation-duration: 72s;
   }
   .marquee:hover .marquee__track,
-  .marquee:focus-within .marquee__track {
+  [data-marquee].is-paused .marquee__track {
     animation-play-state: paused;
   }
   @keyframes marquee {
@@ -130,76 +147,88 @@ const rows: readonly (readonly string[])[] = [
     to { transform: translateX(-50%); }
   }
 
-  .mtile {
-    flex: 0 0 clamp(128px, 15vw, 168px);
-    margin-right: clamp(12px, 1.6vw, 18px);
-    text-align: center;
-  }
-  /* Logo slot (§9): with no logo file the tile carries the brand name as a
-     quiet wordmark instead of a "LOGO" placeholder. */
-  .mtile__box {
-    position: relative;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 3 / 2;
-    padding: 12px;
-    background: var(--surface-page);
-    border: 1px solid var(--line);
-    text-align: center;
-    transition: border-color var(--dur-fast), background var(--dur-fast);
-  }
-  .mtile__name {
+  /* A name in the display face, with a small square between names. */
+  .mname {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
     font-family: var(--font-stack-display);
-    font-weight: 600;
-    font-size: clamp(.8125rem, .76rem + .22vw, .95rem);
-    line-height: 1.25;
-    letter-spacing: -.01em;
+    font-weight: 500;
+    font-size: clamp(1.375rem, 1rem + 1.4vw, 2.25rem);
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    white-space: nowrap;
     color: var(--color-navy);
-    opacity: .7;
-    transition: opacity var(--dur-fast);
   }
-  .mtile__box img {
-    max-width: 70%;
-    max-height: 60%;
-    width: auto;
-    object-fit: contain;
-    filter: grayscale(1);
-    transition: filter var(--dur-fast);
+  .mname::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-inline: clamp(20px, 2.6vw, 36px);
+    background: var(--color-cyan);
   }
-  .mtile:hover .mtile__box {
-    border-color: var(--color-navy);
-    background: var(--surface-pale);
-  }
-  .mtile:hover .mtile__name {
-    opacity: 1;
-  }
-  .mtile:hover .mtile__box img {
-    filter: none;
-  }
-  .mtile small {
-    display: block;
-    margin-top: 9px;
-    font-size: .78rem;
+  .marquee--rev .mname {
     color: var(--text-quiet);
   }
-
-  .marquee__more {
-    margin-top: 26px;
+  .mname img {
+    height: 1em;
+    width: auto;
+    filter: grayscale(1);
   }
 
-  /* §9, §11 — under reduced motion the rows stop and wrap into a static grid. */
+  .marquee__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    padding-top: clamp(22px, 2.6vw, 30px);
+    padding-bottom: var(--section-y);
+  }
+  .marquee__pp {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--color-navy);
+    cursor: pointer;
+    transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .marquee__pp:hover {
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    color: var(--text-inverse);
+  }
+  .marquee__pp :global(.marquee__icon) {
+    width: 14px;
+    height: 14px;
+  }
+  .marquee__pp :global(.marquee__icon--play),
+  [data-marquee].is-paused .marquee__pp :global(.marquee__icon--pause) {
+    display: none;
+  }
+  [data-marquee].is-paused .marquee__pp :global(.marquee__icon--play) {
+    display: block;
+  }
+
+  /* §9, §11 — under reduced motion the rows stop and wrap; the pause button
+     has nothing to do, so it goes. */
   @media (prefers-reduced-motion: reduce) {
     .marquee::before,
-    .marquee::after {
+    .marquee::after,
+    .marquee__pp {
       display: none;
     }
     .marquee__track {
       width: auto;
       flex-wrap: wrap;
-      gap: clamp(12px, 1.6vw, 18px) 0;
+      padding-inline: var(--wrap-pad);
       animation: none;
     }
-    .mtile--clone {
+    .mname--clone {
       display: none;
     }
   }

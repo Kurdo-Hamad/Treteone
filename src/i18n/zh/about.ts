@@ -16,7 +16,6 @@ export const about: AboutStrings = {
     'Treteone 是一家位于中国广州的工业供应与采购公司。我们的工作方式、供应范围与公司信息。',
 
   // ---- /about page head ---------------------------------------------------
-  'about.page.kicker': '关于我们',
   'about.page.title': '一家读得懂规格的工业供应公司。',
   'about.page.lead': (name: string) =>
     `${name} 是一家在广州市荔湾区注册的贸易公司，服务于停不起机的工厂的维修与采购团队。询价由看得懂数据表的人处理，而不是交给目录搜索。`,

@@ -12,7 +12,6 @@ export const about = {
     'Treteone is an industrial supply and sourcing company in Guangzhou, China. How we work, what we supply and our company details.',
 
   // ---- /about page head (approved mockup, #v-about) -----------------------
-  'about.page.kicker': 'About',
   'about.page.title': 'An industrial supply company that reads specifications.',
   /** name is company.registeredName — never typed here. */
   'about.page.lead': (name: string) =>

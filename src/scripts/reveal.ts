@@ -3,7 +3,7 @@
  *
  * What it reveals:
  *   - anything a component marks `.rv`;
- *   - section headings, kickers and leads inside <main>;
+ *   - section headings and leads inside <main>;
  *   - the items of the site's lists and grids (REVEAL_GROUPS), which arrive
  *     in sequence: items that scroll into view together are staggered by
  *     their order, 70 ms apart.
@@ -32,7 +32,6 @@
 
 const SINGLES = [
   'main section h2',
-  'main section .kicker',
   'main section .lead',
   '.split__media',
   // the remaining blocks, so nothing on a page sits still
@@ -46,7 +45,7 @@ const SINGLES = [
   '.scope-band__cta',
   '.marquee__note',
   '.marquee',
-  '.marquee__more',
+  '.marquee__foot',
   '.bfilter',
   '.bcount',
   // footer
@@ -80,10 +79,13 @@ for (const selector of [...SINGLES, ...REVEAL_GROUPS]) {
     if (!el.closest(EXCLUDE)) candidates.add(el);
   }
 }
-// Anything already settling in by CSS (on-screen blocks on desktop — see
-// global.css) is left to that animation, not hidden and revealed again.
+// Anything already animating in by CSS (settle-in on page heads, rise-in on
+// the blocks under a band on desktop — see global.css) is left to that
+// animation. Hiding it as well made those blocks animate twice: in, out,
+// and in again (Nov 2026 review).
 for (const el of Array.from(candidates)) {
-  if (getComputedStyle(el).animationName.includes('settle-in')) candidates.delete(el);
+  const name = getComputedStyle(el).animationName;
+  if (name.includes('settle-in') || name.includes('rise-in')) candidates.delete(el);
 }
 
 // Document order, so a batch staggers top-to-bottom, left-to-right.

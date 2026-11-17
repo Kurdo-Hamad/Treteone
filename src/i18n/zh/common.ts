@@ -38,7 +38,6 @@ export const common: CommonStrings = {
   // ---- 404 page (src/pages/404.astro, zh/404.astro) -------------------------
   'notFound.meta.title': '页面未找到 — Treteone',
   'notFound.meta.description': '您访问的页面不在 treteone.com 上。',
-  'notFound.kicker': '错误 404',
   'notFound.title': '此页面不存在。',
   'notFound.lead': '网址可能输入有误，或页面已被移动。请从下方页面重新开始——或直接发送部件号，由我们接手处理。',
   'notFound.home': '返回首页',

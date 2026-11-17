@@ -11,7 +11,8 @@
  * component follows it.
  *
  * Props
- *   steps  label ("Step 01" / "01"), title and body, already localised
+ *   steps  label ("Step 1" / "1"), title and body, already localised. The
+ *          number stays because here the order is the information.
  */
 
 interface Step {
@@ -31,7 +32,7 @@ const { steps } = Astro.props;
   {
     steps.map((step) => (
       <li class="step">
-        <span class="step__k mono">{step.label}</span>
+        <span class="step__k">{step.label}</span>
         <h3>{step.title}</h3>
         <p>{step.body}</p>
       </li>
@@ -49,30 +50,31 @@ const { steps } = Astro.props;
     gap: clamp(18px, 2.4vw, 30px);
   }
 
-  /* The mockup sets this label in plain cyan on white, which is about 2.4:1
-     and fails AA (§11). --fg-accent is link-blue on light grounds and
-     cyan-light on navy — the mockup's navy colour, and a passing light one. */
+  /* The step number, in the display face with tabular figures — the order
+     is the information here. --fg-accent is link-blue on light grounds and
+     cyan-light on navy (plain cyan on white is 2.4:1 and fails §11). */
   .step__k {
     display: block;
-    margin-bottom: 10px;
-    font-size: .72rem;
-    letter-spacing: .1em;
-    text-transform: uppercase;
+    margin-bottom: 14px;
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
     color: var(--fg-accent);
   }
 
-  /* Room for the cyan measure under the step (global.css). */
+  /* Each step stands on the shared ruled-entry hairline (global.css). */
   .step {
-    padding-bottom: 18px;
+    padding-bottom: 22px;
   }
 
   .step h3 {
-    font-size: 1rem;
+    font-size: var(--fs-lead);
   }
 
   .step p {
-    margin-top: 7px;
-    font-size: .8125rem;
+    margin-top: 8px;
+    font-size: var(--fs-small);
     line-height: 1.6;
     color: var(--fg-body);
   }
@@ -81,12 +83,12 @@ const { steps } = Astro.props;
     color: var(--on-dark-3);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .steps {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 35rem) {
     .steps {
       grid-template-columns: minmax(0, 1fr);
     }

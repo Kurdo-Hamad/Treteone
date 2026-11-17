@@ -37,7 +37,6 @@ export const common = {
   // ---- 404 page (src/pages/404.astro, zh/404.astro) -------------------------
   'notFound.meta.title': 'Page not found — Treteone',
   'notFound.meta.description': 'The page you asked for is not on treteone.com.',
-  'notFound.kicker': 'Error 404',
   'notFound.title': 'This page is not here.',
   'notFound.lead': 'The address may be mistyped, or the page may have moved. Start from one of the pages below — or send the part number and we will take it from there.',
   'notFound.home': 'Back to the homepage',

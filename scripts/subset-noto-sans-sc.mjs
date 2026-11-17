@@ -144,6 +144,19 @@ const codepoints = [...new Set([...text].map((ch) => ch.codePointAt(0)))]
   .filter((cp) => cp !== undefined && needsCJKFace(cp))
   .sort((a, b) => a - b);
 
+/**
+ * Punctuation that Chinese copy shares with Latin: the em dash (written
+ * doubled, "——"), curly quotes and the ellipsis. Roboto covers these code
+ * points and comes first in the stack, so on a Chinese page "——" would be
+ * drawn as two short Latin dashes. They go into the same file and get a
+ * second face, "Noto Sans SC Punct", whose unicode-range is only these. The
+ * Chinese routes put that face first (global.css); English pages never name
+ * it, so their punctuation is unchanged and they never fetch the file for it.
+ */
+const PUNCT = [0x2014, 0x2018, 0x2019, 0x201c, 0x201d, 0x2026];
+const sourceSet = new Set([...text].map((ch) => ch.codePointAt(0)));
+const punct = PUNCT.filter((cp) => sourceSet.has(cp));
+
 if (codepoints.length === 0) {
   throw new Error(
     'No CJK characters found under src/. That cannot be right while the site ' +
@@ -151,8 +164,11 @@ if (codepoints.length === 0) {
   );
 }
 
-const glyphString = codepoints.map((cp) => String.fromCodePoint(cp)).join('');
-const hash = createHash('sha256').update(codepoints.join(',')).digest('hex').slice(0, 16);
+const glyphString = [...codepoints, ...punct].map((cp) => String.fromCodePoint(cp)).join('');
+const hash = createHash('sha256')
+  .update(`${codepoints.join(',')}|${punct.join(',')}`)
+  .digest('hex')
+  .slice(0, 16);
 
 if (!force && existsSync(MANIFEST) && existsSync(WOFF2) && existsSync(CSS)) {
   const previous = JSON.parse(await readFile(MANIFEST, 'utf8'));
@@ -200,7 +216,23 @@ const css = `/* Noto Sans SC — self-hosted subset (CLAUDE.md §8: no Google Fo
   font-display: swap;
   unicode-range: ${unicodeRanges.join(', ')};
 }
-`;
+${
+  punct.length > 0
+    ? `
+/* The same file, for Chinese punctuation only. Named first in the stacks on
+   the Chinese routes (global.css), so "——" is one CJK dash, not two Latin
+   ones. Its range is only these code points, so Latin text is unaffected. */
+@font-face {
+  font-family: "Noto Sans SC Punct";
+  src: url("/fonts/noto-sans-sc.woff2") format("woff2");
+  font-weight: ${WEIGHT_RANGE.min} ${WEIGHT_RANGE.max};
+  font-style: normal;
+  font-display: swap;
+  unicode-range: ${toUnicodeRanges(punct).join(', ')};
+}
+`
+    : ''
+}`;
 
 await writeFile(CSS, css);
 

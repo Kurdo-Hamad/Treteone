@@ -39,7 +39,7 @@ export interface Category {
 export const categories: readonly Category[] = [
   {
     slug: 'automation-control',
-    name: { en: 'Automation & Control', zh: '自动化与控制' },
+    name: { en: 'Automation & control', zh: '自动化与控制' },
     blurb: {
       en: 'PLC · DCS · SCADA · HMI · Remote I/O · VFDs · servo',
       zh: 'PLC · DCS · SCADA · 人机界面 · 远程I/O · 变频器 · 伺服',
@@ -52,7 +52,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'instrumentation-measurement',
-    name: { en: 'Instrumentation & Measurement', zh: '仪器仪表与测量' },
+    name: { en: 'Instrumentation & measurement', zh: '仪器仪表与测量' },
     blurb: {
       en: 'Pressure · flow · level · temperature · transmitters',
       zh: '压力 · 流量 · 液位 · 温度 · 变送器',
@@ -65,7 +65,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'electrical-power',
-    name: { en: 'Electrical & Power', zh: '电气与配电' },
+    name: { en: 'Electrical & power', zh: '电气与配电' },
     blurb: {
       en: 'Switchgear · breakers · transformers · panels · UPS',
       zh: '开关柜 · 断路器 · 变压器 · 控制柜 · UPS',
@@ -78,7 +78,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'motors-drives-transmission',
-    name: { en: 'Motors, Drives & Transmission', zh: '电机、驱动与传动' },
+    name: { en: 'Motors, drives & transmission', zh: '电机、驱动与传动' },
     blurb: {
       en: 'Motors · gearboxes · couplings · bearings · belts',
       zh: '电动机 · 减速机 · 联轴器 · 轴承 · 皮带',
@@ -91,7 +91,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'pumps',
-    name: { en: 'Pumps & Pump Equipment', zh: '泵与泵用设备' },
+    name: { en: 'Pumps & pump equipment', zh: '泵与泵用设备' },
     blurb: {
       en: 'Centrifugal · dosing · submersible · seals · impellers',
       zh: '离心泵 · 计量泵 · 潜水泵 · 机械密封 · 叶轮',
@@ -104,7 +104,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'compressors-compressed-air',
-    name: { en: 'Compressors & Compressed Air', zh: '压缩机与压缩空气' },
+    name: { en: 'Compressors & compressed air', zh: '压缩机与压缩空气' },
     blurb: {
       en: 'Screw · reciprocating · dryers · receivers · spares',
       zh: '螺杆机 · 活塞机 · 干燥机 · 储气罐 · 备件',
@@ -117,7 +117,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'valves-flow-control',
-    name: { en: 'Valves & Flow Control', zh: '阀门与流量控制' },
+    name: { en: 'Valves & flow control', zh: '阀门与流量控制' },
     blurb: {
       en: 'Ball · gate · butterfly · control · safety · actuators',
       zh: '球阀 · 闸阀 · 蝶阀 · 调节阀 · 安全阀 · 执行器',
@@ -130,7 +130,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'mechanical-mro',
-    name: { en: 'Mechanical & MRO Spares', zh: '机械与MRO备件' },
+    name: { en: 'Mechanical & MRO spares', zh: '机械与MRO备件' },
     blurb: {
       en: 'Bearings · seals · gaskets · fasteners · hoses · filters',
       zh: '轴承 · 密封件 · 垫片 · 紧固件 · 软管 · 滤芯',
@@ -143,7 +143,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'hydraulic-pneumatic',
-    name: { en: 'Hydraulic & Pneumatic', zh: '液压与气动' },
+    name: { en: 'Hydraulic & pneumatic', zh: '液压与气动' },
     blurb: {
       en: 'Pumps · cylinders · valves · power units · fittings',
       zh: '液压泵 · 油缸 · 阀 · 液压站 · 接头',
@@ -156,7 +156,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'process-equipment',
-    name: { en: 'Process & Industrial Equipment', zh: '流程与工业设备' },
+    name: { en: 'Process & industrial equipment', zh: '流程与工业设备' },
     blurb: {
       en: 'Heat exchangers · filtration · vessels · fans · conveyors',
       zh: '换热器 · 过滤设备 · 容器 · 风机 · 输送设备',
@@ -169,7 +169,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'industrial-machinery',
-    name: { en: 'Industrial Machinery', zh: '工业机械' },
+    name: { en: 'Industrial machinery', zh: '工业机械' },
     blurb: {
       en: 'Generators · production lines · packaging · welding',
       zh: '发电机组 · 生产线 · 包装机械 · 焊接设备',
@@ -182,7 +182,7 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'industrial-consumables',
-    name: { en: 'Industrial Consumables', zh: '工业耗材' },
+    name: { en: 'Industrial consumables', zh: '工业耗材' },
     blurb: {
       en: 'Filters · lubricants · abrasives · cutting tools · PPE',
       zh: '滤芯 · 润滑油 · 磨料 · 刀具 · 劳保用品',

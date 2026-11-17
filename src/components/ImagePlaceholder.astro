@@ -113,9 +113,10 @@ const sizing = {
     z-index: 2;
     padding: 18px;
     text-align: center;
-    font-family: var(--font-stack-mono);
-    font-size: .6rem;
-    letter-spacing: .16em;
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     line-height: 1.5;
     color: var(--text-muted);
@@ -134,8 +135,10 @@ const sizing = {
     max-width: 30ch;
     margin-top: 7px;
     font-style: normal;
-    font-size: .72rem;
-    letter-spacing: .02em;
+    font-family: var(--font-stack-body);
+    font-weight: 400;
+    font-size: var(--fs-caption);
+    letter-spacing: 0;
     text-transform: none;
     line-height: 1.5;
     color: var(--text-quiet);
@@ -155,8 +158,6 @@ const sizing = {
   }
   .ph--small .ph__t {
     padding: 10px;
-    font-size: .55rem;
-    letter-spacing: .12em;
   }
   .ph--small .ph__t svg {
     width: 20px;
@@ -182,8 +183,7 @@ const sizing = {
     right: clamp(20px, 3vw, 40px);
     padding: 0;
     text-align: right;
-    font-size: .58rem;
-    color: rgba(255, 255, 255, .5);
+    color: var(--on-dark-4);
   }
   .ph--hero .ph__t svg {
     width: 18px;
@@ -193,7 +193,7 @@ const sizing = {
   .ph--hero .ph__t em {
     margin-left: auto;
     text-align: right;
-    color: rgba(255, 255, 255, .5);
+    color: var(--on-dark-4);
   }
 
   /* -- with a photograph ---------------------------------------------------- */
@@ -259,7 +259,7 @@ const sizing = {
     border-color: var(--color-cyan);
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 35rem) {
     .ph--hero .ph__t {
       top: 20px;
       right: 20px;

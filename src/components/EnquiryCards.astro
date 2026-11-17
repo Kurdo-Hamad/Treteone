@@ -1,9 +1,11 @@
 ---
+import Icon from '~/components/Icon.astro';
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { company } from '~/data/company';
 import { standIn } from '~/data/standIns';
 import type { TextKey } from '~/data/heroSlides';
 import { aboutHref, productsHref, quoteHref, sourcingHref } from '~/data/navigation';
-import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, languages, localisePath, useTranslations } from '~/i18n/ui';
 
 /**
  * Image cards — the mockup's .cards block: photograph slot, heading, three
@@ -17,6 +19,12 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
  *
  * The three enquiry cards start below the fold, so they reveal (.rv); the two
  * work cards sit at the foot of the page and do not, as in the mockup.
+ *
+ * "Who you are dealing with" has no photograph until Treteone supplies one of
+ * its own office (a stock photo there would fail the "are these people
+ * real?" check, §1). Until then its frame shows the registered company
+ * record — name and address in both scripts — instead of an empty
+ * "IMAGE" placeholder.
  */
 
 interface Props {
@@ -29,6 +37,8 @@ interface Card {
   readonly heading: TextKey;
   readonly body: TextKey;
   readonly more: TextKey;
+  /** Show the registered company record when there is no photograph. */
+  readonly record?: boolean;
 }
 
 const { set } = Astro.props;
@@ -79,6 +89,7 @@ const sets: Record<Props['set'], { heading: TextKey; note?: TextKey; cards: read
         heading: 'home.work.who.heading',
         body: 'home.work.who.body',
         more: 'home.work.more',
+        record: true,
       },
     ],
   },
@@ -87,6 +98,9 @@ const sets: Record<Props['set'], { heading: TextKey; note?: TextKey; cards: read
 const { heading, note, cards } = sets[set];
 const reveal = set === 'enquiries';
 const titleId = `${set}-title`;
+// Text in the other script gets its own lang, so it is read and shaped right.
+const latinLang = lang === 'en' ? undefined : 'en';
+const hanziLang = lang === 'zh' ? undefined : languages.zh.htmlLang;
 ---
 
 <section class:list={[{ pale: set === 'work' }]} aria-labelledby={titleId}>
@@ -97,11 +111,19 @@ const titleId = `${set}-title`;
       {
         cards.map((card) => (
           <a class:list={['card', { rv: reveal }]} href={localisePath(card.href, lang)}>
-            <ImagePlaceholder subject={t(card.subject)} variant="wide" image={standIn(card.subject)} />
+            {card.record && !standIn(card.subject) ? (
+              <span class="card__record">
+                <span class="card__record-name" lang={latinLang}>{company.registeredName}</span>
+                <span class="card__record-line" lang={latinLang}>{company.address.latin}</span>
+                <span class="card__record-line" lang={hanziLang}>{company.address.hanzi}</span>
+              </span>
+            ) : (
+              <ImagePlaceholder subject={t(card.subject)} variant="wide" image={standIn(card.subject)} />
+            )}
             <h3>{t(card.heading)}</h3>
             <p>{t(card.body)}</p>
             <span class="rm">
-              {t(card.more)} <span class="card__arrow" aria-hidden="true">→</span>
+              {t(card.more)} <Icon name="arrow-right" />
             </span>
           </a>
         ))
@@ -133,28 +155,62 @@ const titleId = `${set}-title`;
     color: inherit;
   }
   .card h3 {
-    margin-top: 16px;
+    margin-top: 20px;
     transition: color .2s;
   }
   .card:is(:hover, :focus-visible) h3 {
     color: var(--fg-link);
   }
   .card p {
-    margin-top: 8px;
-    font-size: .875rem;
+    margin-top: 10px;
+    max-width: 52ch;
+    font-size: var(--fs-body);
     line-height: 1.6;
     color: var(--fg-body);
   }
   .card .rm {
-    margin-top: 12px;
-    transition: transform var(--dur-fast) var(--ease), color var(--dur-fast);
+    margin-top: 14px;
   }
   .card:is(:hover, :focus-visible) .rm {
-    transform: translateX(4px);
+    color: var(--color-navy);
+    text-decoration-color: currentColor;
+  }
+  .card:is(:hover, :focus-visible) .rm :global(.ico) {
+    transform: translateX(3px);
   }
 
+  /* The company record, in the photograph's frame: a navy panel set like a
+     document — registered name, then the address in both scripts. */
+  .card__record {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+    aspect-ratio: 16 / 10;
+    padding: clamp(22px, 3vw, 36px);
+    background: var(--color-navy);
+    color: var(--on-dark-2);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    transition:
+      transform .5s var(--ease-out-expo),
+      box-shadow .5s var(--ease-out-expo);
+  }
+  .card__record-name {
+    margin-bottom: 6px;
+    font-family: var(--font-stack-display);
+    font-weight: var(--weight-heading);
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-head);
+    color: var(--text-inverse);
+  }
+  .card:is(:hover, :focus-visible) .card__record {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-floating);
+  }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .cards,
     .cards--two {
       grid-template-columns: 1fr;

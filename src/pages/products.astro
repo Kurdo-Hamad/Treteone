@@ -28,7 +28,6 @@ const rows = categories.map((category) => ({
 
 <Base title={t('meta.products.title')} description={t('meta.products.description')}>
   <PageHead
-    kicker={t('products.page.kicker')(categories.length)}
     title={t('products.page.title')}
     lead={t('products.page.lead')}
     image={pageImage('products')}
@@ -36,6 +35,7 @@ const rows = categories.map((category) => ({
     <IndexRows
       rows={rows}
       href={localisePath(quoteHref, lang)}
+      param="category"
       action={t('products.rows.enquire')}
       label={t('products.listLabel')}
     />

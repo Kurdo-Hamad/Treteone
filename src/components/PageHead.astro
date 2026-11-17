@@ -3,8 +3,9 @@ import type { ImageMetadata } from 'astro';
 import { Picture } from 'astro:assets';
 
 /**
- * The opening of every detail route: kicker, h1, lead. One component so the
- * pages read as one product.
+ * The opening of every detail route: h1 and lead. One component so the pages
+ * read as one product. No label above the heading — the heading carries its
+ * own weight (eyebrow labels removed in the Nov 2026 refinement).
  *
  *   band (default)  a full-bleed navy band flush under the masthead, with an
  *                   optional photograph on the right behind a navy scrim.
@@ -21,21 +22,19 @@ import { Picture } from 'astro:assets';
  */
 
 interface Props {
-  kicker: string;
   title: string;
   lead?: string;
   image?: ImageMetadata | undefined;
   plain?: boolean;
 }
 
-const { kicker, title, lead, image, plain = false } = Astro.props;
+const { title, lead, image, plain = false } = Astro.props;
 const hasBody = Astro.slots.has('default');
 ---
 
 {
   plain ? (
     <header class="page-head settle-in">
-      <p class="kicker">{kicker}</p>
       <h1>{title}</h1>
       {lead && <p class="lead page-head__lead">{lead}</p>}
     </header>
@@ -58,7 +57,6 @@ const hasBody = Astro.slots.has('default');
           </div>
         )}
         <div class="wrap phead__in settle-in">
-          <p class="kicker">{kicker}</p>
           <h1>{title}</h1>
           {lead && <p class="lead phead__lead">{lead}</p>}
         </div>
@@ -79,12 +77,12 @@ const hasBody = Astro.slots.has('default');
   }
 
   /* -- band ----------------------------------------------------------------- */
-  /* A navy ground sets its own roles, so focus, kicker and headings follow. */
+  /* A navy ground sets its own roles, so focus, links and headings follow. */
   .phead {
     --focus: var(--focus-dark);
     --fg-heading: var(--text-inverse);
-    --fg-kicker: var(--color-cyan-light);
-    --fg-body: rgba(255, 255, 255, .78);
+    --fg-label: var(--color-cyan-light);
+    --fg-body: var(--on-dark-2);
 
     position: relative;
     isolation: isolate;
@@ -108,17 +106,15 @@ const hasBody = Astro.slots.has('default');
   }
 
   .phead h1 {
-    font-size: clamp(2rem, 1.45rem + 2.2vw, 3.1rem);
-    line-height: 1.06;
-    letter-spacing: -.025em;
+    font-size: var(--fs-page-h1);
   }
   :global(html[lang^='zh']) .phead h1 {
     letter-spacing: 0;
     line-height: 1.25;
   }
   .phead__lead {
-    margin-top: 20px;
-    max-width: 60ch;
+    margin-top: 22px;
+    max-width: 56ch;
   }
 
   /* The photograph fills the right of the band, edge to edge. A navy scrim
@@ -220,7 +216,7 @@ const hasBody = Astro.slots.has('default');
   /* Phones and tablets: the photograph gets its own strip above the copy,
      so it shows clearly and the text sits on plain navy. A short fade at
      the bottom of the strip joins it to the band. */
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .phead--media .phead__in > * {
       max-width: none;
     }

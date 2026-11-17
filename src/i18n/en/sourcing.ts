@@ -12,7 +12,6 @@ export const sourcing = {
     'Obsolete, discontinued and unmarked industrial parts. Send a part number, a nameplate photo or a BOQ and we investigate it. How an enquiry is handled, in five steps.',
 
   // ---- /sourcing page head (approved mockup, #v-sourcing) -----------------
-  'sourcing.page.kicker': 'Sourcing · hard-to-find & obsolete',
   'sourcing.page.title': 'How a part with no working reference gets traced.',
   'sourcing.page.lead':
     'An enquiry usually reaches us after the obvious routes have failed. The work is methodical rather than mysterious: establish what the item actually is, then establish who still makes something that satisfies the same duty.',
@@ -32,7 +31,6 @@ export const sourcing = {
     'Datasheets, test certificates and material certificates are supplied where the manufacturer issues them. Where they cannot be obtained, we say so before you order rather than after.',
 
   // ---- navy "what to send" band -------------------------------------------
-  'sourcing.what.kicker': 'What to send',
   'sourcing.what.title': 'Send whatever you have. A photograph counts.',
   'sourcing.what.lead':
     'There is no minimum. Enquiries have started from a single blurred nameplate and from a four-hundred-line bill of quantities, and both go to the same team.',
@@ -44,9 +42,8 @@ export const sourcing = {
   'sourcing.what.description': 'A written description, if that is genuinely all there is',
 
   // ---- five-step process (ProcessSteps) -----------------------------------
-  'process.kicker': 'From requirement to delivery',
   'process.title': 'What happens after you press send.',
-  /** n is already zero-padded ("01"). Shown in capitals by CSS. */
+  /** n is the step number ("1"). */
   'process.stepLabel': (n: string) => `Step ${n}`,
 
 };

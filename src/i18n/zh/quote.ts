@@ -12,7 +12,6 @@ export const quote: QuoteStrings = {
   'meta.quote.description': '发送部件号、照片或整份清单。无需注册，只需留下联系方式。',
 
   // ---- quote form ---------------------------------------------------------
-  'quote.eyebrow': '索取报价',
   'quote.heading': '告诉我们您的需求。',
   'quote.lede': '永远无需注册账户。发送部件号、照片或整份清单，我们会回复价格与交期。',
   'quote.formLabel': '索取报价',
@@ -38,9 +37,9 @@ export const quote: QuoteStrings = {
   'quote.submit': '提交需求',
   'quote.hint': '只有联系方式为必填项。一张模糊的铭牌照片，加上一个联系方式，就足以开始。',
 
-  'quote.part.placeholder': '6ES7 214-1AG40-0XB0',
-  'quote.manufacturer.placeholder': 'Siemens',
-  'quote.quantity.placeholder': '4',
+  'quote.part.placeholder': '例如 6ES7 214-1AG40-0XB0',
+  'quote.manufacturer.placeholder': '例如 Siemens',
+  'quote.quantity.placeholder': '例如 4',
   'quote.notes.placeholder': '工况、使用条件、需求日期、目的地',
 
   'quote.aside.files': '文件',
@@ -60,6 +59,9 @@ export const quote: QuoteStrings = {
   'quote.error.body': (email: string) =>
     `我们这边出现了问题。请直接发送邮件至 ${email}——您的询价比这个表单重要。`,
   'quote.error.contactRequired': '请填写邮箱或WhatsApp号码，以便我们回复。',
+  'quote.error.contactInvalid': '这看起来不像邮箱地址或电话号码，请检查后再提交，以便我们回复。',
+  'quote.prefill.category': '类别：',
+  'quote.prefill.industry': '行业：',
   'quote.error.tooManyFiles': (max: number) => `最多只能上传 ${max} 个文件。`,
   'quote.error.fileTooLarge': (name: string, max: number) =>
     `${name} 超过 ${max} MB，请通过邮件单独发送。`,

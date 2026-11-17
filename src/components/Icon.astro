@@ -1,0 +1,37 @@
+---
+/**
+ * Inline icons, drawn as SVG in one stroke weight — in place of the "→" and
+ * "↑" text glyphs the site used before (Impeccable craft floor: Unicode glyphs
+ * are not an icon system). Decorative: the link or button text names the
+ * action, so every icon is aria-hidden.
+ *
+ *   <Icon name="arrow-right" />   trailing arrow in links and buttons
+ *   <Icon name="arrow-up" />      back to top
+ *   <Icon name="pause" /> / <Icon name="play" />
+ *
+ * Sized to the surrounding text (1em) by the global .ico rule.
+ */
+
+interface Props {
+  name: 'arrow-right' | 'arrow-up' | 'pause' | 'play';
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['ico', className]}
+  viewBox="0 0 16 16"
+  aria-hidden="true"
+  focusable="false"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap="square"
+>
+  {name === 'arrow-right' && <path d="M2.5 8h10M8.5 3.5 13 8l-4.5 4.5"></path>}
+  {name === 'arrow-up' && <path d="M8 13.5v-10M3.5 7.5 8 3l4.5 4.5"></path>}
+  {name === 'pause' && <path d="M5.5 3v10M10.5 3v10" stroke-width="2"></path>}
+  {name === 'play' && <path d="M4.5 2.75v10.5L13 8z" fill="currentColor" stroke="none"></path>}
+</svg>

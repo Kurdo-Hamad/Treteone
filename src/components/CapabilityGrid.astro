@@ -4,13 +4,15 @@ import { standIn } from '~/data/standIns';
 import { categories } from '~/data/categories';
 import type { TextKey } from '~/data/heroSlides';
 import { productsHref } from '~/data/navigation';
-import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, localisePath, pick, useTranslations } from '~/i18n/ui';
 
 /**
  * §7.6 Capability grid — eight of the twelve categories, each a small
- * photograph slot, a noun-plus-clause heading and three lines. Four columns,
- * two below 960px, one below 560px. A scope statement, not a catalogue: no
- * prices, no stock, no part counts (§13).
+ * photograph slot, the category name (read from src/data/categories.ts, so
+ * it matches /products word for word) with a short clause, and three lines.
+ * Four columns, two below 960px; on a phone a compact ruled list without
+ * photographs, so the page is not eight photographs long. A scope statement,
+ * not a catalogue: no prices, no stock, no part counts (§13).
  */
 
 const lang = getLangFromUrl(Astro.url);
@@ -44,11 +46,16 @@ const categoryOf: Record<(typeof caps)[number], string> = {
 };
 const productsPath = localisePath(productsHref, lang);
 
-/* Headings are written "Automation & control — the logic layer" (and with
-   "——" in Chinese). Set the name and the clause on their own lines instead of
-   letting the dash fall wherever the line breaks. */
-const splitHeading = (heading: string): string[] =>
-  heading.split(/\s*(?:——|—)\s*/).filter((part) => part.length > 0);
+/* The i18n headings are written "Automation & control — the logic layer"
+   (and with "——" in Chinese). Only the clause after the dash is used here;
+   the name comes from categories.ts, the one source for category names. */
+const clauseOf = (heading: string): string =>
+  heading.split(/\s*(?:——|—)\s*/).filter((part) => part.length > 0).slice(1).join(' ');
+const nameOf = (cap: (typeof caps)[number]): string => {
+  const category = categories.find((entry) => entry.slug === categoryOf[cap]);
+  if (!category) throw new Error(`CapabilityGrid: no category ${categoryOf[cap]}`);
+  return pick(category.name, lang);
+};
 ---
 
 <section aria-labelledby="caps-title">
@@ -66,16 +73,9 @@ const splitHeading = (heading: string): string[] =>
               image={standIn(key(cap, 'subject'))}
             />
             <h3 id={`cap-${cap}`}>
-              {splitHeading(t(key(cap, 'heading'))).map((part, i) =>
-                i === 0 ? (
-                  <span class="cap__name">{part}</span>
-                ) : (
-                  <>
-                    <span class="sr-only"> — </span>
-                    <span class="cap__clause">{part}</span>
-                  </>
-                ),
-              )}
+              <span class="cap__name">{nameOf(cap)}</span>
+              <span class="sr-only"> — </span>
+              <span class="cap__clause">{clauseOf(t(key(cap, 'heading')))}</span>
             </h3>
             <p>{t(key(cap, 'body'))}</p>
             </a>
@@ -113,44 +113,58 @@ const splitHeading = (heading: string): string[] =>
     margin-bottom: 16px;
   }
   .cap h3 {
+    font-size: var(--fs-lead);
+    line-height: 1.3;
     transition: color .2s;
   }
   .cap__link:is(:hover, :focus-visible) .cap__name {
     color: var(--fg-link);
-  }
-  .cap h3 {
-    font-size: 1rem;
-    line-height: 1.3;
   }
   .cap__name,
   .cap__clause {
     display: block;
   }
   .cap__clause {
-    margin-top: 2px;
+    margin-top: 3px;
+    font-family: var(--font-stack-body);
+    font-size: var(--fs-small);
     font-weight: 400;
-    color: var(--text-muted);
+    letter-spacing: 0;
+    color: var(--fg-muted);
   }
   .cap p {
-    margin-top: 8px;
-    font-size: .8125rem;
+    margin-top: 10px;
+    font-size: var(--fs-small);
     line-height: 1.6;
     color: var(--fg-body);
   }
 
-
   .caps__all {
-    margin-top: 30px;
+    margin-top: 34px;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .caps {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (max-width: 560px) {
+  /* Phone: a ruled list, no photographs — eight full-width photos would be
+     about 3,000px of scrolling before the next section. */
+  @media (max-width: 35rem) {
     .caps {
       grid-template-columns: 1fr;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+    .cap__link {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .cap :global(.ph) {
+      display: none;
+    }
+    .cap p {
+      margin-top: 6px;
     }
   }
 </style>

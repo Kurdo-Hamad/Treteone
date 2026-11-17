@@ -1,5 +1,7 @@
 ---
+import Icon from '~/components/Icon.astro';
 import ImagePlaceholder from '~/components/ImagePlaceholder.astro';
+import { quoteHref } from '~/data/navigation';
 import { standIn } from '~/data/standIns';
 import { heroSlides } from '~/data/heroSlides';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
@@ -12,14 +14,18 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
  * lines up with the page gutter.
  *
  * Four tab panels. Each panel holds its own photograph slot AND its own
- * eyebrow, title, line and link, so every panel is complete in the HTML —
+ * title, line and actions, so every panel is complete in the HTML —
  * nothing is written in by script, and with JS off the first panel simply
  * stays up. The script (src/scripts/rolling-hero.ts) only moves the
  * selection.
  *
  * Bar below the image: pause/play plus a real tablist (role="tab",
- * aria-selected, roving tabindex, arrow keys). Below 700px only the selected
- * tab shows, as one full-width segment with its label visually hidden.
+ * aria-selected, roving tabindex, arrow keys). Below 700px the four segments
+ * share the width with their labels visually hidden, so a phone visitor can
+ * see there are four slides and tap any of them.
+ *
+ * The panels share one grid cell, so the stage grows with its copy: at a
+ * large browser text size nothing is clipped (WCAG 1.4.4).
  *
  * Under prefers-reduced-motion it rests on panel one with the play icon
  * showing; nothing moves until the visitor presses play.
@@ -29,7 +35,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<section class="hero" data-hero>
+<section class="hero dark-surface" data-hero>
   <div class="hero__stage">
     {
       heroSlides.map((slide, i) => (
@@ -48,12 +54,16 @@ const t = useTranslations(lang);
           />
           <div class="hero__overlay">
             <div class="wrap">
-              <p class="kicker hero__eyebrow">{t('home.hero.eyebrow')}</p>
               <p class="hero__title">{t(slide.title)}</p>
               <p class="hero__line">{t(slide.line)}</p>
-              <a class="hero__more" href={localisePath(slide.href, lang)}>
-                {t(slide.link)} <span aria-hidden="true">→</span>
-              </a>
+              <p class="hero__actions">
+                <a class="btn" href={localisePath(quoteHref, lang)}>
+                  {t('home.intro.ctaQuote')} <Icon name="arrow-right" />
+                </a>
+                <a class="hero__more" href={localisePath(slide.href, lang)}>
+                  {t(slide.link)} <Icon name="arrow-right" />
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -106,25 +116,29 @@ const t = useTranslations(lang);
 </script>
 
 <style>
-  /* The hero is a navy ground: it sets its own roles, so focus rings inside
-     it are cyan-light (§4, §11). The dwell time lives here once; the progress
-     segment animates on it and the script reads it, so they cannot drift. */
+  /* The hero is a navy ground (.dark-surface sets the roles, so focus rings
+     are cyan-light and .btn takes its cyan form). The dwell time lives here
+     once; the progress segment animates on it and the script reads it. */
   .hero {
-    --focus: var(--focus-dark);
-    --fg-kicker: var(--color-cyan-light);
     --hero-dwell: 5s;
 
     position: relative;
-    overflow: hidden;
+    overflow: clip;
     background: var(--color-navy);
     color: var(--text-inverse);
   }
 
   /* -- stage ---------------------------------------------------------------- */
+  /* All four panels sit in one grid cell, so the stage is as tall as the
+     tallest panel's copy — or the minimum below, whichever is more. */
   .hero__stage {
     position: relative;
     isolation: isolate;
-    height: clamp(480px, 66vh, 700px);
+    display: grid;
+    /* minmax(0, 1fr): a long word in a large title must wrap, never widen
+       the stage past the screen. */
+    grid-template-columns: minmax(0, 1fr);
+    min-height: clamp(480px, 66vh, 700px);
   }
 
   /* Panels never create a stacking context of their own (no opacity, no
@@ -133,8 +147,11 @@ const t = useTranslations(lang);
      the image crossfades slowly, the copy steps out and back in quickly, so
      two lines of text are never legible on top of each other. */
   .hero__panel {
-    position: absolute;
-    inset: 0;
+    grid-area: 1 / 1;
+    min-width: 0;
+    position: relative;
+    display: grid;
+    align-content: end;
     visibility: hidden;
     /* An outgoing panel stays visible while its image fades, but never
        catches a click meant for the panel coming in. */
@@ -155,31 +172,23 @@ const t = useTranslations(lang);
     opacity: 1;
   }
 
-  /* Left-to-right navy scrim (§6). It shades the copy side, not the whole
-     photograph. */
+  /* Navy scrim (§6). A soft left-to-right shade over the photograph, plus a
+     deeper pool in the lower left where the copy sits, so the copy keeps its
+     contrast on any photograph while the rest of the image stays clear. */
   .hero__scrim {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
     background:
-      linear-gradient(
-        80deg,
-        rgb(var(--scrim-rgb) / .8) 0%,
-        rgb(var(--scrim-rgb) / .6) 38%,
-        rgb(var(--scrim-rgb) / .14) 72%,
-        rgb(var(--scrim-rgb) / .05) 100%
-      ),
-      linear-gradient(to top, rgb(var(--scrim-rgb) / .5) 0%, rgb(var(--scrim-rgb) / 0) 48%);
+      radial-gradient(110% 95% at 0% 100%, rgb(var(--scrim-rgb) / .88) 0%, rgb(var(--scrim-rgb) / .66) 40%, rgb(var(--scrim-rgb) / 0) 74%),
+      linear-gradient(80deg, rgb(var(--scrim-rgb) / .55) 0%, rgb(var(--scrim-rgb) / .3) 40%, rgb(var(--scrim-rgb) / .06) 75%, rgb(var(--scrim-rgb) / 0) 100%);
   }
 
   .hero__overlay {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: relative;
     z-index: 2;
-    padding-block: clamp(26px, 3.6vw, 46px);
+    padding-block: clamp(96px, 14vh, 160px) clamp(28px, 4vw, 52px);
     color: var(--text-inverse);
     opacity: 0;
     transition: opacity .25s var(--ease);
@@ -202,71 +211,81 @@ const t = useTranslations(lang);
 
   /* When the slide changes (rolling-hero.ts adds .is-enter), the copy
      arrives line by line. The first slide never gets .is-enter. */
-  .hero__panel.is-enter :is(.hero__eyebrow, .hero__title, .hero__line, .hero__more) {
+  .hero__panel.is-enter :is(.hero__title, .hero__line, .hero__actions) {
     animation: hero-copy-in .8s var(--ease-out-expo) backwards;
   }
   /* First paint: the first slide's copy settles in (never from invisible —
      see .settle-in in global.css). Later slides use .is-enter instead. */
-  .hero__panel.is-on:not(.is-enter) :is(.hero__eyebrow, .hero__title, .hero__line, .hero__more) {
+  .hero__panel.is-on:not(.is-enter) :is(.hero__title, .hero__line, .hero__actions) {
     animation: settle-in 1s var(--ease-out-expo) backwards;
   }
-  .hero__panel.is-on:not(.is-enter) .hero__title { animation-delay: 80ms; }
-  .hero__panel.is-on:not(.is-enter) .hero__line { animation-delay: 160ms; }
-  .hero__panel.is-on:not(.is-enter) .hero__more { animation-delay: 240ms; }
+  .hero__panel.is-on:not(.is-enter) .hero__line { animation-delay: 80ms; }
+  .hero__panel.is-on:not(.is-enter) .hero__actions { animation-delay: 160ms; }
 
-  .hero__panel.is-enter .hero__eyebrow { animation-delay: .25s; }
-  .hero__panel.is-enter .hero__title { animation-delay: .33s; }
-  .hero__panel.is-enter .hero__line { animation-delay: .43s; }
-  .hero__panel.is-enter .hero__more { animation-delay: .53s; }
+  .hero__panel.is-enter .hero__title { animation-delay: .25s; }
+  .hero__panel.is-enter .hero__line { animation-delay: .35s; }
+  .hero__panel.is-enter .hero__actions { animation-delay: .45s; }
   @keyframes hero-copy-in {
-    from { opacity: 0; transform: translateY(22px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: none; }
   }
 
-  .hero__eyebrow,
   .hero__title,
   .hero__line {
-    max-width: min(640px, 76%);
-  }
-  .hero__eyebrow {
-    margin-bottom: 0;
+    max-width: min(680px, 78%);
   }
   .hero__title {
-    margin-top: 16px;
     font-family: var(--font-stack-display);
     font-weight: var(--weight-heading);
     font-size: var(--fs-hero-title);
-    line-height: 1.04;
-    letter-spacing: -.03em;
+    line-height: .98;
+    letter-spacing: var(--tracking-tight);
     text-wrap: balance;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   :global(html[lang^='zh']) .hero__title {
     letter-spacing: 0;
     line-height: 1.2;
   }
   .hero__line {
-    margin-top: 16px;
-    font-size: clamp(1rem, .95rem + .25vw, 1.125rem);
+    margin-top: 18px;
+    font-size: var(--fs-lead);
     line-height: 1.55;
-    color: rgba(255, 255, 255, .84);
+    /* Full white, not the .80 body tier: over a photograph the line must
+       hold 4.5:1 against the brightest part of the image behind it. */
+    color: var(--on-dark-1);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 26px;
+    margin-top: 28px;
   }
   .hero__more {
     display: inline-flex;
     align-items: center;
     gap: .5em;
-    margin-top: 20px;
-    padding-bottom: 3px;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-cyan-light) 45%, transparent);
+    min-height: 44px;
     font-family: var(--font-stack-display);
     font-weight: 600;
-    font-size: .9375rem;
-    color: var(--color-cyan-light);
-    text-decoration: none;
-    transition: gap .18s var(--ease), border-color var(--dur-fast);
+    font-size: var(--fs-small);
+    color: var(--text-inverse);
+    text-decoration: underline;
+    text-decoration-color: var(--on-dark-line);
+    text-underline-offset: .35em;
+    transition: text-decoration-color var(--dur-fast), color var(--dur-fast);
+  }
+  .hero__more :global(.ico) {
+    transition: transform .25s var(--ease-out-expo);
   }
   .hero__more:hover {
-    gap: .9em;
-    border-bottom-color: var(--color-cyan-light);
+    color: var(--color-cyan-light);
+    text-decoration-color: currentColor;
+  }
+  .hero__more:hover :global(.ico) {
+    transform: translateX(3px);
   }
 
   /* -- bar: pause/play + tablist ------------------------------------------- */
@@ -282,10 +301,10 @@ const t = useTranslations(lang);
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, .34);
+    border: 1px solid var(--on-dark-line);
     border-radius: var(--radius-pill);
     background: none;
     color: var(--text-inverse);
@@ -331,9 +350,9 @@ const t = useTranslations(lang);
     cursor: pointer;
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: .8125rem;
+    font-size: var(--fs-caption);
     line-height: 1.3;
-    color: rgba(255, 255, 255, .6);
+    color: var(--on-dark-3);
     transition: color var(--dur-fast);
   }
   .hero__tab:hover,
@@ -351,10 +370,10 @@ const t = useTranslations(lang);
     height: 3px;
     margin-bottom: 12px;
     overflow: hidden;
-    background: rgba(255, 255, 255, .26);
+    background: var(--rule-dark);
   }
   .hero__tab[aria-selected='true'] .hero__seg {
-    background: rgba(255, 255, 255, .34);
+    background: var(--on-dark-line);
   }
   .hero__seg::after {
     content: '';
@@ -379,12 +398,11 @@ const t = useTranslations(lang);
     to { transform: scaleX(1); }
   }
 
-  /* -- breakpoints (mockup: 960 / 700 / 560) -------------------------------- */
-  @media (max-width: 960px) {
+  /* -- breakpoints ---------------------------------------------------------- */
+  @media (max-width: 60rem) {
     .hero__stage {
-      height: clamp(440px, 64vh, 620px);
+      min-height: clamp(440px, 64vh, 620px);
     }
-    .hero__eyebrow,
     .hero__title,
     .hero__line {
       max-width: none;
@@ -395,42 +413,41 @@ const t = useTranslations(lang);
     }
   }
 
-  /* Phone: one progress line at a time, compact bar. */
-  @media (max-width: 700px) {
+  /* Phone: four short segments side by side, labels hidden, compact bar. */
+  @media (max-width: 43.75rem) {
     .hero__scrim {
       background: linear-gradient(
         to top,
-        rgb(var(--scrim-rgb) / .8) 0%,
-        rgb(var(--scrim-rgb) / .55) 42%,
-        rgb(var(--scrim-rgb) / .1) 100%
+        rgb(var(--scrim-rgb) / .86) 0%,
+        rgb(var(--scrim-rgb) / .6) 45%,
+        rgb(var(--scrim-rgb) / .12) 100%
       );
     }
     .hero__overlay {
-      padding-block: 24px;
+      padding-block: 120px 26px;
     }
     .hero__line {
-      font-size: .9375rem;
+      font-size: var(--fs-body);
     }
     .hero__bar {
       align-items: center;
       gap: 14px;
-      padding-top: 16px;
+      padding-top: 14px;
     }
     .hero__pp {
       width: 44px;
       height: 44px;
     }
     .hero__tabs {
-      display: block;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
     .hero__tab {
-      display: none;
-      width: 100%;
-      /* 44px tall target around a 2px line (§13). */
+      justify-self: stretch;
+      display: grid;
+      align-items: center;
+      /* 44px tall target around a 3px line (§13). */
       min-height: 44px;
-    }
-    .hero__tab[aria-selected='true'] {
-      display: block;
     }
     .hero__label {
       position: absolute;
@@ -441,21 +458,13 @@ const t = useTranslations(lang);
       white-space: nowrap;
     }
     .hero__seg {
-      width: 100%;
       margin-bottom: 0;
-      background: rgba(255, 255, 255, .3);
     }
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 35rem) {
     .hero__stage {
-      height: auto;
-      aspect-ratio: 4 / 5;
-      min-height: 480px;
-      /* With min-height in play the aspect ratio would otherwise transfer a
-         minimum width of 430 x 3/4 = 323px, wider than a 320px phone. */
-      width: 100%;
-      min-width: 0;
+      min-height: max(480px, 125vw);
     }
   }
 </style>

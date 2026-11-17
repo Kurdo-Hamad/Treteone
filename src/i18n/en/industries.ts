@@ -12,7 +12,6 @@ export const industries = {
     'Industrial supply and sourcing for oil and gas, refining, power, cement, manufacturing, steel, mining, water and facilities.',
 
   // ---- /industries page head (approved mockup, #v-industries) -------------
-  'industries.page.kicker': (n: number) => `Industries · ${n} sectors`,
   'industries.page.title': 'Specified to the duty, not the catalogue.',
   'industries.page.lead':
     'The same nominal part behaves differently in slurry, in sour service and on a dusty kiln line. Below is what each sector tends to ask for, and the duty information that decides the answer.',

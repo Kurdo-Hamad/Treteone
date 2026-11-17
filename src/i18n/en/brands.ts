@@ -17,11 +17,10 @@ export const brands = {
   //
   // 'brands.heading' is the homepage marquee heading and the directory's
   // accessible list name. The /brands h1 is the approved mockup's line.
-  'brands.eyebrow': 'Brands',
   'brands.heading': 'Brands we source',
   'brands.title': 'The manufacturers buyers ask for by name.',
   'brands.lede':
-    'Filter by discipline or type a name. The list reflects what is requested most often, not the limit of what can be sourced — if yours is missing, send the enquiry anyway. Logo artwork is pending; names are shown until it is supplied.',
+    'Filter by discipline or type a name. The list reflects what is requested most often, not the limit of what can be sourced — if yours is missing, send the enquiry anyway.',
 
   // Directory filter (approved mockup). The script fills {n}, {shown} and
   // {total}; it holds no copy of its own.

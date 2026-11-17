@@ -13,7 +13,6 @@ export const products = {
     'Twelve industrial product categories sourced from Guangzhou: automation, instrumentation, electrical, motors and drives, pumps, compressors, valves, MRO spares and more.',
 
   // ---- /products page head (approved mockup, #v-products) -----------------
-  'products.page.kicker': (n: number) => `Products · ${n} categories`,
   'products.page.title': 'Everything behind the plant, in one enquiry.',
   'products.page.lead':
     'Categories tell you whether your item is within scope. Nothing is held in stock, and every line is quoted against the specification you send.',
@@ -21,7 +20,6 @@ export const products = {
   'products.rows.enquire': 'Enquire',
 
   // ---- navy scope band on /products (ScopeSteps) --------------------------
-  'scope.band.kicker': 'Scope',
   'scope.band.title': 'From one component to a complete line.',
 
   /** Accessible name of the category list (IndexRows). */

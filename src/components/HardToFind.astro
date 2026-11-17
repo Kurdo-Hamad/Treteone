@@ -4,8 +4,9 @@ import { sourcingHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 
 /**
- * §7.7 Hard-to-find — the navy band from the approved mockup: the claim and
- * one action on the left, the numbered "what to send" list on the right.
+ * §7.7 Hard-to-find — the navy band: the claim and one action on the left,
+ * the "what to send" list on the right. The list is not numbered: it is a set
+ * of things to send, not a sequence.
  * Entry to /sourcing, which holds the full checklist and the process.
  */
 
@@ -18,14 +19,12 @@ const sendable: readonly TextKey[] = [
   'home.htf.send3',
   'home.htf.send4',
 ];
-const pad = (n: number): string => String(n).padStart(2, '0');
 ---
 
 <section class="navy" aria-labelledby="htf-title">
   <div class="wrap sec">
     <div class="htf">
       <div>
-        <p class="kicker">{t('home.htf.kicker')}</p>
         <h2 id="htf-title">{t('home.htf.heading')}</h2>
         <p class="lead htf__lead">{t('home.htf.lead')}</p>
         <p class="htf__cta">
@@ -34,12 +33,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
       </div>
       <ol class="htf__list" aria-label={t('home.htf.listLabel')}>
         {
-          sendable.map((key, i) => (
-            <li>
-              <span class="mono htf__k" aria-hidden="true">{pad(i + 1)}</span>
-              <span>{t(key)}</span>
-            </li>
-          ))
+          sendable.map((key) => <li>{t(key)}</li>)
         }
       </ol>
     </div>
@@ -54,7 +48,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     align-items: center;
   }
   .htf__lead {
-    margin-top: 16px;
+    margin-top: 18px;
   }
   .htf__cta {
     margin-top: 24px;
@@ -66,22 +60,15 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     padding: 0;
     border-top: 1px solid var(--line-dark);
   }
+  /* Each row stands on the shared ruled-entry hairline (global.css). */
   .htf__list li {
-    display: grid;
-    grid-template-columns: 46px 1fr;
-    gap: 14px;
-    padding: 15px 0;
-    border-bottom: 1px solid var(--line-dark);
-    font-size: .9375rem;
-    color: rgba(255, 255, 255, .82);
-  }
-  .htf__k {
-    padding-top: 3px;
-    font-size: .72rem;
-    color: var(--color-cyan-light);
+    padding: 18px 0;
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+    color: var(--on-dark-1);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .htf {
       grid-template-columns: 1fr;
     }

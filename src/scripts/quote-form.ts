@@ -17,6 +17,8 @@ const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
 if (form) {
   const fileInput = form.querySelector<HTMLInputElement>('[data-quote-files]');
   const contactInput = form.querySelector<HTMLInputElement>('[data-quote-contact]');
+  const contactError = form.querySelector<HTMLElement>('[data-quote-contact-error]');
+  const notes = form.querySelector<HTMLTextAreaElement>('[data-quote-notes]');
   const submit = form.querySelector<HTMLButtonElement>('[data-quote-submit]');
   const result = form.querySelector<HTMLElement>('[data-quote-result]');
   const timeField = form.querySelector<HTMLInputElement>('[data-quote-time]');
@@ -27,6 +29,37 @@ if (form) {
   const maxFiles = num('maxFiles');
   const maxFileBytes = num('maxFileBytes');
   const maxTotalBytes = num('maxTotalBytes');
+
+  /* -- validation in the page's language ---------------------------------- */
+  // With the script running, the form checks itself and writes its own,
+  // localised message next to the field. Without the script the native
+  // `required` check still applies (the attribute stays in the HTML).
+  form.noValidate = true;
+
+  /* -- prefill from the row the buyer came from --------------------------- */
+  // /products and /industries link here with ?category=<slug> or
+  // ?industry=<slug>. Write the choice into the notes, so it is not lost on
+  // the way. Names come from the page (data-prefill), never from the URL, so
+  // nothing a link carries is ever written into the form as typed.
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const table = JSON.parse(data['prefill'] ?? '{}') as Record<
+      string,
+      { label: string; names: Record<string, string> }
+    >;
+    const lines: string[] = [];
+    for (const key of ['category', 'industry']) {
+      const slug = params.get(key);
+      const entry = table[key];
+      const name = slug && entry ? entry.names[slug] : undefined;
+      if (entry && name) lines.push(`${entry.label}${name}`);
+    }
+    if (notes && lines.length > 0 && notes.value.trim() === '') {
+      notes.value = `${lines.join('\n')}\n`;
+    }
+  } catch {
+    // A malformed address or table only means no prefill.
+  }
 
   /* -- §8 timing check --------------------------------------------------- */
   // Stamped now, compared server side. A person cannot read the form, attach a
@@ -46,7 +79,17 @@ if (form) {
 
     const text = document.createElement('span');
     text.className = 'quote-result__body';
-    text.textContent = body;
+    // The failure message names the sales address: make it a mailto link.
+    const email = data['email'] ?? '';
+    const at = email ? body.indexOf(email) : -1;
+    if (at === -1) {
+      text.textContent = body;
+    } else {
+      const link = document.createElement('a');
+      link.href = `mailto:${email}`;
+      link.textContent = email;
+      text.append(body.slice(0, at), link, body.slice(at + email.length));
+    }
 
     result.append(heading, text);
 
@@ -122,8 +165,19 @@ if (form) {
     clearResult();
   });
 
+  /** An email address, or something with enough digits to be a phone. */
+  const usableContact = (value: string): boolean =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || (value.match(/\d/g) ?? []).length >= 7;
+
+  const contactProblem = (message: string | null): void => {
+    contactInput?.setAttribute('aria-invalid', message ? 'true' : 'false');
+    if (!contactError) return;
+    contactError.textContent = message ?? '';
+    contactError.hidden = !message;
+  };
+
   contactInput?.addEventListener('input', () => {
-    contactInput.setAttribute('aria-invalid', 'false');
+    contactProblem(null);
   });
 
   /* -- submit ------------------------------------------------------------ */
@@ -139,10 +193,12 @@ if (form) {
     if (sending) return;
 
     const contact = contactInput?.value.trim() ?? '';
-    if (contact === '') {
-      contactInput?.setAttribute('aria-invalid', 'true');
+    if (contact === '' || !usableContact(contact)) {
+      clearResult();
+      contactProblem(
+        contact === '' ? (data['msgContactRequired'] ?? '') : (data['msgContactInvalid'] ?? ''),
+      );
       contactInput?.focus();
-      fail(data['msgContactRequired'] ?? '');
       return;
     }
 

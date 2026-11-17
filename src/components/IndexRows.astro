@@ -2,26 +2,30 @@
 /**
  * Index rows — the list on /products (12 categories) and /industries
  * (9 sectors). One component for both, so the two indexes read the same.
- * Mockup source: .rows / .row in reference/mockup.html.
  *
- *   number · name · mono spec line · action          (four columns)
- *   number · name                                     (below 960px)
- *            spec
- *            action
+ *   name · spec line · action          (three columns)
+ *   name                               (below 960px)
+ *   spec
+ *   action
  *
- * Every row is one link to the quote form — there are no per-category pages
- * (CLAUDE.md §3) — so the whole row is the touch target on a phone (§13).
- * Each <li> carries the entry's slug as its id, so categoryHref() and
- * industryHref() in src/data/navigation.ts land on the right row.
+ * No 01–12 numbering: the order carries no information (Nov 2026
+ * refinement). Every row is one link to the quote form — there are no
+ * per-category pages (CLAUDE.md §3) — so the whole row is the touch target on
+ * a phone (§13). The link carries the row's slug (?category= or ?industry=),
+ * and the form writes the choice into its notes, so the buyer's choice is not
+ * lost on the way. Each <li> carries the slug as its id, so categoryHref()
+ * and industryHref() in src/data/navigation.ts land on the right row.
  *
  * Props
  *   rows          id (slug), name and spec, already localised by the page
  *   href          the localised quote route
+ *   param         the query key the form reads: 'category' or 'industry'
  *   action        visible action label ("Enquire"); the arrow is decorative
  *   label         accessible name of the list
  *   headingLevel  2 when the rows sit directly under the page h1 (both
  *                 current uses), 3 under a section h2. Looks the same.
  */
+import Icon from '~/components/Icon.astro';
 
 interface Row {
   id: string;
@@ -32,26 +36,25 @@ interface Row {
 interface Props {
   rows: readonly Row[];
   href: string;
+  param: 'category' | 'industry';
   action: string;
   label: string;
   headingLevel?: 2 | 3;
 }
 
-const { rows, href, action, label, headingLevel = 2 } = Astro.props;
+const { rows, href, param, action, label, headingLevel = 2 } = Astro.props;
 const Heading = headingLevel === 3 ? 'h3' : 'h2';
-const pad = (n: number): string => String(n).padStart(2, '0');
 ---
 
 <ol class="rows" aria-label={label}>
   {
-    rows.map((row, i) => (
+    rows.map((row) => (
       <li id={row.id}>
-        <a class="row" href={href}>
-          <span class="row__n mono" aria-hidden="true">{pad(i + 1)}</span>
+        <a class="row" href={`${href}?${param}=${row.id}`}>
           <Heading class="row__name">{row.name}</Heading>
-          <span class="row__spec mono">{row.spec}</span>
+          <span class="row__spec">{row.spec}</span>
           <span class="row__go">
-            {action} <span aria-hidden="true">→</span>
+            {action} <Icon name="arrow-right" />
           </span>
         </a>
       </li>
@@ -69,17 +72,17 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 
   .row {
     display: grid;
-    grid-template-columns: 52px minmax(0, 1.05fr) minmax(0, 1.25fr) 104px;
-    gap: 18px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
+    gap: 14px clamp(20px, 3vw, 40px);
     align-items: baseline;
-    padding: 20px 0;
+    padding: 24px 0;
     border-bottom: 1px solid var(--line);
     color: inherit;
     text-decoration: none;
     position: relative;
-    transition: background .35s var(--ease-out-expo);
+    transition: background .3s var(--ease-out-expo);
   }
-  /* A cyan rule draws along the bottom of the hovered row. */
+  /* A cyan rule draws along the bottom of the hovered or focused row. */
   .row::before {
     content: '';
     position: absolute;
@@ -92,69 +95,66 @@ const pad = (n: number): string => String(n).padStart(2, '0');
     transform-origin: left;
     transition: transform .45s var(--ease-out-expo);
   }
-  .row:hover {
-    background: var(--surface-pale);
-  }
-  .row:hover::before {
+  .row:focus-visible::before {
     transform: none;
   }
-  .row__n,
-  .row__name {
-    transition: transform .35s var(--ease-out-expo), color .2s;
-  }
-  .row:hover .row__n,
-  .row:hover .row__name {
-    transform: translateX(8px);
-  }
-
-  .row__n {
-    font-size: .75rem;
-    color: var(--fg-kicker);
-  }
 
   .row__name {
-    font-size: 1.0625rem;
-    line-height: 1.35;
+    font-size: var(--fs-h3);
+    line-height: 1.25;
+    transition: transform .35s var(--ease-out-expo);
   }
 
   .row__spec {
-    font-size: .78rem;
-    line-height: 1.75;
+    font-size: var(--fs-small);
+    line-height: 1.6;
     color: var(--fg-muted);
   }
 
   .row__go {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: .45em;
     font-family: var(--font-stack-display);
     font-weight: 600;
-    font-size: .875rem;
+    font-size: var(--fs-small);
     color: var(--fg-link);
-    text-align: right;
     white-space: nowrap;
     transition: color var(--dur-fast);
   }
-  /* Navy, not cyan: cyan text on the pale hover ground is about 2:1. */
-  .row:hover .row__go {
-    color: var(--color-navy);
-  }
-  /* Only the arrow moves, so the label never slides past the row's edge. */
-  .row__go > [aria-hidden='true'] {
-    display: inline-block;
+  .row__go :global(.ico) {
     transition: transform .3s var(--ease-out-expo);
   }
-  .row:hover .row__go > [aria-hidden='true'] {
-    transform: translateX(4px);
+
+  /* Hover only where a pointer hovers; on a phone the row is simply a link. */
+  @media (hover: hover) {
+    .row:hover {
+      background: var(--surface-pale);
+    }
+    .row:hover::before {
+      transform: none;
+    }
+    .row:hover .row__name {
+      transform: translateX(8px);
+    }
+    /* Navy, not cyan: cyan text on the pale hover ground is about 2:1. */
+    .row:hover .row__go {
+      color: var(--color-navy);
+    }
+    /* Only the arrow moves, so the label never slides past the row's edge. */
+    .row:hover .row__go :global(.ico) {
+      transform: translateX(4px);
+    }
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .row {
-      grid-template-columns: 44px minmax(0, 1fr);
-      gap: 12px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      padding: 20px 0;
     }
-    .row__spec,
     .row__go {
-      grid-column: 2;
-      text-align: left;
+      margin-top: 4px;
     }
   }
 </style>

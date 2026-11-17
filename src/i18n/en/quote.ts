@@ -13,7 +13,6 @@ export const quote = {
 
   // ---- quote form (/quote, §8) --------------------------------------------
   // The only conversion point on the site. Every string here is load-bearing.
-  'quote.eyebrow': 'Request a quote',
   'quote.heading': 'Tell us what you need.',
   'quote.lede':
     'No account, ever. Send a part number, a photograph or a whole list and we reply with price and lead time.',
@@ -42,10 +41,11 @@ export const quote = {
   'quote.hint':
     'Only the contact field is required. A blurred nameplate photograph and a way to reach you is enough to start.',
 
-  // Placeholders (approved mockup). Examples, never defaults.
-  'quote.part.placeholder': '6ES7 214-1AG40-0XB0',
-  'quote.manufacturer.placeholder': 'Siemens',
-  'quote.quantity.placeholder': '4',
+  // Placeholders. Examples, never defaults — the "e.g." says so, so an
+  // example is never mistaken for an answer already typed in.
+  'quote.part.placeholder': 'e.g. 6ES7 214-1AG40-0XB0',
+  'quote.manufacturer.placeholder': 'e.g. Siemens',
+  'quote.quantity.placeholder': 'e.g. 4',
   'quote.notes.placeholder': 'Duty, service conditions, required date, destination',
 
   // The aside's three lines beside the form (approved mockup #v-quote). The
@@ -69,6 +69,13 @@ export const quote = {
   'quote.error.body': (email: string) =>
     `Something went wrong at our end. Please email ${email} directly — your enquiry matters more than this form.`,
   'quote.error.contactRequired': 'Please add an email address or WhatsApp number so we can reply.',
+  'quote.error.contactInvalid':
+    'That does not look like an email address or a phone number. Please check it so we can reply.',
+  // Written into the notes when the buyer arrives from a row on /products or
+  // /industries ("Enquire"), so the choice they made is not lost.
+  // The separator is part of the label, so Chinese takes its own colon.
+  'quote.prefill.category': 'Category: ',
+  'quote.prefill.industry': 'Industry: ',
   'quote.error.tooManyFiles': (max: number) => `Please attach no more than ${max} files.`,
   'quote.error.fileTooLarge': (name: string, max: number) =>
     `${name} is larger than ${max} MB. Please send it separately by email.`,

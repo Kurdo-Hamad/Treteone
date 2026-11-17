@@ -14,6 +14,6 @@ const t = useTranslations(getLangFromUrl(Astro.url));
 
 <Base title={t('meta.quote.title')} description={t('meta.quote.description')}>
   <QuoteForm>
-    <PageHead slot="head" plain kicker={t('quote.eyebrow')} title={t('quote.heading')} lead={t('quote.lede')} />
+    <PageHead slot="head" plain title={t('quote.heading')} lead={t('quote.lede')} />
   </QuoteForm>
 </Base>

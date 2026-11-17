@@ -1,4 +1,5 @@
 ---
+import Icon from '~/components/Icon.astro';
 import { company, mailHref, telHref } from '~/data/company';
 import { homeHref, quoteHref } from '~/data/navigation';
 import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
@@ -21,6 +22,8 @@ import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const buildYear = new Date().getFullYear();
+// The quote page is the form itself: no "Request a quote" button under it.
+const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
 ---
 
 <footer class="site-footer">
@@ -34,25 +37,34 @@ const buildYear = new Date().getFullYear();
         <p class="ftag">{t('footer.tagline')}</p>
       </div>
 
-      <div class="fcta">
-        <p class="fcta__k">{t('footer.ctaKicker')}</p>
-        <a class="btn" href={localisePath(quoteHref, lang)}>
-          {t('cta.quote')} <span aria-hidden="true">→</span>
-        </a>
-      </div>
+      {
+        !onQuotePage && (
+          <div class="fcta">
+            <p class="fcta__k">{t('footer.ctaKicker')}</p>
+            <a class="btn" href={localisePath(quoteHref, lang)}>
+              {t('cta.quote')} <Icon name="arrow-right" />
+            </a>
+          </div>
+        )
+      }
     </div>
 
     <dl class="fdetails">
       <div class="fd">
-        <dt>{t('footer.email')}</dt>
+        <dt class="label">{t('footer.email')}</dt>
         <dd><a class="fd__big" href={mailHref}>{company.email}</a></dd>
       </div>
       <div class="fd">
-        <dt>{t('footer.phone')}</dt>
-        <dd><a class="fd__big" href={telHref}>{company.phoneDisplay}</a></dd>
+        <dt class="label">{t('footer.phone')}</dt>
+        <dd>
+          <a class="fd__big" href={telHref}>{company.phoneDisplay}</a>
+          <a class="fd__wa" href={company.whatsappUrl} rel="noopener noreferrer" target="_blank">
+            {t('cta.whatsapp')} <Icon name="arrow-right" />
+          </a>
+        </dd>
       </div>
       <div class="fd fd--office">
-        <dt>{t('footer.office')}</dt>
+        <dt class="label">{t('footer.office')}</dt>
         <dd>
           <address>
             {company.address.latin}<br />
@@ -66,7 +78,7 @@ const buildYear = new Date().getFullYear();
       <p data-year={buildYear}>{t('footer.rights')(buildYear, company.registeredName)}</p>
       {/* "#top" with no element of that id scrolls to the top of the document (HTML spec), so no anchor element is needed. */}
       <a class="totop" href="#top">
-        {t('footer.top')} <span aria-hidden="true">↑</span>
+        {t('footer.top')} <Icon name="arrow-up" />
       </a>
     </div>
   </div>
@@ -82,23 +94,13 @@ const buildYear = new Date().getFullYear();
   .site-footer {
     --focus: var(--focus-dark);
     --fg-link: var(--text-link-dark);
+    --fg-label: var(--color-cyan-light);
 
     position: relative;
     background: var(--color-navy-deep);
-    color: rgba(255, 255, 255, .62);
+    color: var(--on-dark-3);
     padding-block: clamp(48px, 6vw, 80px) 24px;
-    font-size: .875rem;
-  }
-  /* A short cyan rule on the top edge, aligned to the page gutter — the one
-     accent on the footer. */
-  .site-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: max(var(--wrap-pad), calc((100% - var(--wrap-max)) / 2 + var(--wrap-pad)));
-    width: 72px;
-    height: 3px;
-    background: var(--color-cyan);
+    font-size: var(--fs-small);
   }
   .site-footer .btn {
     background: var(--color-cyan);
@@ -116,7 +118,7 @@ const buildYear = new Date().getFullYear();
     align-items: flex-end;
     gap: 32px 48px;
     padding-bottom: clamp(32px, 4vw, 48px);
-    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    border-bottom: 1px solid var(--rule-dark);
   }
 
   .mark {
@@ -141,16 +143,15 @@ const buildYear = new Date().getFullYear();
     color: var(--text-inverse);
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: 1rem;
+    font-size: var(--fs-body);
     letter-spacing: -.01em;
   }
   .ftag {
     margin-top: 6px;
     max-width: 46ch;
-    font-size: .9375rem;
+    font-size: var(--fs-small);
     line-height: 1.6;
-    /* §11 floor: .62 white on the footer ground is ~7:1. */
-    color: rgba(255, 255, 255, .62);
+    color: var(--on-dark-3);
   }
 
   .fcta {
@@ -162,7 +163,7 @@ const buildYear = new Date().getFullYear();
   .fcta__k {
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: 1.0625rem;
+    font-size: var(--fs-lead);
     color: var(--text-inverse);
   }
 
@@ -176,15 +177,6 @@ const buildYear = new Date().getFullYear();
   }
   .fd dt {
     margin-bottom: 10px;
-    font-family: var(--font-stack-display);
-    font-size: var(--fs-kicker);
-    font-weight: 600;
-    letter-spacing: var(--tracking-kicker);
-    text-transform: uppercase;
-    color: var(--color-cyan-light);
-  }
-  html[lang^='zh'] .fd dt {
-    letter-spacing: .06em;
   }
   .fd dd {
     margin: 0;
@@ -192,7 +184,7 @@ const buildYear = new Date().getFullYear();
   .fd__big {
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: clamp(1rem, .95rem + .3vw, 1.125rem);
+    font-size: var(--fs-lead);
     color: var(--text-inverse);
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -204,11 +196,25 @@ const buildYear = new Date().getFullYear();
     color: var(--color-cyan-light);
     text-decoration-color: currentColor;
   }
+  .fd__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    margin-left: 14px;
+    font-family: var(--font-stack-display);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    color: var(--color-cyan-light);
+    text-decoration: none;
+  }
+  .fd__wa:hover {
+    color: var(--text-inverse);
+  }
   .fd address {
     font-style: normal;
-    font-size: .875rem;
+    font-size: var(--fs-small);
     line-height: 1.7;
-    color: rgba(255, 255, 255, .7);
+    color: var(--on-dark-2);
   }
 
   /* -- legal row ------------------------------------------------------------ */
@@ -219,17 +225,17 @@ const buildYear = new Date().getFullYear();
     justify-content: space-between;
     align-items: center;
     padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, .12);
-    font-size: .8rem;
-    /* The mockup has .46 here; raised to .54 to clear the §11 floor (~6:1). */
-    color: rgba(255, 255, 255, .54);
+    border-top: 1px solid var(--rule-dark);
+    font-size: var(--fs-caption);
+    /* §11 floor: .50 white on the footer ground is ~5:1. */
+    color: var(--on-dark-4);
   }
   .totop {
     display: inline-flex;
     align-items: center;
     gap: .5em;
     min-height: 44px;
-    color: rgba(255, 255, 255, .74);
+    color: var(--on-dark-2);
     text-decoration: none;
     font-family: var(--font-stack-display);
     font-weight: 500;
@@ -239,7 +245,7 @@ const buildYear = new Date().getFullYear();
     color: var(--text-inverse);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .fdetails {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
@@ -247,7 +253,7 @@ const buildYear = new Date().getFullYear();
       grid-column: 1 / -1;
     }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 35rem) {
     .ftop {
       align-items: flex-start;
     }

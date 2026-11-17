@@ -43,25 +43,24 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2';
     margin-top: 32px;
   }
 
-  /* Each block stands on a hairline, like the index rows above it on other
-     pages, so the grid reads as a set of entries rather than loose text. */
+  /* Each block stands on the shared ruled-entry hairline (global.css), like
+     the index rows on other pages, so the grid reads as a set of entries. */
   .def {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--line);
+    padding-bottom: 26px;
   }
   .def__title {
-    margin-bottom: 10px;
-    font-size: 1.0625rem;
-    line-height: 1.35;
+    margin-bottom: 12px;
+    font-size: var(--fs-h3);
   }
 
   .def p {
-    font-size: .9375rem;
+    max-width: 58ch;
+    font-size: var(--fs-body);
     line-height: 1.62;
     color: var(--fg-body);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 60rem) {
     .defs {
       grid-template-columns: minmax(0, 1fr);
     }

@@ -5,6 +5,11 @@
 amber/graphite system the site was built on in passes 1–5.
 
 The old spec is kept as `CLAUDE-amber-superseded.md` for reference only.
+
+**Design unlocked (17 Nov 2026).** The client released the "LOCKED" visual
+rules so the design could be refined against an AI-slop review (Impeccable +
+Jakub Krehel's better-interface skills). Navy + cyan, General Sans and Roboto
+stay; what changed and why is in §16, which wins over older lines here.
 Where `reference/index.html` disagrees with this file, this file wins — the
 prototype's ink/amber palette is dead.
 
@@ -77,7 +82,7 @@ The homepage is a gateway; detail lives on its own routes.
 | `/products` | Page head · 12 categories as index rows · navy five-step scope band (component → complete system) |
 | `/industries` | Page head · 9 sectors as index rows, spec line naming the duty data |
 | `/sourcing` | Page head · four definition blocks · navy "what to send" band · five-step process |
-| `/brands` | Page head · filterable brand directory (chips + search) |
+| `/brands` | Page head · filterable brand directory (chips + search), a typeset index of names (§16) |
 | `/about` | Page head · six definition blocks · registered-details band on pale |
 | `/quote` | The form, on its own page |
 
@@ -94,8 +99,8 @@ Share cards: `public/og-card.png` / `og-card-zh.png`, typographic (no stock phot
 rendered by `scripts/make-og-cards.mjs`.
 
 Every route shares the same masthead (`Header.astro`), the same footer
-(`Footer.astro`), and every detail route opens with the same page head (kicker,
-h1, lead), so the seven pages read as one product. On /products, /industries,
+(`Footer.astro`), and every detail route opens with the same page head (h1,
+lead — no label above the heading, §16), so the seven pages read as one product. On /products, /industries,
 /sourcing, /brands and /about the page head is a full-bleed navy band flush
 under the masthead. The photograph fills the right half (from the centre line,
 clipped to its box) with only a soft navy join at its left edge, so it shows
@@ -310,12 +315,16 @@ margins, no gap above.
   legible. Do not tint the whole photograph blue. Lightened Nov 2026 at the
   client's request: the copy side starts at .8 (was .94) and the photograph shows
   more clearly.
-- Overlay bottom-left, aligned to the page gutter: eyebrow, rotating title, one
-  line, one text link whose target changes per slide.
+- Overlay bottom-left, aligned to the page gutter: rotating title, one line,
+  then a "Send a part number" button and one text link whose target changes per
+  slide. No eyebrow label (removed Nov 2026, §16). The panels share one grid
+  cell, so the stage grows with its copy at large text sizes.
 - Bar below the image, inside the same container: pause/play button plus four
   progress segments with labels. Each segment is 3px heavy and exactly as long as
   its label; 5s per slide (both changed at the client's request, November 2026).
-- **Below 700px: one segment only**, full width, labels visually hidden.
+- **Below 700px: four short segments side by side**, labels visually hidden
+  (was one segment; changed Nov 2026 so a phone visitor can see and reach all
+  four slides).
 - A real tablist: `role="tab"`, `aria-selected`, roving tabindex, arrow keys.
 - Freezes under `prefers-reduced-motion`: rests on slide one, play icon showing.
 
@@ -383,7 +392,7 @@ bottom edge (moved from the top, client request Nov 2026) that draws in as they 
 
 **Motion (added Nov 2026, client request "more dynamic").** All of it stops under
 `prefers-reduced-motion`; none of it hides content when JS is off.
-- Scroll reveal (`src/scripts/reveal.ts`): section headings, kickers, leads, and
+- Scroll reveal (`src/scripts/reveal.ts`): section headings, leads, and
   the items of every list and grid fade up; items arriving together stagger 70 ms.
   Hero, page-head bands and .settle-in blocks are excluded (they settle in instead).
 - Hero: slow zoom on the active photograph; on a slide change the copy arrives
@@ -594,4 +603,93 @@ here so nobody "fixes" it back by accident:
   cyan-light on navy.
 - Form-control borders at ~1.2:1. Controls use `--rule-control` (3:1 or better).
 - "Licence number" in the /about registered-company line — not supplied, not claimed.
+
+---
+
+## 16. Design refinement — 17 Nov 2026 (AI-slop review)
+
+The client unlocked the visual design. Three independent reviews ran on the
+live build: Impeccable's design critique (21/32, "Acceptable"), Impeccable's
+`detect` scanner, and Jakub Krehel's `better-interface` review (verdict:
+Block, two HIGH findings). The client chose: **refine, keep navy & cyan**;
+**keep the site dynamic** but remove the generic look; **keep the rotating
+hero** and add a quote button to it. What changed — do not put these back:
+
+**Removed as template patterns**
+- Eyebrow/kicker labels above headings, everywhere (hero, page heads,
+  sections, quote page). Impeccable bans them outright. The `.label` class is
+  only for term/value pairs (registered details, footer, quote facts).
+- The resting 48 × 3px cyan stub under every entry, and the footer's cyan
+  rule. Entries now stand on a hairline that draws in on arrival; the cyan
+  rule appears on hover only. The page-head band keeps its one 72 × 3px rule.
+- Decorative 01–12 numbering on /products, /industries and the "what to
+  send" lists. Process steps keep "Step 1…5" — there the order is the point.
+- Monospace for ordinary lists, counts and labels. Mono is for codes only
+  (part-number examples, the reply reference).
+- Pill buttons. Buttons, the header quote button, chips and form controls
+  use the 2px `--radius`. Round icon buttons (pause/play) stay round.
+- "→" / "↑" text glyphs. Arrows are drawn SVG (`Icon.astro`).
+- The cyan offset block behind the positioning-split photo.
+- Brand logo boxes with names in them (read as missing artwork). /brands is
+  a typeset index (name + discipline on a hairline); the homepage marquee is a
+  running line of names in the display face. Logo files still replace names.
+- "Logo artwork is pending" (brands lead) and the legalistic cards note
+  (now "Typical enquiries, described in general terms. No client is named.").
+- The "IMAGE: Treteone office" placeholder card: until a real office photo
+  exists, that frame shows the registered name and address in both scripts.
+
+**Type and colour system** (tokens.css)
+- One role scale: `--fs-label` 12 · `--fs-caption` 13 · `--fs-small` 14 ·
+  `--fs-body` 16 · `--fs-lead` 18 · `--fs-h3` 21 · `--fs-sec-h2` ·
+  `--fs-page-h1` · `--fs-display` · `--fs-hero-title`. Nothing under 12px.
+  The old §5 sizes and unused tokens were deleted.
+- No `rgba()` literals in components: white on navy uses `--on-dark-1…4`,
+  `--on-dark-line` (outlines) and `--on-dark-tint`. `--rule-control` is now
+  `--border-control`.
+- Browser surfaces themed: selection, caret, scrollbar, accent colour.
+- Category and industry names are sentence case and read from
+  `src/data/*.ts` everywhere (the capability grid no longer has its own).
+
+**Motion (kept dynamic, cleaned up)**
+- One entrance for the site: 18px rise, ease-out-expo, 70 ms stagger.
+- `reveal.ts` skips anything running `rise-in` or `settle-in` — the two had
+  been fighting and made rows animate twice.
+- The homepage intro reveals on scroll (it sits below the fold under the
+  taller hero), not with `rise-in`.
+- Hover effects on things that are not links (entry zoom 1.04, cyan rule)
+  run only under `@media (hover: hover) and (pointer: fine)`, so a tap on a
+  phone never latches a "selected" look. Brand entries no longer lift.
+- The brand marquee has a visible pause/play button (WCAG 2.2.2).
+- Kept: hero zoom and copy entrance, page-head settle and drift, photo
+  drift on the positioning split, card lift and photo zoom, row hover.
+
+**Bugs fixed**
+- `.rm` hover was cyan text on white (2.4:1) → navy with underline.
+- 200% browser text: breakpoints are in rem (35 / 43.75 / 60rem), the hero
+  stage grows with its copy, and below 22rem the header shows wordmark +
+  menu only. Verified: no sideways scroll on all 16 pages at 320px, and at
+  200% text on 390px and 1280px.
+- Quote form: errors appear next to the contact field in the page's
+  language (`noValidate` when the script runs; native `required` without
+  it); "x" is rejected (needs an email or 7+ digits); Manufacturer no longer
+  autofills the buyer's company; examples read "e.g. …"; the failure
+  message's email is a mailto link; on phones the form comes before the
+  facts; the footer quote button is hidden on /quote.
+- "Enquire" rows link to `/quote/?category=<slug>` or `?industry=<slug>`;
+  the form writes the choice into the notes (names come from the page, never
+  from the URL).
+- Chinese "——", curly quotes and "…" now come from the Noto subset (a
+  second face, "Noto Sans SC Punct", first in the zh stacks) instead of
+  Roboto's short Latin dashes.
+- Hero copy contrast: measured against the brightest 5% of each stand-in
+  photo — titles ≥ 3.3:1 (large text), the line ≥ 4.9:1 (now full white).
+  Re-measure when real photographs arrive.
+- `--header-h` is 76px (the real tallest masthead), used for scroll padding.
+
+**Not done / open**
+- The "Treteone at a glance" band is kept (count-up, client request) but
+  restyled as a ruled strip; Impeccable flags the stats-band pattern itself.
+- Detector warnings still standing by design: Roboto as body face
+  ("overused font") and the marquee. Its "cramped padding" hits are false
+  positives (padding sits on the inner `.wrap.sec`).
 
