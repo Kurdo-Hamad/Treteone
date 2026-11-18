@@ -2,80 +2,81 @@
 import Icon from '~/components/Icon.astro';
 import { company, mailHref, telHref } from '~/data/company';
 import { homeHref, quoteHref } from '~/data/navigation';
-import { getLangFromUrl, localisePath, useTranslations } from '~/i18n/ui';
+import { getLangFromUrl, languages, localisePath, useTranslations } from '~/i18n/ui';
 
 /**
- * Navy footer. No navigation row — the masthead carries the site navigation;
- * the footer carries who we are and how to reach us (client request, Nov 2026).
+ * Navy footer — one compact band (client request, Nov 2026: the earlier
+ * footer was too big). No navigation; the masthead carries that.
  *
- *   wordmark, registered name, tagline                 |  kicker + quote pill
+ *   wordmark            EMAIL            PHONE · WHATSAPP      OFFICE
+ *   registered name     sales@…          +86 …  WhatsApp       address (EN)
+ *   tagline                                                     address (中文)
+ *   Request a quote →
  *   ---------------------------------------------------------------------------
- *   EMAIL            PHONE · WHATSAPP            OFFICE (both scripts)
- *   ---------------------------------------------------------------------------
- *   © year, registered name                                       Back to top ↑
+ *   © year, registered name                                     Back to top ↑
  *
  * This block is half of how the site survives the "are these people real?"
- * check (§1), so nothing in it may be invented. The business licence number
- * is deliberately not shown until it is supplied (§12) — no placeholder.
+ * check (§1), and it is the one place the contact details appear (the About
+ * page no longer repeats them), so nothing in it may be invented. The
+ * business licence number is not shown until it is supplied (§12).
  */
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const buildYear = new Date().getFullYear();
-// The quote page is the form itself: no "Request a quote" button under it.
+// The quote page is the form itself: no quote link under it.
 const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
+// Text in the other script gets its own lang, so it is read and shaped right.
+const latinLang = lang === 'en' ? undefined : 'en';
+const hanziLang = lang === 'zh' ? undefined : languages.zh.htmlLang;
 ---
 
 <footer class="site-footer">
   <div class="wrap">
-    <div class="ftop">
+    <div class="fmain">
       <div class="fbrand">
         <a class="mark" href={localisePath(homeHref, lang)} aria-label={t('nav.home')}>
           <span aria-hidden="true">{company.tradingName}<i>.</i></span>
         </a>
-        <p class="fco">{company.registeredName}</p>
+        <p class="fco" lang={latinLang}>{company.registeredName}</p>
         <p class="ftag">{t('footer.tagline')}</p>
-      </div>
-
-      {
-        !onQuotePage && (
-          <div class="fcta">
-            <p class="fcta__k">{t('footer.ctaKicker')}</p>
-            <a class="btn" href={localisePath(quoteHref, lang)}>
+        {
+          !onQuotePage && (
+            <a class="fquote" href={localisePath(quoteHref, lang)}>
               {t('cta.quote')} <Icon name="arrow-right" />
             </a>
-          </div>
-        )
-      }
+          )
+        }
+      </div>
+
+      <dl class="fdetails">
+        <div class="fd">
+          <dt class="label">{t('footer.email')}</dt>
+          <dd><a class="fd__link" href={mailHref}>{company.email}</a></dd>
+        </div>
+        <div class="fd">
+          <dt class="label">{t('footer.phone')}</dt>
+          <dd>
+            <a class="fd__link" href={telHref}>{company.phoneDisplay}</a>
+            <a class="fd__wa" href={company.whatsappUrl} rel="noopener noreferrer" target="_blank">
+              {t('cta.whatsapp')} <Icon name="arrow-right" />
+            </a>
+          </dd>
+        </div>
+        <div class="fd fd--office">
+          <dt class="label">{t('footer.office')}</dt>
+          <dd>
+            <address>
+              <span lang={latinLang}>{company.address.latin}</span>
+              <span lang={hanziLang}>{company.address.hanzi}</span>
+            </address>
+          </dd>
+        </div>
+      </dl>
     </div>
 
-    <dl class="fdetails">
-      <div class="fd">
-        <dt class="label">{t('footer.email')}</dt>
-        <dd><a class="fd__big" href={mailHref}>{company.email}</a></dd>
-      </div>
-      <div class="fd">
-        <dt class="label">{t('footer.phone')}</dt>
-        <dd>
-          <a class="fd__big" href={telHref}>{company.phoneDisplay}</a>
-          <a class="fd__wa" href={company.whatsappUrl} rel="noopener noreferrer" target="_blank">
-            {t('cta.whatsapp')} <Icon name="arrow-right" />
-          </a>
-        </dd>
-      </div>
-      <div class="fd fd--office">
-        <dt class="label">{t('footer.office')}</dt>
-        <dd>
-          <address>
-            {company.address.latin}<br />
-            <span lang="zh-CN">{company.address.hanzi}</span>
-          </address>
-        </dd>
-      </div>
-    </dl>
-
     <div class="legal">
-      <p data-year={buildYear}>{t('footer.rights')(buildYear, company.registeredName)}</p>
+      <p data-year={buildYear} lang={latinLang}>{t('footer.rights')(buildYear, company.registeredName)}</p>
       {/* "#top" with no element of that id scrolls to the top of the document (HTML spec), so no anchor element is needed. */}
       <a class="totop" href="#top">
         {t('footer.top')} <Icon name="arrow-up" />
@@ -89,43 +90,32 @@ const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
 </script>
 
 <style>
-  /* Navy ground: set the roles here so the focus ring is cyan-light and the
-     global .btn takes its navy-ground (cyan) form. */
+  /* Navy ground: set the roles here so the focus ring is cyan-light. */
   .site-footer {
     --focus: var(--focus-dark);
     --fg-link: var(--text-link-dark);
     --fg-label: var(--color-cyan-light);
 
-    position: relative;
     background: var(--color-navy-deep);
     color: var(--on-dark-3);
-    padding-block: clamp(48px, 6vw, 80px) 24px;
+    padding-block: clamp(40px, 4.5vw, 56px) 0;
     font-size: var(--fs-small);
-  }
-  .site-footer .btn {
-    background: var(--color-cyan);
-    color: var(--color-navy);
-  }
-  .site-footer .btn:hover {
-    background: var(--text-inverse);
+    line-height: 1.6;
   }
 
-  /* -- top: brand and call to action ---------------------------------------- */
-  .ftop {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 32px 48px;
-    padding-bottom: clamp(32px, 4vw, 48px);
-    border-bottom: 1px solid var(--rule-dark);
+  /* -- main row: brand column + three contact columns ---------------------- */
+  .fmain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3.2fr);
+    gap: 32px clamp(32px, 5vw, 72px);
+    padding-bottom: clamp(32px, 3.6vw, 44px);
   }
 
   .mark {
     display: inline-block;
     font-family: var(--font-stack-display);
     font-weight: 700;
-    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    font-size: 1.25rem;
     letter-spacing: .1em;
     line-height: 1;
     text-transform: uppercase;
@@ -139,41 +129,43 @@ const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
   }
 
   .fco {
-    margin-top: 18px;
-    color: var(--text-inverse);
+    margin-top: 14px;
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: var(--fs-body);
-    letter-spacing: -.01em;
+    color: var(--text-inverse);
   }
   .ftag {
-    margin-top: 6px;
-    max-width: 46ch;
-    font-size: var(--fs-small);
-    line-height: 1.6;
+    margin-top: 4px;
+    max-width: 34ch;
     color: var(--on-dark-3);
   }
 
-  .fcta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .fcta__k {
+  .fquote {
+    display: inline-flex;
+    align-items: center;
+    gap: .45em;
+    min-height: 44px;
+    margin-top: 10px;
     font-family: var(--font-stack-display);
-    font-weight: 500;
-    font-size: var(--fs-lead);
+    font-weight: 600;
+    color: var(--color-cyan-light);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: .3em;
+    transition: color var(--dur-fast), text-decoration-color var(--dur-fast);
+  }
+  .fquote:hover {
     color: var(--text-inverse);
+    text-decoration-color: currentColor;
   }
 
-  /* -- contact details ------------------------------------------------------ */
   .fdetails {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 28px 40px;
+    grid-template-columns: minmax(0, .9fr) minmax(0, .9fr) minmax(0, 1.6fr);
+    gap: 28px clamp(24px, 3vw, 44px);
     margin: 0;
-    padding-block: clamp(28px, 3.6vw, 44px);
+    /* Line the labels up with the wordmark's cap height. */
+    padding-top: 2px;
   }
   .fd dt {
     margin-bottom: 10px;
@@ -181,39 +173,40 @@ const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
   .fd dd {
     margin: 0;
   }
-  .fd__big {
+  .fd__link {
     font-family: var(--font-stack-display);
     font-weight: 500;
-    font-size: var(--fs-lead);
+    font-size: var(--fs-body);
     color: var(--text-inverse);
     text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 6px;
     text-decoration-color: transparent;
-    transition: text-decoration-color .2s, color .16s;
+    text-underline-offset: .3em;
+    transition: color var(--dur-fast), text-decoration-color var(--dur-fast);
   }
-  .fd__big:hover {
+  .fd__link:hover {
     color: var(--color-cyan-light);
     text-decoration-color: currentColor;
   }
   .fd__wa {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: .4em;
-    margin-left: 14px;
+    width: fit-content;
+    margin-top: 6px;
     font-family: var(--font-stack-display);
     font-weight: 600;
-    font-size: var(--fs-small);
     color: var(--color-cyan-light);
     text-decoration: none;
+    transition: color var(--dur-fast);
   }
   .fd__wa:hover {
     color: var(--text-inverse);
   }
   .fd address {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     font-style: normal;
-    font-size: var(--fs-small);
-    line-height: 1.7;
     color: var(--on-dark-2);
   }
 
@@ -221,10 +214,10 @@ const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
   .legal {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 30px;
+    gap: 4px 24px;
     justify-content: space-between;
     align-items: center;
-    padding-top: 20px;
+    padding-block: 10px;
     border-top: 1px solid var(--rule-dark);
     font-size: var(--fs-caption);
     /* §11 floor: .50 white on the footer ground is ~5:1. */
@@ -233,33 +226,36 @@ const onQuotePage = /\/quote\/?$/.test(Astro.url.pathname);
   .totop {
     display: inline-flex;
     align-items: center;
-    gap: .5em;
+    gap: .45em;
     min-height: 44px;
     color: var(--on-dark-2);
     text-decoration: none;
     font-family: var(--font-stack-display);
     font-weight: 500;
-    transition: color .16s;
+    transition: color var(--dur-fast);
   }
   .totop:hover {
     color: var(--text-inverse);
   }
 
+  /* -- smaller screens ------------------------------------------------------ */
   @media (max-width: 60rem) {
+    .fmain {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 43.75rem) {
     .fdetails {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px 20px;
     }
     .fd--office {
       grid-column: 1 / -1;
     }
   }
-  @media (max-width: 35rem) {
-    .ftop {
-      align-items: flex-start;
-    }
+  @media (max-width: 22rem) {
     .fdetails {
-      grid-template-columns: 1fr;
-      gap: 24px;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

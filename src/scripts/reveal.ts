@@ -49,8 +49,7 @@ const SINGLES = [
   '.bfilter',
   '.bcount',
   // footer
-  '.ftop > *',
-  '.legal',
+  '.fbrand',
 ];
 
 const REVEAL_GROUPS = [
@@ -59,7 +58,6 @@ const REVEAL_GROUPS = [
   '.steps > .step',
   '.htf__list > li',
   '.checklist > li',
-  '.reg > .reg__item',
   '.glance > .glance__item',
   '.caps > .cap',
   '.cards > .card',

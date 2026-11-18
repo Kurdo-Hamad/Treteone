@@ -15,7 +15,7 @@ export const about = {
   'about.page.title': 'An industrial supply company that reads specifications.',
   /** name is company.registeredName — never typed here. */
   'about.page.lead': (name: string) =>
-    `${name} is a registered trading company in Liwan District, Guangzhou, working with maintenance and procurement teams in plants that cannot afford to stand still. Enquiries are handled by people who can read a datasheet, not routed through a catalogue search.`,
+    `${name} is a registered trading company in Guangzhou, Guangdong Province, China.`,
 
   // ---- the six definition blocks ------------------------------------------
   'about.def.specification.title': 'We work from the specification',
@@ -38,12 +38,6 @@ export const about = {
   // been supplied and is shown nowhere (CLAUDE.md §12), so it is not claimed.
   'about.def.registered.body': (name: string) =>
     `${name} — registered name and address published in the footer of every page.`,
-
-  // ---- registered-details band on pale ------------------------------------
-  'about.registered.title': 'Registered details',
-  'about.registered.name': 'Registered name',
-  'about.registered.enquiries': 'Enquiries',
-  'about.registered.address': 'Registered address',
 
 };
 

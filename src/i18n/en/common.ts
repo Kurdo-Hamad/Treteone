@@ -48,7 +48,6 @@ export const common = {
 
   // ---- footer -------------------------------------------------------------
   'footer.tagline': 'Industrial supply and sourcing, from Guangzhou to plants worldwide.',
-  'footer.ctaKicker': 'Have a part number?',
   'footer.email': 'Email',
   'footer.phone': 'Phone · WhatsApp',
   'footer.office': 'Office',

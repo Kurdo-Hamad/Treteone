@@ -83,7 +83,7 @@ The homepage is a gateway; detail lives on its own routes.
 | `/industries` | Page head · 9 sectors as index rows, spec line naming the duty data |
 | `/sourcing` | Page head · four definition blocks · navy "what to send" band · five-step process |
 | `/brands` | Page head · filterable brand directory (chips + search), a typeset index of names (§16) |
-| `/about` | Page head · six definition blocks · registered-details band on pale |
+| `/about` | Page head (lead: "Guangzhou Treteone Trading Co., Ltd. is a registered trading company in Guangzhou, Guangdong Province, China.") · six definition blocks. The registered-details band was removed (Nov 2026): it repeated the footer |
 | `/quote` | The form, on its own page |
 
 Each mirrored under `/zh/`. Fourteen routes, plus a not-found page in each language
@@ -685,6 +685,17 @@ hero** and add a quote button to it. What changed — do not put these back:
   photo — titles ≥ 3.3:1 (large text), the line ≥ 4.9:1 (now full white).
   Re-measure when real photographs arrive.
 - `--header-h` is 76px (the real tallest masthead), used for scroll padding.
+
+**Footer and About (18 Nov 2026, client request)**
+- The footer is one compact band (about 330px on desktop, was about 530px):
+  wordmark, registered name, tagline and a "Request a quote" text link on
+  the left; Email · Phone/WhatsApp · Office columns; © and Back to top. The
+  big CTA block went. The footer is the one place contact details appear.
+- /about no longer has the registered-details band; its lead is the
+  client's sentence ("… is a registered trading company in Guangzhou,
+  Guangdong Province, China."), with the registered name from company.ts.
+- The footer's last row (© / Back to top) is never hidden by the scroll
+  reveal: at the very foot of the page it could fail to trigger.
 
 **Not done / open**
 - The "Treteone at a glance" band is kept (count-up, client request) but

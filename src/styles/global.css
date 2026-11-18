@@ -455,18 +455,17 @@
     to { transform: none; }
   }
 
-  /* Ruled entries: definitions, registered details, process steps and the
-     "what to send" rows. Each stands on a hairline (::before) that draws in
+  /* Ruled entries: definitions, process steps and the "what to send" rows. Each stands on a hairline (::before) that draws in
      as the entry arrives; on hover a cyan rule runs along it (::after) and
      the entry eases forward a touch. No resting accent stub — the hairline
      carries the structure, the cyan is earned by the hover. */
-  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li) {
+  :is(.def, .step, .checklist > li, .htf__list > li) {
     position: relative;
     transform-origin: left center;
     transition: scale .45s var(--ease-out-expo);
   }
-  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li)::before,
-  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li)::after {
+  :is(.def, .step, .checklist > li, .htf__list > li)::before,
+  :is(.def, .step, .checklist > li, .htf__list > li)::after {
     content: '';
     position: absolute;
     left: 0;
@@ -475,11 +474,11 @@
     transform-origin: left;
     pointer-events: none;
   }
-  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li)::before {
+  :is(.def, .step, .checklist > li, .htf__list > li)::before {
     height: 1px;
-    background: var(--rule-strong, var(--line));
+    background: var(--line);
   }
-  :is(.def, .reg__item, .step, .checklist > li, .htf__list > li)::after {
+  :is(.def, .step, .checklist > li, .htf__list > li)::after {
     height: 2px;
     background: var(--color-cyan);
     transform: scaleX(0);
@@ -494,26 +493,26 @@
   /* Hover only where a pointer can hover: a tap on a phone must not latch a
      "selected" look onto plain text. */
   @media (hover: hover) and (pointer: fine) {
-    :is(.def, .reg__item, .step, .checklist > li, .htf__list > li):hover {
+    :is(.def, .step, .checklist > li, .htf__list > li):hover {
       scale: 1.04;
     }
-    :is(.def, .reg__item, .step, .checklist > li, .htf__list > li):hover::after {
+    :is(.def, .step, .checklist > li, .htf__list > li):hover::after {
       transform: none;
     }
   }
   /* Revealed entries take the reveal's transition list; carry the zoom's
      easing on, with no reveal delay, and draw the hairline after arrival. */
-  .js-reveal :is(.def, .reg__item, .step, .checklist > li, .htf__list > li).rv {
+  .js-reveal :is(.def, .step, .checklist > li, .htf__list > li).rv {
     transition:
       opacity .6s var(--ease-out-expo) var(--rv-delay, 0ms),
       transform .7s var(--ease-out-expo) var(--rv-delay, 0ms),
       scale .45s var(--ease-out-expo);
   }
-  .js-reveal :is(.def, .reg__item, .step, .checklist > li, .htf__list > li).rv::before {
+  .js-reveal :is(.def, .step, .checklist > li, .htf__list > li).rv::before {
     transform: scaleX(0);
     transition: transform .9s var(--ease-out-expo) calc(var(--rv-delay, 0ms) + .2s);
   }
-  .js-reveal :is(.def, .reg__item, .step, .checklist > li, .htf__list > li).rv.in::before {
+  .js-reveal :is(.def, .step, .checklist > li, .htf__list > li).rv.in::before {
     transform: none;
   }
 

@@ -18,7 +18,7 @@ export const about: AboutStrings = {
   // ---- /about page head ---------------------------------------------------
   'about.page.title': '一家读得懂规格的工业供应公司。',
   'about.page.lead': (name: string) =>
-    `${name} 是一家在广州市荔湾区注册的贸易公司，服务于停不起机的工厂的维修与采购团队。询价由看得懂数据表的人处理，而不是交给目录搜索。`,
+    `${name} 是一家在中国广东省广州市注册的贸易公司。`,
 
   // ---- the six definition blocks ------------------------------------------
   'about.def.specification.title': '我们从规格出发',
@@ -34,10 +34,5 @@ export const about: AboutStrings = {
   'about.def.registered.title': '一家注册公司',
   'about.def.registered.body': (name: string) => `${name}——注册名称和地址刊载于每一页的页脚。`,
 
-  // ---- registered-details band --------------------------------------------
-  'about.registered.title': '注册信息',
-  'about.registered.name': '注册名称',
-  'about.registered.enquiries': '询价联系',
-  'about.registered.address': '注册地址',
 
 };
